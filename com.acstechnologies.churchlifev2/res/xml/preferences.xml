@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    
+     <PreferenceCategory android:title="Authentication Settings" android:key="category_authentication">                
+        <EditTextPreference
+                android:name="Auth1Preference"
+                android:summary=""
+                android:defaultValue=""
+                android:title="auth1"
+                android:key="auth1" />
+
+        <EditTextPreference
+                android:name="Auth2Preference"
+                android:summary=""
+                android:defaultValue=""
+                android:title="auth2"
+                android:key="auth2" />
+                
+        <EditTextPreference
+                android:name="Auth3Preference"
+                android:summary=""
+                android:defaultValue=""
+                android:title="auth3"
+                android:key="auth3" />                
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Authentication Settings" android:key="category_authentication">
+		<EditTextPreference
+        	android:summary="This allows you to enter a test"
+            android:defaultValue="blah"
+            android:title="test"
+            android:key="test" android:name="TestPreference"/>                                                                                
+    </PreferenceCategory>
+     
+</PreferenceScreen>

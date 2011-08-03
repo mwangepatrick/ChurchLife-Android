@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>  
+    <string name="app_name">Church Life v.2</string>
+    <string-array name="countries_array">
+        <item>Bahrain</item>
+        <item>Bangladesh</item>
+        <item>Barbados</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Belize</item>
+        <item>Benin</item>
+    </string-array>
+    
+    <string name="Login.Email">Email</string>   
+    <string name="Login.Password">Password</string>
+    <string name="Login.RememberMe">Remember Me</string>    
+    <string name="Login.Username">Username</string>
+    <string name="Login.SiteNumber">Site No.</string>        
+	<string name="Login.Login">Login</string>
+	
+	<string name="Login.Validation.Email">Enter an email address.</string>
+	<string name="Login.Validation.SiteNumber">Enter a Site Number.</string>
+	<string name="Login.Validation.UserName">Enter a Username.</string>
+	<string name="Login.Validation.Password">Enter a password.</string>
+	<string name="Login.Validation.InvalidLogin">"Invalid login.  Please try again."</string>
+	<string name="Login.ProgressDialog">"Logging In. Please wait..."</string>
+	<string name="Login.SiteSelectTitle">"Select a Site"</string>
+
+	<string name="Preferences.Title">Preferences</string>
+
+
+
+
+
+	<color name="Login.Background">#E6DFE0</color>
+	<color name="White">#FFFFFF</color>
+	
+</resources>
