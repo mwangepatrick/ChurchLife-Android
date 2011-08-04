@@ -1,25 +1,24 @@
 package com.acstechnologies.churchlifev2.exceptionhandling;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class ExceptionInfo {
 
-	public enum SEVERITY_ERROR {
-		LOW, MODERATE, HIGH, CRITICAL		
+	public enum SEVERITY {
+		LOW,MODERATE,HIGH,CRITICAL		
 	}
 	
-	public enum TYPE_ERROR {
-		UNEXPECTED, APPLICATION,VALIDATION		
+	public enum TYPE {
+		UNEXPECTED,APPLICATION,VALIDATION		
 	}
 		
-	protected Throwable 		cause                = null;
-    protected String    		errorId              = null;
-    protected String    		contextId            = null;
-    protected TYPE_ERROR       	errorType            = null;
-    protected SEVERITY_ERROR    severity             = null;
+	protected Throwable cause                = null;
+    protected String    errorId              = null;
+    protected String    contextId            = null;
+    protected TYPE      errorType            = null;
+    protected SEVERITY  severity             = null;
 
     protected String    userErrorDescription = null;
     protected String    errorDescription     = null;
@@ -28,7 +27,7 @@ public class ExceptionInfo {
     protected Map<String, Object> parameters =
             new HashMap<String, Object>();
        
-	public void setCause(UnsupportedEncodingException e) {
+	public void setCause(Throwable e) {
 		cause = e;		
 	}
 
@@ -49,30 +48,66 @@ public class ExceptionInfo {
 	}
 	
 	// error type
-	public void setErrorType(TYPE_ERROR input) {
+	public void setErrorType(TYPE input) {
 		errorType = input;		
 	}
-	public TYPE_ERROR getErrorType() {	
+	public TYPE getErrorType() {	
 		return errorType;
 	}
 	
 	// severity
-	public void setSeverity(SEVERITY_ERROR input) {
+	public void setSeverity(SEVERITY input) {
 		severity = input;		
 	}	
-	public SEVERITY_ERROR getErrorServirty() {
+	public SEVERITY getErrorServirty() {
 		return severity;
 	}
 	
+	
 	// error description
 	public void setErrorDescription(String input) {
-		errorDescription = input;
-		
+		errorDescription = input;		
 	}
 	public String getErrorDescription() {
 		return errorDescription;		
 	}
+	
+	
+	// user error description
+	public void setUserErrorDescription(String input) {
+		userErrorDescription = input;	
+	}
+	public String getUserErrorDescription() {
+		return userErrorDescription;		
+	}
+	
+	
+	// correction message (if applicable)
+	public void setErrorCorrection(String string) {
+		errorCorrection = string;		
+	}
+	public String getErrorCorrection() {
+		return errorCorrection;
+	}
 
+	
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
 
-    
+	// Factory Methods
+	public static ExceptionInfo ExceptionInfoFactory(TYPE t,
+												   	 SEVERITY s, 	
+												   	 String id,
+												     String contextId,
+												     String description) {
+		ExceptionInfo info = new ExceptionInfo();	
+		info.setErrorType(t);
+		info.setErrorId(id);
+		info.setSeverity(s);			
+		info.setContextId(contextId);
+		info.setErrorDescription(description);
+		return info;		
+	}
+  
 }

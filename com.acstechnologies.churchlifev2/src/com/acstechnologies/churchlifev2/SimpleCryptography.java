@@ -1,6 +1,7 @@
 package com.acstechnologies.churchlifev2;
 
 import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -20,55 +21,115 @@ import android.util.Base64;
  * String cleartext = SimpleCrypto.decrypt(masterpassword, crypto)
  * </pre>
  * @author ferenc.hechler
- * mas - modified to use Base64 encoding
+ * softwarearchitect - modified to use Base64 encoding
  */
 public class SimpleCryptography {
 	
     	protected static final String UTF8 = "utf-8";
     		
-        public static String encrypt(String seed, String cleartext) throws Exception {
+        public static String encrypt(String seed, String cleartext) throws AppException {
                 byte[] rawKey = getRawKey(seed.getBytes());
                 byte[] result = encrypt(rawKey, cleartext.getBytes());
                 //return toHex(result);							' Hex
                 return toBase64(result);
         }
         
-        public static String decrypt(String seed, String encrypted) throws Exception {
+        public static String decrypt(String seed, String encrypted) throws AppException {
                 byte[] rawKey = getRawKey(seed.getBytes());
-                //byte[] enc = toHexByte(encrypted);				' Hex
+                //byte[] enc = toHexByte(encrypted);			' Hex
                 byte[] enc = toBase64Byte(encrypted);                               
                 byte[] result = decrypt(rawKey, enc);
                 
                 return new String(result);
         }
 
-        private static byte[] getRawKey(byte[] seed) throws Exception {
-                KeyGenerator kgen = KeyGenerator.getInstance("AES");
-                SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-                sr.setSeed(seed);
-            kgen.init(128, sr); // 192 and 256 bits may not be available
-            SecretKey skey = kgen.generateKey();
-            byte[] raw = skey.getEncoded();
+        private static byte[] getRawKey(byte[] seed) throws AppException {
+        	
+        	KeyGenerator kgen;
+            SecureRandom sr;
+            byte[] raw = null;
+               
+			try {
+				kgen = KeyGenerator.getInstance("AES");
+				sr = SecureRandom.getInstance("SHA1PRNG");
+				sr.setSeed(seed);
+				kgen.init(128, sr); // 192 and 256 bits may not be available
+				SecretKey skey = kgen.generateKey();
+				raw = skey.getEncoded();									
+			} catch (NoSuchAlgorithmException e) {
+				throw AppException.AppExceptionFactory(e,
+						ExceptionInfo.TYPE.UNEXPECTED,
+						ExceptionInfo.SEVERITY.CRITICAL, 
+						"100", "SimpleCryptography.getRawKey",
+						e.getMessage());		
+			}    
             return raw;
         }
 
         
-        private static byte[] encrypt(byte[] raw, byte[] clear) throws Exception {
-            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-                Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-            byte[] encrypted = cipher.doFinal(clear);
-                return encrypted;
+        private static byte[] encrypt(byte[] raw, byte[] clear) throws AppException {
+        	byte[] encrypted = null;
+        	try
+        	{
+        		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+            	Cipher cipher = Cipher.getInstance("AES");
+            	cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+            	encrypted = cipher.doFinal(clear);            	
+        	}
+        	// Since we are doing the EXACT same thing each time...sink the Exception
+        	//  (normally not recommended)
+        	catch (Exception e) {
+        		throw AppException.AppExceptionFactory(e,
+						ExceptionInfo.TYPE.UNEXPECTED,
+						ExceptionInfo.SEVERITY.MODERATE, 
+						"100", "SimpleCryptography.encrypt",
+						e.getMessage());
+        	}      
+        	
+        	/*
+        	 * this did not work catch (NoSuchAlgorithmException | BadPaddingException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException e)
+        	        	
+        	catch (NoSuchAlgorithmException e) {
+        		
+        	}
+            catch (NoSuchPaddingException e) {
+            	
+            }
+        	catch (BadPaddingException e)  {
+            	
+            }
+        	catch (InvalidKeyException e) {
+        		
+        	}
+        	catch (IllegalBlockSizeException e) {
+        		
+        	}
+        	*/
+        	return encrypted;
         }
 
-        private static byte[] decrypt(byte[] raw, byte[] encrypted) throws Exception {
-            SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
-                Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
-            byte[] decrypted = cipher.doFinal(encrypted);
-                return decrypted;
+        private static byte[] decrypt(byte[] raw, byte[] encrypted) throws AppException {
+        	byte[] decrypted = null;
+        	try
+        	{
+        		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+        		Cipher cipher = Cipher.getInstance("AES");
+        		cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+        		decrypted = cipher.doFinal(encrypted);
+        	}
+        	// Since we are doing the EXACT same thing each time...sink the Exception
+        	//  (normally not recommended)
+        	catch (Exception e) {
+        		throw AppException.AppExceptionFactory(e,
+						ExceptionInfo.TYPE.UNEXPECTED,
+						ExceptionInfo.SEVERITY.MODERATE, 
+						"100", "SimpleCryptography.decrypt",
+						e.getMessage());
+        	} 
+            return decrypted;
         }
 
+        
         public static byte[] toBase64Byte(String base64String){
         	byte[] result = Base64.decode(base64String,  Base64.NO_WRAP);
         	return result;
@@ -78,19 +139,11 @@ public class SimpleCryptography {
         	try {
 				return new String(Base64.encode(buf, Base64.NO_WRAP),UTF8);
 			} catch (UnsupportedEncodingException e) {
-				AppException exception = new AppException();
-
-				ExceptionInfo info = exception.addInfo();
-			    info.setCause(e);
-			    info.setErrorId("toBase64");
-			    info.setContextId("SimpleCryptography");
-
-			    info.setErrorType(ExceptionInfo.TYPE_ERROR.UNEXPECTED);
-			    info.setSeverity(ExceptionInfo.SEVERITY_ERROR.CRITICAL);
-
-			    info.setErrorDescription("Error converting Base64 byte array to a string.");
-
-			    throw exception;				    							
+				throw AppException.AppExceptionFactory(e,
+						ExceptionInfo.TYPE.UNEXPECTED,
+						ExceptionInfo.SEVERITY.CRITICAL, 
+						"100", "SimpleCryptography.toBase64",
+						"Error converting Base64 byte array to a string.");												    						
 			}        	
         }
         

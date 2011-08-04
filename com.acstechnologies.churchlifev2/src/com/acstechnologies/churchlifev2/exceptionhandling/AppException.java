@@ -3,8 +3,8 @@ package com.acstechnologies.churchlifev2.exceptionhandling;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.SEVERITY_ERROR;
-import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.TYPE_ERROR;
+import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.SEVERITY;
+import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.TYPE;
 
 //http://tutorials.jenkov.com/exception-handling-strategies/template-propagating.html
 public class AppException extends Exception {
@@ -31,13 +31,14 @@ public class AppException extends Exception {
 	    return errorInfoList;
 	  }
 
-	  public TYPE_ERROR getErrorType() {
+	
+	  public TYPE getErrorType() {
 		  
-		  ExceptionInfo.TYPE_ERROR errorType = ExceptionInfo.TYPE_ERROR.UNEXPECTED;
+		  ExceptionInfo.TYPE errorType = ExceptionInfo.TYPE.UNEXPECTED;
 
 		  for(ExceptionInfo errorInfo : this.getErrorInfoList()){
 
-		      if(errorInfo.getErrorType() != errorType) {
+		      if(errorInfo.getErrorType() != errorType && errorInfo.getErrorType() != null) {
 		          errorType = errorInfo.getErrorType();
 		      }
 		  }
@@ -45,13 +46,13 @@ public class AppException extends Exception {
 		  return errorType;
 	  }
 	  
-	  public SEVERITY_ERROR getErrorSeverity() {
+	  public SEVERITY getErrorSeverity() {
 		  
-		  ExceptionInfo.SEVERITY_ERROR severity = ExceptionInfo.SEVERITY_ERROR.CRITICAL;
+		  ExceptionInfo.SEVERITY severity = ExceptionInfo.SEVERITY.CRITICAL;
 
 		  for(ExceptionInfo errorInfo : this.getErrorInfoList()){
 
-		      if(errorInfo.getErrorServirty() != severity) {
+		      if(errorInfo.getErrorServirty() != severity && errorInfo.getErrorServirty() != null) {
 		    	  severity = errorInfo.getErrorServirty();
 		      }
 		  }
@@ -78,7 +79,69 @@ public class AppException extends Exception {
 		    return builder.toString();
 		}
 
+
+	  /**
+	   *  
+	   *   
+	   * @return  A period (.) delimited list of error descriptions for all ExceptionInfo
+	   *          objects in the list
+	   */
+	  public String extractErrorDescription(){
+			
+		  StringBuilder builder = new StringBuilder();
+
+		    for(int i=this.getErrorInfoList().size()-1; i>=0; i--){
+
+		    	ExceptionInfo errorInfo = this.getErrorInfoList().get(i);
+
+		    	if (errorInfo.getErrorDescription() != null && errorInfo.getErrorDescription().length() > 0)
+		    	{
+		    		builder.append(errorInfo.getErrorDescription());
+		        	builder.append(". ");
+		    	}
+		    }
+		    return builder.toString();	  
+	  }
 	  
+	  
+	  	// ***  Factory Methods ***
+		public static AppException AppExceptionFactory(ExceptionInfo.TYPE t,
+													   ExceptionInfo.SEVERITY s, 	
+													   String id,
+													   String contextId,
+													   String description) {		
+			AppException appE = new AppException();					
+			ExceptionInfo info = ExceptionInfo.ExceptionInfoFactory(t, s, id, contextId, description);					
+			appE.addInfo(info);
+			
+			return appE;					
+		}
+	  	  	  	 
+		public static AppException AppExceptionFactory(Throwable caughtException,
+													   ExceptionInfo.TYPE t,
+													   ExceptionInfo.SEVERITY s,
+													   String id,
+													   String contextId,
+													   String description) {
+			
+			AppException appE = new AppException();					
+			ExceptionInfo info = ExceptionInfo.ExceptionInfoFactory(t, s, id, contextId, description);
+			info.setCause(caughtException);
+			appE.addInfo(info);
+						
+			return appE;
+		}
+		
+		
+		public static AppException AppExceptionFactory(Throwable caughtException, ExceptionInfo info) {
+			
+			AppException appE = new AppException();	
+			info.setCause(caughtException);
+			appE.addInfo(info);
+			
+			return appE;
+		}
+				
 }
 
 

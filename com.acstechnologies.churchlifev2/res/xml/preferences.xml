@@ -25,7 +25,13 @@
                 android:key="auth3" />                
     </PreferenceCategory>
     
-    <PreferenceCategory android:title="Authentication Settings" android:key="category_authentication">
+    <PreferenceCategory android:title="Application Settings" android:key="category_application">
+    	<EditTextPreference
+        	android:summary="This allows you to enter the service URL."
+            android:defaultValue="https://api.accessacs.com"
+            android:title="Service URL"
+            android:key="serviceurl" android:name="serviceurl"/> 
+            
 		<EditTextPreference
         	android:summary="This allows you to enter a test"
             android:defaultValue="blah"

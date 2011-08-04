@@ -7,6 +7,16 @@ import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;  
 import android.preference.PreferenceCategory;
    
+/**
+ * This activity created from a selection of a menu item on the application
+ *   options menu (see OptionsActivity).  This class exists to remove from
+ *   preferences the 'remember me' authentication credentials so that the
+ *   user does not have access to see them (they are encrypted) on the preferences
+ *   edit form.
+ *   
+ * @author softwarearchitect
+ *
+ */
 public class Preferences extends PreferenceActivity {  
   
     /** Called when the activity is first created. */  
@@ -25,6 +35,11 @@ public class Preferences extends PreferenceActivity {
         mCategory.removePreference(mPref);
         
         mPref = (EditTextPreference) findPreference("auth3");  
-        mCategory.removePreference(mPref);               
+        mCategory.removePreference(mPref);     
+        
+        //no way to remove the entire category programmatically.
+        // TODO revisit
+        //http://stackoverflow.com/questions/5605520/how-remove-preferencecategory-programmatically
+                
     }              
 }  

@@ -1,6 +1,9 @@
 package com.acstechnologies.churchlifev2.webservice;
 
+import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
+import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 import com.acstechnologies.churchlifev2.webservice.RESTClient.RequestMethod;
+
 /**
  * This class is a wrapper to the acstechnologies RESTful webservices.  
  * 
@@ -9,6 +12,8 @@ import com.acstechnologies.churchlifev2.webservice.RESTClient.RequestMethod;
  */
 public class WebServiceHandler {
 		
+	String _baseUrl = null;
+	
 	/** 
 	 *  Used to validate/authenticate with the acstechnologies web service layer.
 	 *  
@@ -21,25 +26,26 @@ public class WebServiceHandler {
 	 *  @return 				WebServiceObject   
 	 *  @throws ? 
 	 *  */ 
-	public LoginResponse login(String username, String password, String siteNumber){
+	public LoginResponse login(String username, String password, String siteNumber) throws AppException {
 
 		LoginResponse wsObject = null;
-		
-    	RESTClient client = new RESTClient("https://api.accessacs.com/account/validate");
-    		        	        
-    	client.AddParam("sitenumber", "106217");
+    	RESTClient client = new RESTClient(_baseUrl + "/account/validate");
+    	
+    	client.AddParam("sitenumber", siteNumber);
     	client.AddParam("username", username);
     	client.AddParam("password", password);    	
-    	 
-    	try {
-    	    client.Execute(RequestMethod.POST);
+    	     	
+    	try	{
+    		client.Execute(RequestMethod.POST);
 			wsObject= new LoginResponse(client.getResponse());								
     	}
-    	catch (Exception e){    		
-    		//TODO add error handling here!
-    		//zzz
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		throw e;
     	}
-    	
 		return wsObject;
 	}
 	
@@ -58,12 +64,11 @@ public class WebServiceHandler {
 	 *  @return 				WebServiceObject   
 	 *  @throws ? 
 	 *  */ 	
-	public LoginResponse login(String emailAddress, String password){
+	public LoginResponse login(String emailAddress, String password) throws AppException {
 
-		LoginResponse wsObject = null;
-		
-    	RESTClient client = new RESTClient("https://api.accessacs.com/account/findbyemail");
-
+		LoginResponse wsObject = null;		    
+    	RESTClient client = new RESTClient(_baseUrl + "/account/findbyemail");
+    	
     	client.AddParam("email", emailAddress);
     	client.AddParam("password", password);    	
     	 
@@ -71,14 +76,20 @@ public class WebServiceHandler {
     	    client.Execute(RequestMethod.POST);
 			wsObject= new LoginResponse(client.getResponse());								
     	}
-    	catch (Exception e){    		
-    		//TODO add error handling here!
-    	}
-    	
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.getParameters().put("emailAddress", emailAddress);
+    		info.getParameters().put("password", password);
+    		throw e;
+    	}    	
 		return wsObject;
 	}
 
 	
-	
+	// Constructor
+	public WebServiceHandler(String webServiceUrl)	{
+		_baseUrl = webServiceUrl;
+	}
 	
 }

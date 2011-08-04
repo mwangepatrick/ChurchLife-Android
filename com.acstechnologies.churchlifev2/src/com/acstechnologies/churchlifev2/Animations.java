@@ -11,7 +11,7 @@ import android.view.animation.TranslateAnimation;
 //      		Animation b = AnimationUtils.loadAnimation(LoginActivity.this, R.anim.slide_right_to_left);
 	
 public class Animations {
-
+	
 	public static Animation inFromRightAnimation() {
 		  Animation inFromRight = new TranslateAnimation(
 		    Animation.RELATIVE_TO_PARENT, +1.0f,

@@ -1,5 +1,7 @@
 package com.acstechnologies.churchlifev2;
 
+import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,14 +10,18 @@ import android.content.SharedPreferences.Editor;
 
 public class AppPreferences {
 	
+    /**
+     * This value SHOULD ALWAYS be changed to match your package.
+     */
      private static final String APP_SHARED_PREFS = "com.acstechnologies.churchlifev2_preferences"; //  Name of the file -.xml
-     
-     
+          
      /**
       * This value SHOULD ALWAYS be changed and kept secret!
       */
      private static final String SEED = "##initialseedvalue##";
-          
+                   
+     
+     
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
 
@@ -24,34 +30,43 @@ public class AppPreferences {
          this.appSharedPrefs = context.getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);    	
          this.prefsEditor = appSharedPrefs.edit();
      }
-
-    
+   
      // Auth1 - ENCRYPTED
-     public String getAuth1() throws Exception {    	   
+     public String getAuth1() throws AppException {    	   
          return getEncryptedValue("auth1");
      }
-     public void setAuth1(String text) throws Exception {
+     public void setAuth1(String text) throws AppException {
     	 setEncryptedValue("auth1", text);
      }
      
      // auth2 - ENCRYPTED
-     public String getAuth2() throws Exception {    	   
+     public String getAuth2() throws AppException {    	   
          return getEncryptedValue("auth2");
      }
-     public void setAuth2(String text) throws Exception {
+     public void setAuth2(String text) throws AppException {
     	 setEncryptedValue("auth2", text);
      }
-     
+          
      // auth3 - ENCRYPTED
-     public String getAuth3() throws Exception {    	   
+     public String getAuth3() throws AppException {    	   
          return getEncryptedValue("auth3");
      }
-     public void setAuth3(String text) throws Exception {
+     public void setAuth3(String text) throws AppException {
     	 setEncryptedValue("auth3", text);
      }
      
-     //Test
+     // Web Service URI (base)
+     public String getWebServiceUrl() {
+    	 return appSharedPrefs.getString("serviceurl", "https://api.accessacs.com");
+     }
      
+     public void setWebServiceUrl(String url) {
+    	 prefsEditor.putString("serviceurl", url);
+    	 prefsEditor.commit();
+     }
+     
+     
+     //Test     
      public String getTest() {
          return appSharedPrefs.getString("test", "");
      }
@@ -62,9 +77,9 @@ public class AppPreferences {
      }
      
      
-     
+          
      // Helper methods for encrypted keys
-     public String getEncryptedValue(String keyName) throws Exception {
+     public String getEncryptedValue(String keyName) throws AppException {
     	        
     	String result = "";
     	
@@ -75,7 +90,7 @@ public class AppPreferences {
         return result;        
      }
      
-     public void setEncryptedValue(String keyName, String value) throws Exception {
+     public void setEncryptedValue(String keyName, String value) throws AppException {
     	    
     	String encryptedString = "";
     		
@@ -85,5 +100,6 @@ public class AppPreferences {
   		prefsEditor.putString(keyName, encryptedString);
   	    prefsEditor.commit();   	    	     	
      }
-     
+
+
 }
