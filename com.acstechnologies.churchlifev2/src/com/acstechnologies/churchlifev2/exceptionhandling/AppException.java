@@ -1,7 +1,18 @@
 package com.acstechnologies.churchlifev2.exceptionhandling;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.SEVERITY;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.TYPE;
@@ -103,6 +114,86 @@ public class AppException extends Exception {
 		    return builder.toString();	  
 	  }
 	  
+	  /**
+	   *  Wraps the entire error in an XML string that can be logged when an error occurs.
+	   *  
+	   *  NOTE:  Do NOT throw an AppException here as we are handling one and could easily
+	   *          get into an infinitie loop.
+	   *  See
+	   *  http://tutorials.jenkov.com/exception-handling-strategies/template-error-info-list.html
+	   */
+	  public String toXmlString() throws Exception
+	  {
+		  String returnValue = "";
+		  
+		  DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		  DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+	
+		  Document doc = docBuilder.newDocument();
+		  Element rootElement = doc.createElement("error");
+		  doc.appendChild(rootElement);
+		 
+		  // error elements
+		  Element errorId = doc.createElement("errorId");
+		  errorId.appendChild(doc.createTextNode(this.extractErrorId()));
+		  rootElement.appendChild(errorId);
+		 
+		  Element errorType = doc.createElement("errorType");
+		  errorType.appendChild(doc.createTextNode(this.getErrorType().name()));	
+		  rootElement.appendChild(errorType);
+			  
+		  Element severity = doc.createElement("severity");			 
+		  severity.appendChild(doc.createTextNode(this.getErrorSeverity().name()));	
+		  rootElement.appendChild(severity);			 
+			  
+		  // Error List
+		  Element errorList = doc.createElement("errorInfoList");
+		  rootElement.appendChild(errorList);
+
+		  for(int i=this.getErrorInfoList().size()-1; i>=0; i--){
+			  
+		    	ExceptionInfo errorInfo = this.getErrorInfoList().get(i);
+		    	Element elementInfo = doc.createElement("errorInfo");
+			   	errorList.appendChild(elementInfo);
+			    				    	
+			   	// Description
+			   	Element desc = doc.createElement("errordescription");			
+			   	if (errorInfo.getErrorDescription() != null) {
+			   		desc.appendChild(doc.createTextNode(errorInfo.getErrorDescription()));
+			   	}			    	
+			   	elementInfo.appendChild(desc);
+					  			    	
+			   	// Parameters
+			   	Element parms = doc.createElement("parameters");			    	
+			   	elementInfo.appendChild(parms);
+				  			    				    				    				    						    
+			    for (Map.Entry<String, Object> entry : errorInfo.parameters.entrySet()) {
+			        String key = entry.getKey();
+			        Object value = entry.getValue();
+			    		    
+				   	Element parameter = doc.createElement("parameter");
+			    	parameter.setAttribute("name", key);
+			    	parameter.appendChild(doc.createTextNode(value.toString()));				    	
+			    	parms.appendChild(parameter);				    					    		    
+			   	}			    				    				    	
+		  }
+				
+		  // return the xml DOM as a String 
+          TransformerFactory factory = TransformerFactory.newInstance();
+          Transformer transformer = factory.newTransformer();
+          DOMSource source = new DOMSource(doc);
+          StreamResult result = new StreamResult(new StringWriter());
+          transformer.transform(source, result);
+		  
+          returnValue = result.getWriter().toString();
+
+          // Can throw one of the following:
+		  //ParserConfigurationException 
+		  //TransformerConfigurationException
+          //TransformerException
+			  
+		  return returnValue;
+	  }
 	  
 	  	// ***  Factory Methods ***
 		public static AppException AppExceptionFactory(ExceptionInfo.TYPE t,

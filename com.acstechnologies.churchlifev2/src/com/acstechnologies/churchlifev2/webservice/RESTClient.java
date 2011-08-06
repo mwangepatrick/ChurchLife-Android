@@ -8,15 +8,24 @@ import java.util.ArrayList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ProtocolVersion;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.HttpHostConnectException;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerPNames;
+import org.apache.http.conn.params.ConnPerRouteBean;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
@@ -136,14 +145,17 @@ public class RESTClient {
 	    	}	    	
 	    }
 	 
+	   
 	    private void executeRequest(HttpUriRequest request, String url) throws AppException
 	    {
-	        HttpClient client = new DefaultHttpClient();
-	 
+	    	//HttpClient client = new DefaultHttpClient();			/* 2.3.3 */	   
+	    	DefaultHttpClient client = createHttpClient();			/* 2.2 */	    		 
 	        HttpResponse httpResponse;
 	 
 	        try {
-	            httpResponse = client.execute(request);
+	           
+	        	httpResponse = client.execute(request);  
+	        	
 	            responseCode = httpResponse.getStatusLine().getStatusCode();
 	            message = httpResponse.getStatusLine().getReasonPhrase();
 	 
@@ -169,14 +181,6 @@ public class RESTClient {
 						   "RESTClient.executeRequest",
 						   e.toString()); 
 	        } 
-	        catch (HttpHostConnectException e) {
-	        	 throw AppException.AppExceptionFactory(e,
-						   ExceptionInfo.TYPE.APPLICATION,
-						   ExceptionInfo.SEVERITY.CRITICAL, 
-						   "100",           												    
-						   "RESTClient.executeRequest",
-						   "There was a problem connecting to the data service."); 
-	        }
 	        catch (IOException e) {
 	            client.getConnectionManager().shutdown();
 	            
@@ -185,7 +189,7 @@ public class RESTClient {
 						   ExceptionInfo.SEVERITY.CRITICAL, 
 						   "100",           												    
 						   "RESTClient.executeRequest",
-						   e.toString()); 
+						   "There was a problem connecting to the data service."); 
 	        }
 	    }
 	    
@@ -223,4 +227,34 @@ public class RESTClient {
 	        return sb.toString();
 	    }
 	    */
+	    
+	    /**
+	     * 
+	     * Uses the EasySSLSocketFactory to validate certificates
+	     * 
+	     * This was not necessary for 2.3.3 and up.  See line 151 for original code.
+	     * 
+	     * @return
+	     */
+	    public DefaultHttpClient createHttpClient() {
+	    	
+            SchemeRegistry schemeRegistry = new SchemeRegistry();            
+            schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));	// http scheme            
+            schemeRegistry.register(new Scheme("https", new EasySSLSocketFactory(), 443));			// https scheme
+
+            HttpParams params = new BasicHttpParams();
+            params.setParameter(ConnManagerPNames.MAX_TOTAL_CONNECTIONS, 30);
+            params.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE, new ConnPerRouteBean(30));
+            params.setParameter(HttpProtocolParams.USE_EXPECT_CONTINUE, false);
+              
+            ProtocolVersion pv = new ProtocolVersion("HTTP", 1, 1);
+            HttpProtocolParams.setVersion(params, pv);
+            
+            ClientConnectionManager cm = new ThreadSafeClientConnManager(params, schemeRegistry);
+            DefaultHttpClient client = new DefaultHttpClient(cm, params);
+                            
+            return client;
+	    }
+
+
 }

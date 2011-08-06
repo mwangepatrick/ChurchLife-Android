@@ -24,8 +24,7 @@ public class ExceptionInfo {
     protected String    errorDescription     = null;
     protected String    errorCorrection      = null;
 
-    protected Map<String, Object> parameters =
-            new HashMap<String, Object>();
+    protected Map<String, Object> parameters = new HashMap<String, Object>();
        
 	public void setCause(Throwable e) {
 		cause = e;		
