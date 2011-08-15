@@ -61,7 +61,7 @@ public class EasyX509TrustManager
      */
     public void checkClientTrusted( X509Certificate[] certificates, String authType) throws CertificateException
     {
-        standardTrustManager.checkClientTrusted( certificates, authType );
+        //standardTrustManager.checkClientTrusted( certificates, authType );
     }
 
     /**

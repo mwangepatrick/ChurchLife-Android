@@ -26,7 +26,7 @@ public class Preferences extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
                 
         // Remove the authentication preferences (user cannot set these values from the preferences window)               
-        PreferenceCategory mCategory = (PreferenceCategory) findPreference("category_authentication");
+        PreferenceCategory mCategory = (PreferenceCategory) findPreference("category_application");
         
         EditTextPreference mPref = (EditTextPreference) findPreference("auth1");        
         mCategory.removePreference(mPref);
@@ -37,9 +37,5 @@ public class Preferences extends PreferenceActivity {
         mPref = (EditTextPreference) findPreference("auth3");  
         mCategory.removePreference(mPref);     
         
-        //no way to remove the entire category programmatically.
-        // TODO revisit
-        //http://stackoverflow.com/questions/5605520/how-remove-preferencecategory-programmatically
-                
     }              
 }  

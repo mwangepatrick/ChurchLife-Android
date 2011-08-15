@@ -69,6 +69,10 @@ public class LoginActivity extends OptionsActivity {
             _appPrefs = new AppPreferences(getApplicationContext());           
             _gestureDetector = new GestureDetector(new LoginSwipeDetector());            
                        
+        	// Remove login credentials from global state - ALWAYS
+        	GlobalState gs = (GlobalState) getApplication();
+        	gs.clearApplicationSettings();  
+        	
             logoutCheck(); 						// Was this activity was called with a 'logout' parameter?
                                          
             setContentView(R.layout.login);		// Present the login form to the user. 
@@ -103,8 +107,8 @@ public class LoginActivity extends OptionsActivity {
             btnLogin.setOnClickListener(new OnClickListener() {		
             	public void onClick(View v) {	            		     
             		if (inputIsValid())
-            			//doLoginWithProgressWindow();
-            			doLoginWithProgressWindow2();            	}		
+            			new LoginProgressTask().execute();				// login in background
+            	}		
     		});     
             
         }
@@ -149,6 +153,7 @@ public class LoginActivity extends OptionsActivity {
 			            	// Get the login item based on the which (index) selected and navigate
 			            	//  forward with the info from that site number. (The text displayed
 			            	//  does not contain site number so we lookup by index.)
+		        			String siteName = _wsLogin.getSiteName(which);
 			            	String siteNumber = _wsLogin.getSiteNumber(which);	            		
 			            	String userName = _wsLogin.getUserName(which);
 			            			            			            			            	
@@ -158,7 +163,7 @@ public class LoginActivity extends OptionsActivity {
 			            	String labelShouldBe = String.format(formatString, _wsLogin.getSiteName(which), _wsLogin.getUserName(which));
 			            		
 			            	if (items[which].toString().equals(labelShouldBe)) {	            			
-			            		navigateForward(siteNumber, userName);
+			            		navigateForward(siteName, siteNumber, userName);
 			            	}	
 			            	else
 			            	{
@@ -229,7 +234,7 @@ public class LoginActivity extends OptionsActivity {
      * @throws Exception
      */
     private void logoutCheck() throws AppException
-    {
+    {             
     	Boolean logout = false;
         Bundle extraBundle = this.getIntent().getExtras();
         if (extraBundle != null) {
@@ -289,13 +294,7 @@ public class LoginActivity extends OptionsActivity {
     	return (msg.length() == 0);    	    
     }
     
-    private void doLoginWithProgressWindow2()
-    {    	
-    	new LoginProgressTask().execute();				// login in background
-    }
-       
-
-
+   
     /**
      * 
      * @author softwarearchitect
@@ -306,7 +305,7 @@ public class LoginActivity extends OptionsActivity {
     	private Exception e = null;
     	
     	protected void onPreExecute() {
-    		showDialog(DIALOG_PROGRESS);
+    		//showDialog(DIALOG_PROGRESS);
     	}
     	
     	protected LoginResponse doInBackground(Void... args) {
@@ -362,7 +361,7 @@ public class LoginActivity extends OptionsActivity {
     	
     	protected void onPostExecute(LoginResponse result) {
     		
-    		removeDialog(DIALOG_PROGRESS);
+    		//removeDialog(DIALOG_PROGRESS);
     		
     		// result is the value returned from doInBackground
     		try
@@ -376,7 +375,7 @@ public class LoginActivity extends OptionsActivity {
 					if (result.getStatusCode() == 0) {        				
 						// In most cases, the return value is for a single site    
 						if (result.getLength() == 1) {    					   		
-							navigateForward(result.getSiteNumber(), result.getUserName());																
+							navigateForward(result.getSiteName(), result.getSiteNumber(), result.getUserName());																
 						}
 						else {
 							// present a picklist of sites to the user
@@ -400,7 +399,7 @@ public class LoginActivity extends OptionsActivity {
     /**
      * Upon successful login, route the user to the correct activity.  Pass
      *  the security information to that activity so that it can make web
-     *  service calls.  Username and SiteName are passed from the caller
+     *  service calls.  SiteNumber, SiteName, and Username are passed from the caller
      *  (returned from the login web service call).  Password and 'remember
      *   me' are resolved from UI controls
      *   
@@ -412,7 +411,7 @@ public class LoginActivity extends OptionsActivity {
      * @param userName
      * @throws AppException 
      */
-    private void navigateForward(String siteNumber, String userName) throws AppException
+    private void navigateForward(String siteName, String siteNumber, String userName) throws AppException
     {    	    	
     	// Get control values from the form
     	Boolean remember = chkRemember.isChecked();
@@ -430,19 +429,16 @@ public class LoginActivity extends OptionsActivity {
 			_appPrefs.setAuth3(siteNumber);   			
     	} 
 		
+		// Save login credentials to global state as they are needed for EVERY web service call
+		GlobalState gs = (GlobalState) getApplication();
+		gs.setSiteName(siteName);
+		gs.setSiteNumber(siteNumber);
+		gs.setUserName(userName);
+		gs.setPassword(password);
+					
     	//start IndividualListActivity
 		Intent intent = new Intent();
-		intent.setClass(LoginActivity.this, IndividualListActivity.class);
-		 
-		//Create a bundle and initialize it
-		Bundle bundle = new Bundle();
-
-		//Add the parameters to a bundle and attach it to the intent
-		bundle.putString("sitenumber",siteNumber);
-		bundle.putString("username",userName);
-		bundle.putString("password",password);
-		
-		intent.putExtras(bundle);
+		intent.setClass(LoginActivity.this, MainActivity.class); 
 		
 		finish();				// ensures the user cannot use the 'back' to this activity
 		

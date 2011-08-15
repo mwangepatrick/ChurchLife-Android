@@ -65,6 +65,14 @@ public class AppPreferences {
     	 prefsEditor.commit();
      }
      
+     // Organization Name - set from web service (returned from login)
+ 	public String getOrganizationName() {
+ 		return appSharedPrefs.getString("organizationname", "");
+	}
+    public void setOrganizationName(String name) {
+   	 prefsEditor.putString("organizationname", name);
+   	 prefsEditor.commit();
+    }
      
      //Test     
      public String getTest() {
@@ -100,6 +108,7 @@ public class AppPreferences {
   		prefsEditor.putString(keyName, encryptedString);
   	    prefsEditor.commit();   	    	     	
      }
+
 
 
 }

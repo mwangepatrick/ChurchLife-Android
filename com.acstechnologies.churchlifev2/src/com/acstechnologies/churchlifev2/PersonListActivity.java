@@ -1,8 +1,6 @@
 package com.acstechnologies.churchlifev2;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +47,26 @@ public class PersonListActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        //String[] countries = getResources().getStringArray(R.array.countries_array);
 
+        /*
+        String[] countries = getResources().getStringArray(R.array.countries_array);
+
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, countries));
+
+        ListView lv = getListView();
+        lv.setTextFilterEnabled(true);
+
+        lv.setOnItemClickListener(new OnItemClickListener() {
+          public void onItemClick(AdapterView<?> parent, View view,
+              int position, long id) {
+            // When clicked, show a toast with the TextView text
+            Toast.makeText(getApplicationContext(), ((TextView) view).getText(),
+                Toast.LENGTH_SHORT).show();
+          }
+        });
+        */
+        
+                    
         //get data from webservice to populate the listview
         String[] names = getNames4();
         
@@ -68,6 +83,7 @@ public class PersonListActivity extends ListActivity {
                 Toast.LENGTH_SHORT).show();
           }
         });
+       
     }
     
     public String[] getNames() 

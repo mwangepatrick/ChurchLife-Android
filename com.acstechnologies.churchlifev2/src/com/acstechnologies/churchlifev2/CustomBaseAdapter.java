@@ -12,6 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 
+/**
+ * Extends the BaseAdapter so that a ListView can display strongly typed objects
+ * 
+ *  FUTURE:  Would be better to do this with generics
+ *  
+ * @author softwarearchitect
+ *
+ */
 public class CustomBaseAdapter extends BaseAdapter {
 	 private static ArrayList<Individual> searchArrayList;
 	 

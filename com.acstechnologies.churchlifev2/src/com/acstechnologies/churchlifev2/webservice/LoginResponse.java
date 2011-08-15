@@ -17,7 +17,7 @@ public class LoginResponse extends WebServiceObject {
 	// "UserName":"myusername"}
 			
 	// Keep in mind that the base object may be an array.  If that is the case, 
-	//  the individual properties will only return values if an indexer is provided.
+	//  the individual properties will return values for the first login item
 	//
 	// FUTURE:  Perhaps separate logic out into a collection class or provide iterator	
 	

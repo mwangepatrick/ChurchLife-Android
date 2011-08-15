@@ -16,7 +16,7 @@
     <string name="Login.RememberMe">Remember Me</string>    
     <string name="Login.Username">Username</string>
     <string name="Login.SiteNumber">Site No.</string>        
-	<string name="Login.Login">Login</string>
+	<string name="Login.Login">Sign In</string>
 	
 	<string name="Login.Validation.Email">Enter an email address.</string>
 	<string name="Login.Validation.SiteNumber">Enter a Site Number.</string>
@@ -29,8 +29,10 @@
 	<string name="Preferences.Title">Preferences</string>
 
 
-
-
+ 	<string name="IndividualList.Search">Search</string>   
+	<string name="IndividualList.Validation.Search">Enter search text.</string>
+	<string name="IndividualList.ProgressDialog">"Searching people. Please wait..."</string>
+	<string name="IndividualList.More">More Results</string>
 
 	<color name="Login.Background">#E6DFE0</color>
 	<color name="White">#FFFFFF</color>

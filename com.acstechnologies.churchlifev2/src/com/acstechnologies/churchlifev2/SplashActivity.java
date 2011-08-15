@@ -3,8 +3,8 @@ package com.acstechnologies.churchlifev2;
 import com.acstechnologies.churchlifev2.R;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
+import com.acstechnologies.churchlifev2.webservice.LoginResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
-import com.acstechnologies.churchlifev2.webservice.WebServiceObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,11 +29,11 @@ public class SplashActivity extends Activity {
      * @author softwarearchitect
      *
      */
-    private class AutoLoginTask extends AsyncTask<String, Void, Boolean> {
+    private class AutoLoginTask extends AsyncTask<Void, Void, Boolean> {
       	
      	private Exception e = null;
         	
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Void... args) {
           	Boolean result = false;
             try {
                	result = autoLoginIn();
@@ -51,7 +51,7 @@ public class SplashActivity extends Activity {
             	
            	if (e == null) {			// no error
            		if (result == true)  	// if successful login, change the activity to which to navigate	        					
-    				nextIntent = new Intent(SplashActivity.this, IndividualListActivity.class);	   
+    				nextIntent = new Intent(SplashActivity.this, MainActivity.class);    
            	}
            	else {
            		ExceptionHelper.notifyNonUsers(e);            	
@@ -82,8 +82,17 @@ public class SplashActivity extends Activity {
         if (auth1.length() > 0 && auth2.length() > 0){
             	
          	WebServiceHandler wh = new WebServiceHandler(prefs.getWebServiceUrl());    		            		
-           	WebServiceObject wso = wh.login(auth1, auth2, auth3);            	
-           	result = (wso.getStatusCode() == 0);       			            	
+           	LoginResponse response = wh.login(auth1, auth2, auth3);            	
+           	result = (response.getStatusCode() == 0);
+           	
+           	if (result == true) {
+        		// set global application variables	    				
+				GlobalState gs = (GlobalState) getApplication();
+				gs.setSiteName(response.getSiteName());
+				gs.setSiteNumber(response.getSiteNumber());
+				gs.setUserName(response.getUserName());
+				gs.setPassword(auth2);
+         	}           	
         }         	
        	return result;
     }   

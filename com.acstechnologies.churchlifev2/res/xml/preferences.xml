@@ -2,41 +2,35 @@
 <PreferenceScreen
   xmlns:android="http://schemas.android.com/apk/res/android">
     
-     <PreferenceCategory android:title="Authentication Settings" android:key="category_authentication">                
+   <PreferenceCategory android:title="Application Settings" android:key="category_application"> 
         <EditTextPreference
-                android:name="Auth1Preference"
                 android:summary=""
                 android:defaultValue=""
                 android:title="auth1"
-                android:key="auth1" />
+                android:key="auth1" android:name="Auth1Preference" android:enabled="false"/>
 
         <EditTextPreference
-                android:name="Auth2Preference"
                 android:summary=""
                 android:defaultValue=""
                 android:title="auth2"
-                android:key="auth2" />
+                android:key="auth2" android:name="Auth2Preference" android:enabled="false"/>
                 
         <EditTextPreference
-                android:name="Auth3Preference"
                 android:summary=""
                 android:defaultValue=""
                 android:title="auth3"
-                android:key="auth3" />                
-    </PreferenceCategory>
-    
-    <PreferenceCategory android:title="Application Settings" android:key="category_application">
+                android:key="auth3" android:name="Auth3Preference" android:enabled="false"/>                
+	 	
     	<EditTextPreference
         	android:summary="This allows you to enter the service URL."
             android:defaultValue="https://api.accessacs.com"
             android:title="Service URL"
-            android:key="serviceurl" android:name="serviceurl"/> 
-            
+            android:key="serviceurl" android:name="serviceurl"/>             
 		<EditTextPreference
         	android:summary="This allows you to enter a test"
             android:defaultValue="blah"
             android:title="test"
-            android:key="test" android:name="TestPreference"/>                                                                                
+            android:key="test" android:name="TestPreference"/>		                                                                                
     </PreferenceCategory>
      
 </PreferenceScreen>
