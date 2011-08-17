@@ -108,10 +108,10 @@ public class WebServiceHandler {
 	 *  @return 				IndividualResponse (WebServiceObject)   
 	 *  @throws AppException 
 	 *  */ 	
-	public IndividualResponse getIndividuals(String username, String password, String siteNumber, 
-											 String searchText, int startingRecordId, int maxRecordId) throws AppException {
+	public IndividualsResponse getIndividuals(String username, String password, String siteNumber, 
+											  String searchText, int startingRecordId, int maxRecordId) throws AppException {
 
-		IndividualResponse wsObject = null;		    
+		IndividualsResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individuals");
     	  	    	
     	client.AddParam("searchText", searchText);
@@ -123,7 +123,7 @@ public class WebServiceHandler {
     	
     	try {
     	    client.Execute(RequestMethod.GET);
-			wsObject= new IndividualResponse(client.getResponse());								
+			wsObject= new IndividualsResponse(client.getResponse());								
     	}
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
@@ -136,6 +136,29 @@ public class WebServiceHandler {
 		return wsObject;
 	}
 	
+	public IndividualResponse getIndividual(String username, String password, String siteNumber, int individualId) throws AppException {
+		
+		IndividualResponse wsObject = null;		    		
+		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individual/" + Integer.toString(individualId));   	
+		
+		String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+		
+		try {
+			client.Execute(RequestMethod.GET);
+			wsObject = new IndividualResponse(client.getResponse());								
+		}
+		catch (AppException e)	{
+			// Add some parameters to the error for logging
+			ExceptionInfo info = e.addInfo();
+			info.setContextId("WebserviceHandler.getIndividual");
+			info.getParameters().put("siteNumber", siteNumber);
+			info.getParameters().put("individualId", individualId);    		
+			throw e;
+		}    	
+		return wsObject;
+	}
+
 	
 	/** 
 	 *  Used to retrieve a list of events from the acstechnologies web service layer

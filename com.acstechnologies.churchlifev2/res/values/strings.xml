@@ -23,7 +23,7 @@
 	<string name="Login.Validation.UserName">Enter a Username.</string>
 	<string name="Login.Validation.Password">Enter a password.</string>
 	<string name="Login.Validation.InvalidLogin">"Invalid login.  Please try again."</string>
-	<string name="Login.ProgressDialog">"Logging In. Please wait..."</string>
+	<string name="Login.ProgressDialog">"Signing In. Please wait..."</string>
 	<string name="Login.SiteSelectTitle">"Select a Site"</string>
 
 	<string name="Preferences.Title">Preferences</string>
@@ -34,7 +34,13 @@
 	<string name="IndividualList.ProgressDialog">"Searching people. Please wait..."</string>
 	<string name="IndividualList.More">More Results</string>
 
-	<color name="Login.Background">#E6DFE0</color>
+	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
+
+
+
+	<color name="Login.Background">#E6DFE0</color>	
+	<color name="MediumGrey">#9E9E9E</color>
 	<color name="White">#FFFFFF</color>
+	
 	
 </resources>

@@ -13,8 +13,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -78,7 +79,7 @@ public class LoginActivity extends OptionsActivity {
             setContentView(R.layout.login);		// Present the login form to the user. 
             
             bindControls();						// Set state variables to their form controls
-       
+       	    
             // Wire up 'view1' button         
             imageButtonView1.setOnClickListener(new OnClickListener() {		
             	public void onClick(View v) {	        		             	
@@ -106,8 +107,8 @@ public class LoginActivity extends OptionsActivity {
             // Wire up the login button                     
             btnLogin.setOnClickListener(new OnClickListener() {		
             	public void onClick(View v) {	            		     
-            		if (inputIsValid())
-            			new LoginProgressTask().execute();				// login in background
+            		if (inputIsValid()) 
+            			doLoginWithProgressWindow(); // login in with worker thread            		
             	}		
     		});     
             
@@ -257,7 +258,8 @@ public class LoginActivity extends OptionsActivity {
      * Ensures all form fields have valid input.  
      * 
      * Should be called on button click before processing.   Displays a message 
-     *   to the user indicating which field is invalid.
+     *   to the user indicating which field is invalid.  This procedure stops 
+     *   checking for invalid fields once the first invalid field is encountered.
      *   
      * @return true if input fields are valid, otherwise false
      */
@@ -269,7 +271,7 @@ public class LoginActivity extends OptionsActivity {
     		if (txtEmail.getText().length() == 0) {    			
     			msg = (String)this.getResources().getText(R.string.Login_Validation_Email); 
     		}
-    		if (txtEmailPassword.getText().length() == 0){   
+    		if (msg.length() == 0 && txtEmailPassword.getText().length() == 0){   
     			msg = (String)this.getResources().getText(R.string.Login_Validation_Password);    			
     		}        	
     	}
@@ -277,10 +279,10 @@ public class LoginActivity extends OptionsActivity {
     		if (txtSiteNumber.getText().length() == 0) {   
     			msg = (String)this.getResources().getText(R.string.Login_Validation_SiteNumber);     		
     		}
-    		if (txtUserName.getText().length() == 0){    			
+    		if (msg.length() == 0 && txtUserName.getText().length() == 0){    			
     			msg = (String)this.getResources().getText(R.string.Login_Validation_UserName);     			
     		}     		
-    		if (txtPassword.getText().length() == 0){    			
+    		if (msg.length() == 0 && txtPassword.getText().length() == 0){    			
     			msg = (String)this.getResources().getText(R.string.Login_Validation_Password);     		
     		}     		
     	}
@@ -296,104 +298,127 @@ public class LoginActivity extends OptionsActivity {
     
    
     /**
-     * 
-     * @author softwarearchitect
-     *
+     * Displays a progress dialog and launches a background thread to connect to a web service
+     *   to authenticate the users credentials
+     *   
      */
-    class LoginProgressTask extends AsyncTask<Void, Void, LoginResponse> {
-    	
-    	private Exception e = null;
-    	
-    	protected void onPreExecute() {
-    		//showDialog(DIALOG_PROGRESS);
+    private void doLoginWithProgressWindow()
+    {           
+    	if (inputIsValid()) {	    			    
+	    	showDialog(DIALOG_PROGRESS);
+	    	
+	    	// This handler is called once the login attempt is complete.  It looks at the class level
+	    	//  web service return object (loginresponse) to determine success/failure.  If successful,
+	    	//  the login response will have 1 or more sites in it.
+	    	final Handler handler = new Handler() {
+	    		public void handleMessage(Message msg) {
+	    		  
+	    			removeDialog(DIALOG_PROGRESS);	    		
+	    			try {	  
+	    				
+	    				// check to see if an exception was raised on the background thread
+	    				//  that performed the login web service call. 
+	    				if (msg.what < 0) {
+	    					//TODO:
+		       				//  (we should examine it to see if is is one that should be raised as critical
+		       				//   or something that is just a validation message, etc.)
+		       				String errMsg = msg.getData().getString("Exception");	       
+		       				throw AppException.AppExceptionFactory(
+		       					  ExceptionInfo.TYPE.UNEXPECTED,
+		 						   ExceptionInfo.SEVERITY.CRITICAL, 
+		 						   "100",           												    
+		 						   "doSearchWithProgressWindow.handleMessage",
+		 						   errMsg);	       		    					
+	    				}
+	    				else {
+							if (_wsLogin.getStatusCode() == 0) {        				
+								// In most cases, the return value is for a single site    
+								if (_wsLogin.getLength() == 1) {    					   		
+									navigateForward(_wsLogin.getSiteName(), _wsLogin.getSiteNumber(), _wsLogin.getUserName());																
+								}
+								else {
+									// present a picklist of sites to the user
+									showDialog(DIALOG_CHURCH_LIST);    					    				
+								}    				    				    			    			
+							}
+							else
+							{        		
+								Toast.makeText(LoginActivity.this, R.string.Login_Validation_InvalidLogin, Toast.LENGTH_LONG).show(); 
+							}	    					
+	    				}	    				
+	    			}
+					catch (Exception e) {
+						ExceptionHelper.notifyNonUsers(e) ; 	
+						ExceptionHelper.notifyUsers(e, LoginActivity.this);		    	    				    			
+		    		}   	      			    			    			    			   				    			    		 
+	    		}
+	    	};
+	    	
+	    	Thread searchThread = new Thread() {  
+	    		public void run() {
+	    			try {
+	    				doLogin();
+		    	    	handler.sendEmptyMessage(0);
+	    			}
+	    			catch (Exception e) {    				
+	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
+	    				
+	    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+	    				msg.what = -1;
+	    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
+	    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
+	    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
+	    				
+	    				String returnMessage = String.format("An unexpected error has occurred while attempting to login.  The error is %s.", e.getMessage());					    				    				    				    				    	
+	    				Bundle b = new Bundle();
+	    				b.putString("Exception", returnMessage);
+	    				
+	    				handler.sendMessage(msg);    				
+	    			}    			       	    	    	    	
+	    		 }
+	    	};
+	    	searchThread.start();    
     	}
-    	
-    	protected LoginResponse doInBackground(Void... args) {
-    		LoginResponse result = null;
-            try {
-            	LoginResponse l = doLogin();
-            	result = l;
-            }	    
-            catch (Exception e) {
-               this.e = e;
-            }                
-            return result;
-    	}
-    		     	
-        
-    	/**
-    	 * Sends credentials to the authentication service and return the results.
-         * Assumes input has been validated
-         * 
-    	 * @param auth1  Username or Email address
-    	 * @param auth2  Password
-    	 * @param auth3  SiteNumber
-    	 * @return the object returned from the webservice call
-    	 * @throws AppException 
-    	 */    
-        private LoginResponse doLogin() throws AppException
-        {	
-    		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());    		
-    		LoginResponse wsl = null;
-    			
-    		// Get (default) form values (from view1)
-    		String usernameOrEmail = txtEmail.getText().toString();
-    		String password = txtEmailPassword.getText().toString();
-    		String siteNumber = "";
-    		    			
-    		// Reset values from form if view2 is selected
-    		if (vf.getCurrentView() == view2) {
-    			usernameOrEmail = txtUserName.getText().toString();
-    			password = txtPassword.getText().toString();
-    			siteNumber = txtSiteNumber.getText().toString();    				
-    		}
-    			
-    		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
-            if (siteNumber.length() > 0){
-            	wsl = wh.login(usernameOrEmail, password, siteNumber);
-            }
-            else {
-            	wsl = wh.login(usernameOrEmail, password);
-            }  
-            return wsl;
+    }
+    
+    
+	/**
+	 * Sends credentials to the authentication service and return the results.
+     * Assumes input has been validated
+     * 
+	 * @param auth1  Username or Email address
+	 * @param auth2  Password
+	 * @param auth3  SiteNumber
+	 * @return the object returned from the webservice call
+	 * @throws AppException 
+	 */    
+    private LoginResponse doLogin() throws AppException
+    {	
+		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());    		
+		//LoginResponse wsl = null;
+			
+		// Get (default) form values (from view1)
+		String usernameOrEmail = txtEmail.getText().toString();
+		String password = txtEmailPassword.getText().toString();
+		String siteNumber = "";
+		    			
+		// Reset values from form if view2 is selected
+		if (vf.getCurrentView() == view2) {
+			usernameOrEmail = txtUserName.getText().toString();
+			password = txtPassword.getText().toString();
+			siteNumber = txtSiteNumber.getText().toString();    				
+		}
+			
+		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
+        if (siteNumber.length() > 0){
+        	_wsLogin = wh.login(usernameOrEmail, password, siteNumber);
         }
-              	
-    	
-    	protected void onPostExecute(LoginResponse result) {
-    		
-    		//removeDialog(DIALOG_PROGRESS);
-    		
-    		// result is the value returned from doInBackground
-    		try
-    		{    			
-    			if (e != null){
-    				throw e;
-    			}
-    			else {	    				    		
-	    			_wsLogin = result;		//set class level variable
-	    			
-					if (result.getStatusCode() == 0) {        				
-						// In most cases, the return value is for a single site    
-						if (result.getLength() == 1) {    					   		
-							navigateForward(result.getSiteName(), result.getSiteNumber(), result.getUserName());																
-						}
-						else {
-							// present a picklist of sites to the user
-							showDialog(DIALOG_CHURCH_LIST);    					    				
-						}    				    				    			    			
-					}
-					else
-					{        		
-						Toast.makeText(LoginActivity.this, R.string.Login_Validation_InvalidLogin, Toast.LENGTH_LONG).show(); 
-					}
-    			}
-    		}
-    		catch (Exception e){
-        		ExceptionHelper.notifyUsers(e, LoginActivity.this);
-        		ExceptionHelper.notifyNonUsers(e);
-    		}
-    	}
-    }    
+        else {
+        	_wsLogin = wh.login(usernameOrEmail, password);
+        }  
+        return _wsLogin;
+    }
+    
   
     
     /**

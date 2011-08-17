@@ -1,9 +1,9 @@
 package com.acstechnologies.churchlifev2.exceptionhandling;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
-
 
 public class ExceptionHelper {
 
@@ -14,46 +14,53 @@ public class ExceptionHelper {
 			
 	public static void notifyUsers(Throwable e, Context context){
 
-		  if(e instanceof AppException) {
+		if(e instanceof AppException) {
 		    
 		    AppException ae = (AppException) e;
 
 		    if(ae.getErrorType() == ExceptionInfo.TYPE.VALIDATION) {
-
-		    	Toast.makeText(context, ae.extractErrorDescription(),Toast.LENGTH_LONG).show();
 		    	
 		    	// The error was caused by the user / client,
 		    	// show the cause and how to correct it.
+		    	ShowAlert(context, ae.extractErrorDescription());		    		
+		    } 
+		    else if(ae.getErrorType() == ExceptionInfo.TYPE.APPLICATION) {
 
-		    } else if(ae.getErrorType() == ExceptionInfo.TYPE.APPLICATION) {
-
-		    	//dialog box here! User must acknowledge.
-		    	//FUTURE zzz
-		    	Toast.makeText(context, ae.extractErrorDescription(),Toast.LENGTH_LONG).show();
 		    	// The error was not caused by user / client.
 		    	// Just show a standard error message.
-		    	
+		    	ShowAlert(context, ae.extractErrorDescription());		    			    	
 		    }		  
 		    else if(ae.getErrorType() == ExceptionInfo.TYPE.UNEXPECTED) {
 
-		    	//dialog box here! User must acknowledge.
-		    	//FUTURE zzz
-		    	String msg = String.format("An unexpected error has occurred.  The error is: %s", ae.extractErrorDescription());
-		    	Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-		    	
-		
-		    	
-		    }
-		  
-		  } else {  
-		     //An unknown exception occurred. Show a standard error message.
-			  //zzz
-			  Toast.makeText(context, e.getMessage(),Toast.LENGTH_LONG).show();
-			 
-		  }
+		    	String msg = String.format("An unexpected error has occurred.  The error is: %s", ae.extractErrorDescription());		    	
+		    	ShowAlert(context, msg);		    			    			    	
+		    }		 
 		}
+		else {  
+			//An unknown exception occurred. Show a standard error message.
+			//zzz
+			ShowAlert(context, e.getMessage());
+		}
+	}
 
-	  
+	public static void ShowAlert(Context context, String message) {
+	
+    	//Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    	AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    	builder.setMessage(message);    	
+    	/* Typically these alerts do not have a close button but the user
+    	   uses the hard back button to close.
+    	       	
+    	builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {	    	
+    	      public void onClick(DialogInterface dialog, int which) {
+    	       // nothing to do    		    	 	    	
+    	    } });
+    	 */ 
+    	builder.create().show();   
+	}
+	
+	
+	
 	public static void notifyNonUsers(Throwable e){
 		
 		try {		

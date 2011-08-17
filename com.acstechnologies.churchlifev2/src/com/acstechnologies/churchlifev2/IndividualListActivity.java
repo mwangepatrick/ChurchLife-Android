@@ -5,10 +5,12 @@ import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
+import com.acstechnologies.churchlifev2.webservice.IndividualsResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -25,10 +27,13 @@ import android.widget.Toast;
 
 public class IndividualListActivity extends OptionsActivity {
 	
-	static final int DIALOG_PROGRESS = 0;
-	private ProgressDialog progressD;
+	static final int DIALOG_PROGRESS_INDIVIDUALS = 0;
+	static final int DIALOG_PROGRESS_INDIVIDUAL = 1;
 	
-	IndividualResponse _wsIndividuals;					// results of the web service call
+	private ProgressDialog _progressD;
+	private String _progressText;
+	
+	IndividualsResponse _wsIndividuals;					// results of the web service call
 	AppPreferences _appPrefs;  	
 	
 	EditText txtSearch;
@@ -71,12 +76,22 @@ public class IndividualListActivity extends OptionsActivity {
    
     protected Dialog onCreateDialog(int id) {
         switch(id) {
-        case DIALOG_PROGRESS:
-        	progressD = new ProgressDialog(IndividualListActivity.this);
-        	progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
-        	progressD.setIndeterminate(true);
-        	progressD.setCancelable(false);
-    		return progressD;	  
+        case DIALOG_PROGRESS_INDIVIDUAL:
+        case DIALOG_PROGRESS_INDIVIDUALS:
+        	_progressD = new ProgressDialog(IndividualListActivity.this);
+        	
+        	String msg = "";
+        	if (id == DIALOG_PROGRESS_INDIVIDUALS) {
+        		msg = getString(R.string.IndividualList_ProgressDialog);	
+        	}
+        	else {
+        		msg = String.format(getString(R.string.Individual_ProgressDialog), _progressText);        		
+        	}
+        	
+        	_progressD.setMessage(msg);        	
+        	_progressD.setIndeterminate(true);
+        	_progressD.setCancelable(false);
+    		return _progressD;	  
         default:
             return null;
         }
@@ -122,20 +137,18 @@ public class IndividualListActivity extends OptionsActivity {
      * Displays a progress dialog and launches a background thread to connect to a web service
      *   to retrieve search results 
      *   
-     *  
-     * Assumes form input has been validated!
      */
     private void doSearchWithProgressWindow()
     {           
     	if (inputIsValid()) {	    			    
-	    	showDialog(DIALOG_PROGRESS);
+	    	showDialog(DIALOG_PROGRESS_INDIVIDUALS);
 	    	
 	    	// This handler is called once the people search is complete.  It looks at the data returned
 	    	//  from the thread (in the Message) to determine success/failure.  If successful, the results are displayed.
 	    	final Handler handler = new Handler() {
 	    		public void handleMessage(Message msg) {
 	    		  
-	    			removeDialog(DIALOG_PROGRESS);
+	    			removeDialog(DIALOG_PROGRESS_INDIVIDUALS);
 	    			
 	    			try {
 		    			if (msg.what == 0) {	        			
@@ -213,8 +226,9 @@ public class IndividualListActivity extends OptionsActivity {
        	 		doSearchWithProgressWindow();
        	 	}
        	 	else {
-           	 	//Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-    			Toast.makeText(getApplicationContext(),_wsIndividuals.getLastName(position), Toast.LENGTH_SHORT).show();       	 		       	 		
+       	 		// display the individual
+       	 		_progressText = _wsIndividuals.getFirstName(position) + " " + _wsIndividuals.getLastName(position);
+       	 		loadIndividualWithProgressWindow(_wsIndividuals.getIndvId(position));       	 		  										    	     	 		       	 
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -224,4 +238,99 @@ public class IndividualListActivity extends OptionsActivity {
 		}  
     }
     	    
+    
+    ///////////// - move this out possibly...same thing has to be done from inside person if thye
+    // pick a family member
+    /**
+     * Displays a progress dialog and launches a background thread to connect to a web service
+     *   to retrieve search results 
+     *   
+     */
+    private void loadIndividualWithProgressWindow(final int individualId)
+    {           
+    	if (inputIsValid()) {	    		
+    		
+	    	showDialog(DIALOG_PROGRESS_INDIVIDUAL);
+	    	
+	    	// This handler is called once the people search is complete.  It looks at the data returned
+	    	//  from the thread (in the Message) to determine success/failure.  If successful, the results are displayed.
+	    	final Handler handler = new Handler() {
+	    		public void handleMessage(Message msg) {
+	    		  
+	    		
+	    			
+	    			try {
+		    			if (msg.what == 0) {	        					           	 	
+		           	 		Intent intent = new Intent();
+		           	 		intent.setClass(IndividualListActivity.this, IndividualActivity.class); 		           	 	
+		           	 		intent.putExtra("individual", msg.getData().getString("individual"));
+		           	 		startActivity(intent);
+		           	 		
+		           	 		removeDialog(DIALOG_PROGRESS_INDIVIDUAL);
+		           	 		
+		       			}
+		       			else if (msg.what < 0) {
+		       				
+		       				removeDialog(DIALOG_PROGRESS_INDIVIDUAL);
+		       				// If < 0, the exception text is in the message bundle.  Throw it
+		       				
+		       				//TODO:
+		       				//  (we should examine it to see if is is one that should be raised as critical
+		       				//   or something that is just a validation message, etc.)
+		       				String errMsg = msg.getData().getString("Exception");	       
+		       				throw AppException.AppExceptionFactory(
+		       					  ExceptionInfo.TYPE.UNEXPECTED,
+		 						   ExceptionInfo.SEVERITY.CRITICAL, 
+		 						   "100",           												    
+		 						   "doSearchWithProgressWindow.handleMessage",
+		 						   errMsg);	       				
+		       			}	    				
+	    			}
+	    			catch (Exception e) {
+	    				ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
+	    	    		ExceptionHelper.notifyNonUsers(e)  ; 				    				
+	    			}    			    			    			    			   				    			    		  
+	    		}
+	    	};
+	    	
+	    	Thread searchThread = new Thread() {  
+	    		public void run() {
+	    			try {
+		    			GlobalState gs = (GlobalState) getApplication();
+			    	    	
+		    			WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());
+		    	    	IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
+		    	    	
+		    	    	Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+		    	    	msg.what = 0;
+		    	    	
+		    	    	Bundle b = new Bundle();
+	    				b.putString("individual", i.toString());
+	    				msg.setData(b);
+	    						    	    		    	    			    	  
+		    	    	handler.sendMessage(msg);
+	    			}
+	    			catch (Exception e) {    				
+	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
+	    				
+	    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+	    				msg.what = -1;
+	    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
+	    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
+	    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
+	    				
+	    				String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
+	    				Bundle b = new Bundle();
+	    				b.putString("Exception", returnMessage);
+	    				msg.setData(b);
+	    				
+	    				handler.sendMessage(msg);    				
+	    			}    			       	    	    	    	
+	    		 }
+	    	};
+	    	searchThread.start();    
+    	}
+    }
+            
+    //////////////
 }    
