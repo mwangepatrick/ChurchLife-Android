@@ -2,18 +2,14 @@ package com.acstechnologies.churchlifev2;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.webservice.EventResponse;
-import com.acstechnologies.churchlifev2.webservice.EventResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.os.Bundle;
-import android.widget.EditText;
-import android.widget.ListView;
 
 public class EventListActivity extends OptionsActivity {
 	
@@ -80,35 +76,5 @@ public class EventListActivity extends OptionsActivity {
     }
     
     
-    private ArrayList<Individual> GetSearchResults2(){
-        
-    	ArrayList<Individual> results = new ArrayList<Individual>();
-	     
-	    Individual sr1 = new Individual();
-	    sr1.setName("John Smith");
-	    sr1.setCityState("Dallas, TX");
-	    sr1.setPhone("214-555-1234");
-	    results.add(sr1);
-     
-	    sr1 = new Individual();
-	    sr1.setName("Jane Doe");
-	    sr1.setCityState("Atlanta, GA");
-	    sr1.setPhone("469-555-2587");
-	    results.add(sr1);
-	     
-	    sr1 = new Individual();
-	    sr1.setName("Steve Young");
-	    sr1.setCityState("Miami, FL");
-	    sr1.setPhone("305-555-7895");
-	    results.add(sr1);
-	     
-	    sr1 = new Individual();
-	    sr1.setName("Fred Jones");
-	    sr1.setCityState("Las Vegas, NV");
-	    sr1.setPhone("612-555-8214");
-	    results.add(sr1);
-     
-	    return results;
-    }
     
 }

@@ -28,14 +28,14 @@
 
 	<string name="Preferences.Title">Preferences</string>
 
-
  	<string name="IndividualList.Search">Search</string>   
 	<string name="IndividualList.Validation.Search">Enter search text.</string>
 	<string name="IndividualList.ProgressDialog">"Searching people. Please wait..."</string>
 	<string name="IndividualList.More">More Results</string>
 
-	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
 
+	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
+	<string name="Individual.CallPhone">"Call %s"</string>
 
 
 	<color name="Login.Background">#E6DFE0</color>	

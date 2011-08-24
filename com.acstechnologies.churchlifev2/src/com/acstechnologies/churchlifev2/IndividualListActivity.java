@@ -10,12 +10,14 @@ import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -153,7 +155,12 @@ public class IndividualListActivity extends OptionsActivity {
 	    			try {
 		    			if (msg.what == 0) {	        			
 		       	             String[] names = _wsIndividuals.getFullNameList(true, getResources().getString(R.string.IndividualList_More));	       	             	       	             	       	           
-		       	             lv1.setAdapter(new ArrayAdapter<String>(IndividualListActivity.this, R.layout.list_item, names));	       	                  	         				                  
+		       	             lv1.setAdapter(new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default, names));
+		       	             
+		       	             // Hide the keyboard
+		       	             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		       	             imm.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
+
 		       			}
 		       			else if (msg.what < 0) {
 		       				// If < 0, the exception text is in the message bundle.  Throw it

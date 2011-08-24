@@ -1,5 +1,10 @@
 package com.acstechnologies.churchlifev2.webservice;
 
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 
@@ -58,12 +63,38 @@ public class IndividualResponse extends WebServiceObject {
 	// FamilyPictureUrl
 	public String getFamilyPictureUrl()	throws AppException { return getStringValue("FamilyPictureUrl", 0); }
 	
-	// *** Child Objects *** 
+	//***************************
+	// ***   Child Objects 	  ***
+	// **************************
 	
+	public ArrayList<IndividualPhone> PhoneNumbers() throws AppException {
+		ArrayList<IndividualPhone> list = new ArrayList<IndividualPhone>();
+		
+		// Populate the object with the json contained in this object
+		try {
+			JSONArray phones = getItem(0).getJSONArray("Phones");
+			
+			for (int i = 0; i < phones.length(); i++) {
+				String phoneJson = phones.getString(i);
+				list.add(new IndividualPhone(phoneJson));			    			    			   
+			}
 
-	
-	
-	
+		} catch (JSONException e) {
+
+			//zzz what about the appException being bubbled up?
+			ExceptionInfo i = ExceptionInfo.ExceptionInfoFactory(
+					ExceptionInfo.TYPE.UNEXPECTED,
+				  	ExceptionInfo.SEVERITY.MODERATE, 
+				  	"100", 
+				  	"IndividualResponse.PhoneNumbers", 
+				  	"Error creating the Phones arraylist.");
+
+			throw AppException.AppExceptionFactory(e, i); 
+		}
+		
+		return list;			
+	}
+
 	
 	// Constructor
 	public IndividualResponse(String responseString) throws AppException {
