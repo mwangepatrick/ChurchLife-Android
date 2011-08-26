@@ -35,7 +35,8 @@
 
 
 	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
-	<string name="Individual.CallPhone">"Call %s"</string>
+	<string name="Individual.PhoneAction">"Call %s"</string>
+	<string name="Individual.EmailAction">"Email %s"</string>
 
 
 	<color name="Login.Background">#E6DFE0</color>	

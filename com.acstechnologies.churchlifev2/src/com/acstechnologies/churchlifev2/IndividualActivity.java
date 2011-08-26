@@ -51,6 +51,7 @@ public class IndividualActivity extends OptionsActivity {
 	
 	ImageView individualImageView;						// form controls
 	TextView nameTextView;
+	ListView emailListView;
 	ListView phoneListView;
 	
 	 @Override
@@ -123,6 +124,7 @@ public class IndividualActivity extends OptionsActivity {
 	    private void bindControls(){	    	
 	    	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
 	    	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
+	    	emailListView = (ListView)this.findViewById(R.id.emailListview);
 	    	phoneListView = (ListView)this.findViewById(R.id.phoneListview);
 	    }
 	    
@@ -142,15 +144,19 @@ public class IndividualActivity extends OptionsActivity {
 	    	// name											
 			nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
 			
+			// emails
+			EmailAddressListAdapter ea = new EmailAddressListAdapter(this, _wsIndividual.getEmails());
+			emailListView.setAdapter(ea);
+								
+			// addresses
+			
+			// family members
+			
 			// phone numbers						
-	        PhoneNumberListAdapter ca = new PhoneNumberListAdapter(this,  _wsIndividual.PhoneNumbers());
+	        PhoneNumberListAdapter ca = new PhoneNumberListAdapter(this,  _wsIndividual.getPhoneNumbers());
 	        phoneListView.setAdapter(ca);
 	        
-	        // addresses
 	        
-	        // email addresses
-	        
-	        // family members
 			
 			
 	    }

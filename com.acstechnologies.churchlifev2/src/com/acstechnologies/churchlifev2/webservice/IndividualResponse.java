@@ -67,7 +67,9 @@ public class IndividualResponse extends WebServiceObject {
 	// ***   Child Objects 	  ***
 	// **************************
 	
-	public ArrayList<IndividualPhone> PhoneNumbers() throws AppException {
+	//zzz duplicationn exists here.....refactor to use a standard base class for these children or generics
+	
+	public ArrayList<IndividualPhone> getPhoneNumbers() throws AppException {
 		ArrayList<IndividualPhone> list = new ArrayList<IndividualPhone>();
 		
 		// Populate the object with the json contained in this object
@@ -86,7 +88,7 @@ public class IndividualResponse extends WebServiceObject {
 					ExceptionInfo.TYPE.UNEXPECTED,
 				  	ExceptionInfo.SEVERITY.MODERATE, 
 				  	"100", 
-				  	"IndividualResponse.PhoneNumbers", 
+				  	"IndividualResponse.getPhoneNumbers", 
 				  	"Error creating the Phones arraylist.");
 
 			throw AppException.AppExceptionFactory(e, i); 
@@ -95,6 +97,35 @@ public class IndividualResponse extends WebServiceObject {
 		return list;			
 	}
 
+	public ArrayList<IndividualEmail> getEmails() throws AppException {
+		
+		ArrayList<IndividualEmail> list = new ArrayList<IndividualEmail>();
+		
+		// Populate the object with the json contained in this object
+		try {
+			JSONArray items = getItem(0).getJSONArray("Emails");
+			
+			for (int i = 0; i < items.length(); i++) {
+				String phoneJson = items.getString(i);
+				list.add(new IndividualEmail(phoneJson));			    			    			   
+			}
+
+		} catch (JSONException e) {
+
+			//zzz what about the appException being bubbled up?
+			ExceptionInfo i = ExceptionInfo.ExceptionInfoFactory(
+					ExceptionInfo.TYPE.UNEXPECTED,
+				  	ExceptionInfo.SEVERITY.MODERATE, 
+				  	"100", 
+				  	"IndividualResponse.getEmails", 
+				  	"Error creating the Emails arraylist.");
+
+			throw AppException.AppExceptionFactory(e, i); 
+		}
+		
+		return list;			
+	}
+	
 	
 	// Constructor
 	public IndividualResponse(String responseString) throws AppException {

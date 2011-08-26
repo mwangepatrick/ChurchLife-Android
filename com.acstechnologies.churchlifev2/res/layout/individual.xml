@@ -12,8 +12,8 @@
 	    		   android:layout_alignParentTop="true" 
 	    		   android:layout_alignParentLeft="true"
 	    		   android:layout_margin="5dip"
-	    		   android:layout_height="60sp"
-	    		   android:layout_width="60sp">
+	    		   android:layout_height="70sp"
+	    		   android:layout_width="70sp">
 	   	</ImageView>
 	
 		<TextView 		
@@ -28,15 +28,25 @@
 				android:layout_toRightOf="@+id/individualImageView">
 		</TextView>
 	</LinearLayout>
-	
+
 	<ListView
-	  android:id="@+id/phoneListview"
+	  android:id="@+id/emailListview"
 	  android:layout_width="match_parent"
-	  android:layout_height="match_parent"
+	  android:layout_height="wrap_content"
 	  xmlns:android="http://schemas.android.com/apk/res/android"
 	  android:orientation="vertical"	  	 
 	  android:descendantFocusability="afterDescendants"
 	  android:layout_below="@+id/topLinearLayout">    
+	</ListView>
+		
+	<ListView
+	  android:id="@+id/phoneListview"
+	  android:layout_width="match_parent"
+	  android:layout_height="wrap_content"
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:orientation="vertical"	  	 
+	  android:descendantFocusability="afterDescendants"
+	  android:layout_below="@+id/emailListview">    
 	</ListView>
 
 	

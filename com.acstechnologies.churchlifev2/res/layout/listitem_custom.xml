@@ -4,8 +4,8 @@
    				android:layout_height="fill_parent" 
    				xmlns:android="http://schemas.android.com/apk/res/android">
 	<TextView 		
-			android:id="@+id/callTextView" 
-			android:text="@string/Individual.CallPhone"
+			android:id="@+id/titleTextView" 
+			android:text="Title"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"				
 			android:textSize="19sp"
@@ -14,30 +14,32 @@
 	</TextView>
 
 	<TextView 		
-			android:id="@+id/phoneTextView" 
-			android:text="111-222-3333"
+			android:id="@+id/valueTextView" 
+			android:text="value"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"			
 			android:layout_marginLeft="5dip"
 			android:textColor="@color/White"
-			android:layout_below="@+id/callTextView">
+			android:layout_below="@+id/titleTextView">
 	</TextView>
-
-    <ImageButton android:id="@+id/textMessageImageButton" 
+   	  
+    <ImageButton android:id="@+id/action1ImageButton" 
     		   android:src="@drawable/sms"
     		   android:layout_height="wrap_content" 
-    		   android:layout_width="wrap_content" 	    		 
+    		   android:layout_width="wrap_content" 	
+    		   android:background="@android:color/transparent" 	    		 
     		   android:layout_margin="5dip"    		  
     		   android:tag="text"
-    		   android:layout_toLeftOf="@+id/phoneImageButton">
+    		   android:layout_toLeftOf="@+id/action2ImageButton">
    	</ImageButton>
    	  
    	<ImageButton
-   		android:id="@+id/phoneImageButton" 
+   		android:id="@+id/action2ImageButton" 
    		android:src="@drawable/call_contact"  
    		android:layout_height="wrap_content"
    		android:layout_width="wrap_content" 
-   		android:layout_margin="5dip"    	   		    		
+   		android:layout_margin="5dip"  
+   		android:background="@android:color/transparent" 	   		    	
    		android:tag="phone"
    		android:layout_alignParentRight="true">
    	</ImageButton>
