@@ -217,9 +217,9 @@ public class WebServiceObject {
 				JSONObject topLevelData = _mainObject.getJSONObject("Data");
 				
 				// Check for a listing response 
-				//  ...the top level "Data" object will have a child "Data" JSON array										
-				if (topLevelData.optJSONArray("Data") != null) {
-					JSONArray childDataArray = topLevelData.getJSONArray("Data");														
+				//  ...the top level "Data" object will have a child "List" JSON array										
+				if (topLevelData.optJSONArray("List") != null) {
+					JSONArray childDataArray = topLevelData.getJSONArray("List");														
 					result = childDataArray.getJSONObject(indexer);
 				}
 				else {	// Set the return to the single object response
@@ -262,9 +262,9 @@ public class WebServiceObject {
 				JSONObject topLevelData = _mainObject.getJSONObject("Data");
 				
 				// Check for a listing response 
-				//  ...the top level "Data" object will have a child "Data" JSON array										
-				if (topLevelData.optJSONArray("Data") != null) {
-					JSONArray childDataArray = topLevelData.getJSONArray("Data");														
+				//  ...the top level "Data" object will have a child "List" JSON array										
+				if (topLevelData.optJSONArray("List") != null) {
+					JSONArray childDataArray = topLevelData.getJSONArray("List");														
 					result = childDataArray.length();
 				}
 				else {

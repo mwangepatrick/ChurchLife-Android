@@ -31,8 +31,16 @@ public class CustomListAdapter<T> extends BaseAdapter {
 		return "";		
 	}
 	
-	public String getValue(T currentItem) 		throws AppException {
+	public String getValueLine1(T currentItem) 		throws AppException {
 		return "";
+	}
+
+	public String getValueLine2(T currentItem) 		throws AppException {
+		return "";
+	}
+	
+	public Boolean getValueLine2Visible() {
+		return false;
 	}
 	
 	public String getAction1Tag(T currentItem) 	throws AppException {		
@@ -88,7 +96,8 @@ public class CustomListAdapter<T> extends BaseAdapter {
 	 */
 	static class ListViewHolder {		 
 		 TextView titleTextView;
-		 TextView valueTextView;
+		 TextView valueLine1TextView;
+		 TextView valueLine2TextView;
 		 ImageButton action1ImageButton;
 		 ImageButton action2ImageButton;	
 	}
@@ -110,8 +119,14 @@ public class CustomListAdapter<T> extends BaseAdapter {
 				 
 				 holder = new ListViewHolder();
 				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
-				 holder.valueTextView = (TextView) convertView.findViewById(R.id.valueTextView);			
+				 holder.valueLine1TextView = (TextView) convertView.findViewById(R.id.valueLine1TextView);			
+				 holder.valueLine2TextView = (TextView) convertView.findViewById(R.id.valueLine2TextView);				 			
 				
+				 // if we aren't displaying Line2...remove it.
+				 if (getValueLine2Visible() == false) {
+					 holder.valueLine2TextView.setVisibility(View.GONE);
+				 }
+				 
 				 Drawable image = null;
 				 
 				 // ImageButton for Action1 (can be turned off if image is null)
@@ -157,7 +172,8 @@ public class CustomListAdapter<T> extends BaseAdapter {
 			}
 			
 			holder.titleTextView.setText(this.getTitle(_items.get(position)));		
-			holder.valueTextView.setText(this.getValue(_items.get(position)));		 				 		
+			holder.valueLine1TextView.setText(this.getValueLine1(_items.get(position)));			
+			holder.valueLine2TextView.setText(this.getValueLine2(_items.get(position)));								 	
 			holder.action1ImageButton.setTag(this.getAction1Tag(_items.get(position)));
 			holder.action2ImageButton.setTag(this.getAction2Tag(_items.get(position)));
 			

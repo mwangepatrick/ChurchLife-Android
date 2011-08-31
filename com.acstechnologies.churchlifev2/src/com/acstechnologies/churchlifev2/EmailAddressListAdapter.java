@@ -19,7 +19,7 @@ public class EmailAddressListAdapter extends CustomListAdapter<IndividualEmail> 
 	}
 	
 	@Override
-	public String getValue(IndividualEmail currentItem) 	throws AppException {
+	public String getValueLine1(IndividualEmail currentItem) 	throws AppException {
 		return currentItem.getEmailAddress();
 	}
 	

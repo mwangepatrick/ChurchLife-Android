@@ -20,18 +20,18 @@ public class PhoneNumberListAdapter extends CustomListAdapter<IndividualPhone> {
 	}
 	
 	@Override
-	public String getValue(IndividualPhone currentItem) 	throws AppException {
+	public String getValueLine1(IndividualPhone currentItem) 	throws AppException {
 		return String.format("(%s) %s", currentItem.getAreaCode(), currentItem.getPhoneNumber()); 
 	}
 
 	@Override
 	public String getAction1Tag(IndividualPhone currentItem) throws AppException {		
-		return getValue(currentItem);
+		return getValueLine1(currentItem);
 	}	
 	
 	@Override
 	public String getAction2Tag(IndividualPhone currentItem) throws AppException {		
-		return getValue(currentItem);
+		return getValueLine1(currentItem);
 	}	
 
 	@Override

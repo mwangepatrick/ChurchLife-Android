@@ -7,21 +7,63 @@ import com.acstechnologies.churchlifev2.webservice.LoginResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
 public class SplashActivity extends Activity {
 
+	static final int DIALOG_PROGRESS_NONETWORK = 0;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-        setContentView(R.layout.splashscreen);                        
-        new AutoLoginTask().execute();				// login in background
+        setContentView(R.layout.splashscreen);       
+        
+        if (isOnline() == false)
+        {
+        	showDialog(DIALOG_PROGRESS_NONETWORK);        	
+        }
+        else {
+        	new AutoLoginTask().execute();				// login in background
+        }
     }
         
+    public boolean isOnline() {
+    	 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+    	 return cm.getActiveNetworkInfo().isConnectedOrConnecting();    	     	 
+    }
 
+    protected Dialog onCreateDialog(int id) {
+		 switch(id) {
+	     case DIALOG_PROGRESS_NONETWORK:
+	    	 
+	    	 AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    	 
+	    	 builder.setMessage(R.string.Splash_NoConnection);
+	    	 builder.setTitle(R.string.Splash_NoConnection);
+	    	 builder.setCancelable(true);	    	 	    	 
+	    	 builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+	             public void onClick(DialogInterface dialog, int id) {
+	                 dialog.cancel();
+	                 finish();
+	             }
+	         });
+	    	 
+	    	 return builder.create();
+	    	 
+	     default:
+	    	 return null;
+	     }
+	 }
+    
     /**
      *  Executes on a background thread.  If error, log the message and
      *    route the user to the login page.

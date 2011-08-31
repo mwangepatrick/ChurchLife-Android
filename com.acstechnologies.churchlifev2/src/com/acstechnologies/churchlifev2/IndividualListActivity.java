@@ -4,14 +4,12 @@ import com.acstechnologies.churchlifev2.R;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
-import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
 import com.acstechnologies.churchlifev2.webservice.IndividualsResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,7 +49,7 @@ public class IndividualListActivity extends OptionsActivity {
         	 _appPrefs = new AppPreferences(getApplicationContext());
         	 
         	 setContentView(R.layout.individuallist);
-        	 
+        	         	 
         	 bindControls();								// Set state variables to their form controls
         	         	 
         	 // Wire up the search button                     
@@ -154,7 +152,13 @@ public class IndividualListActivity extends OptionsActivity {
 	    			
 	    			try {
 		    			if (msg.what == 0) {	        			
-		       	             String[] names = _wsIndividuals.getFullNameList(true, getResources().getString(R.string.IndividualList_More));	       	             	       	             	       	           
+		       	             String[] names = _wsIndividuals.getFullNameList(true, getResources().getString(R.string.IndividualList_More));
+		       	             
+		       	             // If no results...add the 'No records found.' message.
+		       	             if (names.length == 0) {		       	            
+		       	            	names =  new String[] { getResources().getString(R.string.IndividualList_NoResults) };				       	            	
+		       	             }
+		       	             
 		       	             lv1.setAdapter(new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default, names));
 		       	             
 		       	             // Hide the keyboard
@@ -222,7 +226,7 @@ public class IndividualListActivity extends OptionsActivity {
     	}
     }
     
-    // Occurs when a user selects an item on the listview.    
+    // Occurs when a user selects an individual on the listview.    
     private void ItemSelected(int position)
     {    	    
     	try {
@@ -234,8 +238,11 @@ public class IndividualListActivity extends OptionsActivity {
        	 	}
        	 	else {
        	 		// display the individual
-       	 		_progressText = _wsIndividuals.getFirstName(position) + " " + _wsIndividuals.getLastName(position);
-       	 		loadIndividualWithProgressWindow(_wsIndividuals.getIndvId(position));       	 		  										    	     	 		       	 
+       	 		String name = _wsIndividuals.getFirstName(position) + " " + _wsIndividuals.getLastName(position);
+       	 		String dialogText = String.format(getString(R.string.Individual_ProgressDialog), name); 
+ 
+       	 		IndividualActivityLoader loader = new IndividualActivityLoader(this, dialogText);
+       	 		loader.loadIndividualWithProgressWindow(_wsIndividuals.getIndvId(position)); 
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -244,100 +251,8 @@ public class IndividualListActivity extends OptionsActivity {
 	    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
 		}  
     }
-    	    
     
-    ///////////// - move this out possibly...same thing has to be done from inside person if thye
-    // pick a family member
-    /**
-     * Displays a progress dialog and launches a background thread to connect to a web service
-     *   to retrieve search results 
-     *   
-     */
-    private void loadIndividualWithProgressWindow(final int individualId)
-    {           
-    	if (inputIsValid()) {	    		
-    		
-	    	showDialog(DIALOG_PROGRESS_INDIVIDUAL);
-	    	
-	    	// This handler is called once the people search is complete.  It looks at the data returned
-	    	//  from the thread (in the Message) to determine success/failure.  If successful, the results are displayed.
-	    	final Handler handler = new Handler() {
-	    		public void handleMessage(Message msg) {
-	    		  
-	    		
-	    			
-	    			try {
-		    			if (msg.what == 0) {	        					           	 	
-		           	 		Intent intent = new Intent();
-		           	 		intent.setClass(IndividualListActivity.this, IndividualActivity.class); 		           	 	
-		           	 		intent.putExtra("individual", msg.getData().getString("individual"));
-		           	 		startActivity(intent);
-		           	 		
-		           	 		removeDialog(DIALOG_PROGRESS_INDIVIDUAL);
-		           	 		
-		       			}
-		       			else if (msg.what < 0) {
-		       				
-		       				removeDialog(DIALOG_PROGRESS_INDIVIDUAL);
-		       				// If < 0, the exception text is in the message bundle.  Throw it
-		       				
-		       				//TODO:
-		       				//  (we should examine it to see if is is one that should be raised as critical
-		       				//   or something that is just a validation message, etc.)
-		       				String errMsg = msg.getData().getString("Exception");	       
-		       				throw AppException.AppExceptionFactory(
-		       					  ExceptionInfo.TYPE.UNEXPECTED,
-		 						   ExceptionInfo.SEVERITY.CRITICAL, 
-		 						   "100",           												    
-		 						   "doSearchWithProgressWindow.handleMessage",
-		 						   errMsg);	       				
-		       			}	    				
-	    			}
-	    			catch (Exception e) {
-	    				ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
-	    	    		ExceptionHelper.notifyNonUsers(e)  ; 				    				
-	    			}    			    			    			    			   				    			    		  
-	    		}
-	    	};
-	    	
-	    	Thread searchThread = new Thread() {  
-	    		public void run() {
-	    			try {
-		    			GlobalState gs = (GlobalState) getApplication();
-			    	    	
-		    			WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());
-		    	    	IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
-		    	    	
-		    	    	Message msg = handler.obtainMessage();		// return only the exception string as part of the message
-		    	    	msg.what = 0;
-		    	    	
-		    	    	Bundle b = new Bundle();
-	    				b.putString("individual", i.toString());
-	    				msg.setData(b);
-	    						    	    		    	    			    	  
-		    	    	handler.sendMessage(msg);
-	    			}
-	    			catch (Exception e) {    				
-	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-	    				
-	    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
-	    				msg.what = -1;
-	    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
-	    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
-	    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
-	    				
-	    				String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
-	    				Bundle b = new Bundle();
-	    				b.putString("Exception", returnMessage);
-	    				msg.setData(b);
-	    				
-	    				handler.sendMessage(msg);    				
-	    			}    			       	    	    	    	
-	    		 }
-	    	};
-	    	searchThread.start();    
-    	}
-    }
-            
-    //////////////
+
+
+    	    
 }    

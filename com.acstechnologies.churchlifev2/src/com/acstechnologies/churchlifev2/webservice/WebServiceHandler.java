@@ -32,7 +32,7 @@ public class WebServiceHandler {
 	public LoginResponse login(String username, String password, String siteNumber) throws AppException {
 
 		LoginResponse wsObject = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/account/validate");
+    	RESTClient client = new RESTClient(_baseUrl + "/accounts/validate");
     	
     	client.AddParam("sitenumber", siteNumber);
     	client.AddParam("username", username);
@@ -71,11 +71,11 @@ public class WebServiceHandler {
 	public LoginResponse login(String emailAddress, String password) throws AppException {
 
 		LoginResponse wsObject = null;		    
-    	RESTClient client = new RESTClient(_baseUrl + "/account/findbyemail");
+    	RESTClient client = new RESTClient(_baseUrl + "/accounts/findbyemail");
     	
     	client.AddParam("email", emailAddress);
-    	client.AddParam("password", password);    	
-    	 
+    	client.AddParam("password", password);    	    	 
+    	
     	try {
     	    client.Execute(RequestMethod.POST);
 			wsObject= new LoginResponse(client.getResponse());								
@@ -139,7 +139,7 @@ public class WebServiceHandler {
 	public IndividualResponse getIndividual(String username, String password, String siteNumber, int individualId) throws AppException {
 		
 		IndividualResponse wsObject = null;		    		
-		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individual/" + Integer.toString(individualId));   	
+		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individuals/" + Integer.toString(individualId));   	
 		
 		String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);

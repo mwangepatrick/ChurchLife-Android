@@ -14,15 +14,25 @@
 	</TextView>
 
 	<TextView 		
-			android:id="@+id/valueTextView" 
-			android:text="value"
+			android:id="@+id/valueLine1TextView" 
+			android:text="value for line 1"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"			
 			android:layout_marginLeft="5dip"
 			android:textColor="@color/White"
 			android:layout_below="@+id/titleTextView">
 	</TextView>
-   	  
+
+	<TextView 		
+			android:id="@+id/valueLine2TextView" 
+			android:text="value for line 2"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"			
+			android:layout_marginLeft="5dip"
+			android:textColor="@color/White"
+			android:layout_below="@+id/valueLine1TextView">
+	</TextView>
+	   	  
     <ImageButton android:id="@+id/action1ImageButton" 
     		   android:src="@drawable/sms"
     		   android:layout_height="wrap_content" 
@@ -38,8 +48,8 @@
    		android:src="@drawable/call_contact"  
    		android:layout_height="wrap_content"
    		android:layout_width="wrap_content" 
-   		android:layout_margin="5dip"  
-   		android:background="@android:color/transparent" 	   		    	
+   		android:background="@android:color/transparent" 	
+   		android:layout_margin="5dip"     			    
    		android:tag="phone"
    		android:layout_alignParentRight="true">
    	</ImageButton>

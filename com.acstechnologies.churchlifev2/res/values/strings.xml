@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>  
     <string name="app_name">Church Life v.2</string>
-    <string-array name="countries_array">
-        <item>Bahrain</item>
-        <item>Bangladesh</item>
-        <item>Barbados</item>
-        <item>Belarus</item>
-        <item>Belgium</item>
-        <item>Belize</item>
-        <item>Benin</item>
-    </string-array>
     
+    <string name="Splash.NoConnectionTitle">Network Unavailable</string>   
+    <string name="Splash.NoConnection">This application requires an active connection to the internet.  No connection was found.  This application will close.</string>  
+    
+     
     <string name="Login.Email">Email</string>   
     <string name="Login.Password">Password</string>
     <string name="Login.RememberMe">Remember Me</string>    
@@ -32,12 +27,14 @@
 	<string name="IndividualList.Validation.Search">Enter search text.</string>
 	<string name="IndividualList.ProgressDialog">"Searching people. Please wait..."</string>
 	<string name="IndividualList.More">More Results</string>
+	<string name="IndividualList.NoResults">Sorry, no people found with that name.</string>
 
 
 	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
 	<string name="Individual.PhoneAction">"Call %s"</string>
 	<string name="Individual.EmailAction">"Email %s"</string>
-
+	<string name="Individual.AddressAction">"View %s address"</string>
+	<string name="Individual_FamilyMemberAction">View family member</string>
 
 	<color name="Login.Background">#E6DFE0</color>	
 	<color name="MediumGrey">#9E9E9E</color>

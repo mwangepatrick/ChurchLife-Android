@@ -52,6 +52,8 @@ public class IndividualActivity extends OptionsActivity {
 	ImageView individualImageView;						// form controls
 	TextView nameTextView;
 	ListView emailListView;
+	ListView addressListView;
+	ListView familyListView;
 	ListView phoneListView;
 	
 	 @Override
@@ -91,204 +93,94 @@ public class IndividualActivity extends OptionsActivity {
 	    }
 
 	 protected Dialog onCreateDialog(int id) {
-	        switch(id) {
-	        case DIALOG_PROGRESS:
-	        	_progressD = new ProgressDialog(IndividualActivity.this);
-	        	_progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
-	        	_progressD.setIndeterminate(true);
-	        	_progressD.setCancelable(false);
-	    		return _progressD;	  
-	        default:
-	            return null;
-	        }
-	    }
+		 switch(id) {
+	     case DIALOG_PROGRESS:
+	    	 _progressD = new ProgressDialog(IndividualActivity.this);
+	         _progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
+	         _progressD.setIndeterminate(true);
+	         _progressD.setCancelable(false);
+	    	 return _progressD;	  
+	     default:
+	    	 return null;
+	     }
+	 }
+   
+	 
+    /**
+     *  Links state variables to their respective form controls
+     */
+    private void bindControls(){	    	
+    	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
+    	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
+    	emailListView = (ListView)this.findViewById(R.id.emailListview);
+    	addressListView = (ListView)this.findViewById(R.id.addressListview);
+    	familyListView = (ListView)this.findViewById(R.id.familyListview);
+    	phoneListView = (ListView)this.findViewById(R.id.phoneListview);
+    }
+    
+    /**
+     *  Sets the control values to the individual record that was passed to this activity.
+     *  
+     * @throws AppException
+     */
+    private void bindData() throws AppException {
+    	
+    	// image
+    	Drawable image = ImageOperations(_wsIndividual.getPictureUrl());
+    	if (image != null) {
+    		individualImageView.setImageDrawable(image);	    	        
+    	}
+    	
+    	// name											
+		nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
 
+		//works
+		//TextView headerText = new TextView(this);
+		//headerText.setText("Email");				
+		//emailListView.addHeaderView(headerText);
+							
+		// emails
+		EmailAddressListAdapter ea = new EmailAddressListAdapter(this, _wsIndividual.getEmails());
+		emailListView.setAdapter(ea);
+							
+		// addresses
+		AddressListAdapter aa = new AddressListAdapter(this, _wsIndividual.getAddresses());
+		addressListView.setAdapter(aa);
+					
+		// family members
+		FamilyMemberListAdapter fa = new FamilyMemberListAdapter(this, _wsIndividual.getFamilyMembers(), this);
+		familyListView.setAdapter(fa);
+		
+		// phone numbers						
+        PhoneNumberListAdapter ca = new PhoneNumberListAdapter(this,  _wsIndividual.getPhoneNumbers());
+        phoneListView.setAdapter(ca);	        
+		
+    }
+    
+    
+    /**
+     * gets a drawable for a given url
+     * @param url
+     * @return
+     */
+    private Drawable ImageOperations(String url) {
+    	Drawable d = null;
+    	try {	    		
+    		if (url.length() > 0) {
+    			URL imageUrl = new URL(url);
+    			InputStream is = (InputStream) imageUrl.getContent();
+    			d = Drawable.createFromStream(is, "src");
+    		}
+    	   return d;	    	   
+    	} 
+    	catch (MalformedURLException e) {
+    		ExceptionHelper.notifyNonUsers(e);
+    		return null;
+    	} catch (IOException e) {
+    		ExceptionHelper.notifyNonUsers(e);
+    		return null;
+    	}
+    }
 
-	  // Instantiating the Handler associated with the main thread
-	  private Handler messageHandler = new Handler() {
-		  
-		  @Override
-		  public void handleMessage(Message msg) {  
-			  switch(msg.what) {
-			  case 1:
-				  String s = "12123"; //Toast.makeText(this, "test", 100);
-			  case 0:
-				  String y = "123123";
-			  }
-		  }
-	   };
-	    
-	    /**
-	     *  Links state variables to their respective form controls
-	     */
-	    private void bindControls(){	    	
-	    	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
-	    	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
-	    	emailListView = (ListView)this.findViewById(R.id.emailListview);
-	    	phoneListView = (ListView)this.findViewById(R.id.phoneListview);
-	    }
-	    
-	    /**
-	     *  Sets the control values to the individual record that was passed to this activity.
-	     *  
-	     * @throws AppException
-	     */
-	    private void bindData() throws AppException {
-	    	
-	    	// image
-	    	Drawable image = ImageOperations(_wsIndividual.getPictureUrl());
-	    	if (image != null) {
-	    		individualImageView.setImageDrawable(image);	    	        
-	    	}
-	    	
-	    	// name											
-			nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
-			
-			// emails
-			EmailAddressListAdapter ea = new EmailAddressListAdapter(this, _wsIndividual.getEmails());
-			emailListView.setAdapter(ea);
-								
-			// addresses
-			
-			// family members
-			
-			// phone numbers						
-	        PhoneNumberListAdapter ca = new PhoneNumberListAdapter(this,  _wsIndividual.getPhoneNumbers());
-	        phoneListView.setAdapter(ca);
-	        
-	        
-			
-			
-	    }
-	    
-	    
-	    /**
-	     * gets a drawable for a given url
-	     * @param url
-	     * @return
-	     */
-	    private Drawable ImageOperations(String url) {
-	    	Drawable d = null;
-	    	try {	    		
-	    		if (url.length() > 0) {
-	    			URL imageUrl = new URL(url);
-	    			InputStream is = (InputStream) imageUrl.getContent();
-	    			d = Drawable.createFromStream(is, "src");
-	    		}
-	    	   return d;	    	   
-	    	} 
-	    	catch (MalformedURLException e) {
-	    		ExceptionHelper.notifyNonUsers(e);
-	    		return null;
-	    	} catch (IOException e) {
-	    		ExceptionHelper.notifyNonUsers(e);
-	    		return null;
-	    	}
-	    }
-	    	    
-		  
-	    /**
-	     * Displays a progress dialog and launches a background thread to connect to a web service
-	     *   to retrieve data for an individual 
-	     *   
-	     */
-	    private void getIndividualWithProgressWindow(final int individualId)
-	    {           	      			    
-		    showDialog(DIALOG_PROGRESS);
-		    	
-		    /*
-		    // This handler is called once the people search is complete.  It looks at the data returned
-		    //  from the thread (in the Message) to determine success/failure.  If successful, the results are displayed.
-		    final Handler handler = new Handler() {
-		    	public void handleMessage(Message msg) {
-		    		  
-		    		removeDialog(DIALOG_PROGRESS);
-	    			
-	    			try {
-		    			if (msg.what == 0) {	        			
-		       	           	// Person retrieved, set form control values
-		    				//individualImageView.setImageURI()   //may need to use individualImageView.setImageDrawable(drawable)
-		    				Uri u = Uri.parse(_wsIndividual.getPictureUrl());		    						    				
-		    				individualImageView.setImageURI(u);
-		    				
-		    				nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
-		    						    						    			
-		       			}
-		       			else if (msg.what < 0) {
-		       				// If < 0, the exception text is in the message bundle.  Throw it
-		       				
-		       				//TODO:
-		       				//  (we should examine it to see if is is one that should be raised as critical
-		       				//   or something that is just a validation message, etc.)
-		       				String errMsg = msg.getData().getString("Exception");	       
-		       				throw AppException.AppExceptionFactory(
-		       					  ExceptionInfo.TYPE.UNEXPECTED,
-		 						   ExceptionInfo.SEVERITY.CRITICAL, 
-		 						   "100",           												    
-		 						   "doSearchWithProgressWindow.handleMessage",
-		 						   errMsg);	       				
-		       			}	    				
-	    			}
-	    			catch (Exception e) {
-	    				ExceptionHelper.notifyUsers(e, IndividualActivity.this);
-	    	    		ExceptionHelper.notifyNonUsers(e)  ; 				    				
-	    			}    			    			    			    			   				    			    		  
-	    		}
-	    	};
-	    	*/
-		    
-		    
-	    	Thread searchThread = new Thread() {  
-	    		public void run() {
-	    			try {
-		    			GlobalState gs = (GlobalState) getApplication();
-		    			
-		    	    	WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());
-		    	    	_wsIndividual = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
-		    	    			    	    	
-		    	    	Runnable r = new Runnable() {
-		    	    		@Override
-		    	    		public void run() {
-		    	    			removeDialog(DIALOG_PROGRESS);		    	    			
-		    	    			try
-		    	    			{
-			    	    			Uri u = Uri.parse(_wsIndividual.getPictureUrl());		    						    				
-				    				individualImageView.setImageURI(u);
-				    				
-				    				nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
-		    	    			}
-		    	    			catch (Exception e) {
-		    	    				ExceptionHelper.notifyUsers(e, IndividualActivity.this);
-		    	    	    		ExceptionHelper.notifyNonUsers(e); 
-		    	    			}
-	    	    		    }
-		    	    	 };
-		    	    	
-		    	    	messageHandler.post(r);
-		    	    	
-		    	    	//handler.sendEmptyMessage(0);
-	    			}
-	    			catch (Exception e) {    				
-	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-	    				
-	    				//obtain message and add exception to it?  test
-	    				
-	    				Message msg = messageHandler.obtainMessage();		// return only the exception string as part of the message
-	    				msg.what = -1;
-	    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
-	    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
-	    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
-	    				
-	    				String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
-	    				Bundle b = new Bundle();
-	    				b.putString("Exception", returnMessage);
-	    				
-	    				messageHandler.sendMessage(msg);    				
-	    			}    			       	    	    	    	
-	    		 }
-	    	};
-	    	searchThread.start();    	    	
-	    }
-	    
 	 
 }
