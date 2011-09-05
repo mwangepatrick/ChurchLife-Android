@@ -11,7 +11,7 @@
 	    		   android:src="@drawable/no_person_photo"	    		  
 	    		   android:layout_alignParentTop="true" 
 	    		   android:layout_alignParentLeft="true"
-	    		   android:scaleType="fitXY"
+	    		   android:scaleType="fitCenter"
 	    		   android:layout_margin="5dip"
 	    		   android:layout_height="70sp"
 	    		   android:layout_width="70sp">
@@ -31,89 +31,14 @@
 	</LinearLayout>
 
 	<ListView
-	  android:id="@+id/phoneListview"
+	  android:id="@+id/detailsListview"
 	  android:layout_width="match_parent"
 	  android:layout_height="wrap_content"
 	  xmlns:android="http://schemas.android.com/apk/res/android"
 	  android:orientation="vertical"	  	 
-	  android:descendantFocusability="afterDescendants"
 	  android:layout_marginTop="5sp"
 	  android:layout_below="@+id/topLinearLayout">    
 	</ListView>
 
-	<ImageView
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:src="@android:drawable/divider_horizontal_dark"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:scaleType="fitXY"
-	    android:paddingLeft="5dp"
-	    android:paddingRight="5dp"
-	    android:paddingBottom="2dp"
-	    android:paddingTop="2dp"
-	    android:layout_below="@+id/phoneListview">
-	</ImageView>
-	
-	<ListView
-	  android:id="@+id/emailListview"
-	  android:layout_width="match_parent"
-	  android:layout_height="wrap_content"
-	  xmlns:android="http://schemas.android.com/apk/res/android"
-	  android:orientation="vertical"	  	 	  
-	  android:drawSelectorOnTop="false"
-	  android:choiceMode="singleChoice"
-	  android:layout_marginTop="5dp" 
-	  android:layout_below="@+id/phoneListview">    
-	</ListView>
-
-	<ImageView
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:src="@android:drawable/divider_horizontal_dark"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:scaleType="fitXY"
-	    android:paddingLeft="5dp"
-	    android:paddingRight="5dp"
-	    android:paddingBottom="2dp"
-	    android:paddingTop="2dp"
-	    android:layout_below="@+id/emailListview">
-	</ImageView>
-	
-	<ListView
-	  android:id="@+id/addressListview"
-	  android:layout_width="match_parent"
-	  android:layout_height="wrap_content"
-	  xmlns:android="http://schemas.android.com/apk/res/android"
-	  android:orientation="vertical"	  	 
-	  android:descendantFocusability="afterDescendants"
-	  android:layout_below="@+id/emailListview"
-	  android:layout_marginTop="5dp">    
-	</ListView>
-	
-	<ImageView
-	    xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:src="@android:drawable/divider_horizontal_dark"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:scaleType="fitXY"
-	    android:paddingLeft="5dp"
-	    android:paddingRight="5dp"
-	    android:paddingBottom="2dp"
-	    android:paddingTop="2dp"
-	    android:layout_below="@+id/addressListview">
-	</ImageView>
-	
-	<ListView
-	  android:id="@+id/familyListview"
-	  android:layout_width="match_parent"
-	  android:layout_height="wrap_content"
-	  xmlns:android="http://schemas.android.com/apk/res/android"
-	  android:orientation="vertical"	  	 
-	  android:descendantFocusability="afterDescendants"
-	  android:layout_below="@+id/addressListview"
-	  android:layout_marginTop="5sp">    
-	</ListView>
-	
-	
 </RelativeLayout>
 				    

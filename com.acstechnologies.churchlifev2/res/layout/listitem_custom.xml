@@ -2,7 +2,8 @@
 <RelativeLayout android:id="@+id/relativeLayout1" 
   				android:layout_width="fill_parent" 
    				android:layout_height="fill_parent" 
-   				xmlns:android="http://schemas.android.com/apk/res/android">
+   				xmlns:android="http://schemas.android.com/apk/res/android"
+   				android:padding="5dip">
 	<TextView 		
 			android:id="@+id/titleTextView" 
 			android:text="Title"
@@ -33,24 +34,22 @@
 			android:layout_below="@+id/valueLine1TextView">
 	</TextView>
 	   	  
-    <ImageButton android:id="@+id/action1ImageButton" 
+    <ImageButton android:id="@+id/action2ImageButton" 
     		   android:src="@drawable/sms"
+    		   android:background="@android:color/transparent" 
     		   android:layout_height="wrap_content" 
-    		   android:layout_width="wrap_content" 	
-    		   android:background="@android:color/transparent" 	    		 
+    		   android:layout_width="wrap_content" 		    		 
     		   android:layout_margin="5dip"    		  
-    		   android:tag="text"
-    		   android:layout_toLeftOf="@+id/action2ImageButton">
+    		   android:layout_toLeftOf="@+id/action1ImageButton">
    	</ImageButton>
    	  
    	<ImageButton
-   		android:id="@+id/action2ImageButton" 
+   		android:id="@+id/action1ImageButton" 
    		android:src="@drawable/call_contact"  
    		android:layout_height="wrap_content"
-   		android:layout_width="wrap_content" 
-   		android:background="@android:color/transparent" 	
-   		android:layout_margin="5dip"     			    
-   		android:tag="phone"
+   		android:layout_width="wrap_content"   		
+   		android:background="@android:color/transparent" 
+   		android:layout_margin="5dip"
    		android:layout_alignParentRight="true">
    	</ImageButton>
    	   	   	

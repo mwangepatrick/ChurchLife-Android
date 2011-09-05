@@ -15,6 +15,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+
+//zzz  NO LONGER USED - remove if not used for events, etc.
+
+
 /**
  * Extends the BaseAdapter so that a ListView can display an email address list
  *   similar to the native Android contact view activity.
