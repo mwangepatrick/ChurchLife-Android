@@ -40,8 +40,8 @@ import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
  */
 public class IndividualActivity extends OptionsActivity {
 
-	static final int DIALOG_PROGRESS = 0;
-	private ProgressDialog _progressD;
+	//static final int DIALOG_PROGRESS = 0;
+	//private ProgressDialog _progressD;
 	
 	IndividualResponse _wsIndividual;					// results of the web service call
 	AppPreferences _appPrefs;  	
@@ -83,18 +83,18 @@ public class IndividualActivity extends OptionsActivity {
 	    	}  	        
 	    }
 
-	 protected Dialog onCreateDialog(int id) {
-		 switch(id) {
-	     case DIALOG_PROGRESS:
-	    	 _progressD = new ProgressDialog(IndividualActivity.this);
-	         _progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
-	         _progressD.setIndeterminate(true);
-	         _progressD.setCancelable(false);
-	    	 return _progressD;	  
-	     default:
-	    	 return null;
-	     }
-	 }
+//	 protected Dialog onCreateDialog(int id) {
+//		 switch(id) {
+//	     case DIALOG_PROGRESS:
+//	    	 _progressD = new ProgressDialog(IndividualActivity.this);
+//	         _progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
+//	         _progressD.setIndeterminate(true);
+//	         _progressD.setCancelable(false);
+//	    	 return _progressD;	  
+//	     default:
+//	    	 return null;
+//	     }
+//	 }
    
 	 
     /**
@@ -114,8 +114,6 @@ public class IndividualActivity extends OptionsActivity {
      */
     private void bindData() throws AppException {
     	
-    	//zzz scale image appropriately 
-    	
     	// image
     	Drawable image = ImageOperations(_wsIndividual.getPictureUrl());
     	if (image != null) {
@@ -133,7 +131,7 @@ public class IndividualActivity extends OptionsActivity {
 		//  CustomListItem object.
 		ArrayList<CustomListItem> listItems = new ArrayList<CustomListItem>();
 				
-		// Phone Numbers
+		// Phone Numbers - add to listitems
 		String titleString = getResources().getString(R.string.Individual_PhoneAction);		
 		
 		ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
@@ -149,7 +147,7 @@ public class IndividualActivity extends OptionsActivity {
 		}
 		
 		
-		// Email addresses
+		// Email addresses - add to listitems
 		titleString = getResources().getString(R.string.Individual_EmailAction);		
 				
 		ArrayList<IndividualEmail> emailList = _wsIndividual.getEmails();
@@ -160,7 +158,7 @@ public class IndividualActivity extends OptionsActivity {
 											 getResources().getDrawable(R.drawable.sym_action_email)));			
 		}
 		
-		// Physical addresses
+		// Physical addresses - add to listitems
 		titleString = getResources().getString(R.string.Individual_AddressAction);		
 		
 		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
@@ -177,7 +175,7 @@ public class IndividualActivity extends OptionsActivity {
 											 null));			
 		}
 				
-		// Family members
+		// Family members - add to listitems
 		titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
 		
 		ArrayList<IndividualFamilyMember> memberList = _wsIndividual.getFamilyMembers();
@@ -261,8 +259,7 @@ public class IndividualActivity extends OptionsActivity {
     		mapAddress(argument);
     		
     	}else if (command.equals("individual")) {
-    		loadIndividual(argument);
-    		
+    		loadIndividual(argument);    		
     	}
     	//else do nothing...command is not known
     }
@@ -336,8 +333,6 @@ public class IndividualActivity extends OptionsActivity {
         public void run() {
         	finish();
         }
-    };
-    
-
+    };    
 	 
 }

@@ -4,11 +4,10 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-    <EditText android:layout_height="wrap_content"
-    	 android:layout_width="match_parent" 
-    	 android:id="@+id/editText1"
-    	 android:text="Event Listing Here (coming soon)">
-        <requestFocus></requestFocus>
-    </EditText>
-    
+      
+  	<ListView
+   		android:id="@+id/ListView01"
+   		android:layout_height="wrap_content"
+   		android:layout_width="fill_parent"/>
+   		    
 </LinearLayout>

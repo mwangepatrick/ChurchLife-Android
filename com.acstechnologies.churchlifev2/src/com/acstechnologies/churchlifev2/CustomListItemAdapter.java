@@ -37,6 +37,10 @@ public class CustomListItemAdapter extends BaseAdapter {
 	public Object getItem(int position) {  return _items.get(position); }
 	public long getItemId(int position) {  return position; 			}
 
+	public void refill(ArrayList<CustomListItem> newItems) {
+		_items = newItems;
+	    notifyDataSetChanged();
+	}
 	
 	/**
 	 * Object representation of the listitem_custom layout
@@ -70,48 +74,51 @@ public class CustomListItemAdapter extends BaseAdapter {
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.valueLine1TextView = (TextView) convertView.findViewById(R.id.valueLine1TextView);			
 			 holder.valueLine2TextView = (TextView) convertView.findViewById(R.id.valueLine2TextView);				 			
-			
-			 // if we aren't displaying Line2...remove it.				
-			 if (currentItem.getValueLine2Visible() == false) {
-				 holder.valueLine2TextView.setVisibility(View.GONE);
-			 }
-			 
-			 Drawable image = null;
-			 
-			 // ImageButton for Action1 (can be turned off if image is null)
-			 holder.action1ImageButton = (ImageButton)convertView.findViewById(R.id.action1ImageButton);				 				
-			 image = currentItem.getAction1Image();
-			 if (image != null) {
-				 holder.action1ImageButton.setImageDrawable(image);	
-				 holder.action1ImageButton.setOnClickListener(_clickHandler);	
-			 }
-			 else {
-				 holder.action1ImageButton.setVisibility(View.INVISIBLE);					 									 
-			 }				
-			
-			 // ImageButton for Action2  (can be turned off if image is null)
-			 holder.action2ImageButton = (ImageButton)convertView.findViewById(R.id.action2ImageButton);
-			 image = currentItem.getAction2Image();
-			 if (image != null) {
-				 holder.action2ImageButton.setImageDrawable(image);	
-				 holder.action2ImageButton.setOnClickListener(_clickHandler);					 
-			 }
-			 else {
-				 holder.action2ImageButton.setVisibility(View.INVISIBLE);
-			 }					 				 				 				
-			 			 						
+			 				 				 							 			 					
 			 convertView.setTag(holder);
 		}
 		else {
 			 holder = (ListViewHolder) convertView.getTag();
 		}
 		
+		//-----------------------------------------------------------------
+		// Now that we have the holder, update it for the current item
+		//-----------------------------------------------------------------
+		// if we aren't displaying Line2...remove it.				
+		if (currentItem.getValueLine2Visible() == false) {
+			holder.valueLine2TextView.setVisibility(View.GONE);
+		}
+		 
+		Drawable image = null;
+		 
+		// ImageButton for Action1 (can be turned off if image is null)
+		holder.action1ImageButton = (ImageButton)convertView.findViewById(R.id.action1ImageButton);				 				
+		image = currentItem.getAction1Image();
+		if (image != null) {
+			holder.action1ImageButton.setImageDrawable(image);	
+			holder.action1ImageButton.setTag(currentItem.getAction1Tag());	
+			holder.action1ImageButton.setOnClickListener(_clickHandler);	
+		}
+		else {
+			holder.action1ImageButton.setVisibility(View.INVISIBLE);					 									 
+		}				
+		
+		 // ImageButton for Action2  (can be turned off if image is null)
+		 holder.action2ImageButton = (ImageButton)convertView.findViewById(R.id.action2ImageButton);
+		 image = currentItem.getAction2Image();
+		 if (image != null) {
+			 holder.action2ImageButton.setImageDrawable(image);	
+			 holder.action2ImageButton.setTag(currentItem.getAction2Tag());
+			 holder.action2ImageButton.setOnClickListener(_clickHandler);					 
+		 }
+		 else {
+			 holder.action2ImageButton.setVisibility(View.INVISIBLE);
+		 }					
+		 			
 		holder.titleTextView.setText(currentItem.getTitle());		
 		holder.valueLine1TextView.setText(currentItem.getValueLine1());			
 		holder.valueLine2TextView.setText(currentItem.getValueLine2());	
-		holder.action1ImageButton.setTag(currentItem.getAction1Tag());			
-		holder.action2ImageButton.setTag(currentItem.getAction2Tag());
-		
+							
 		return convertView;	
 	}
 

@@ -9,11 +9,9 @@
 	<View
        	android:layout_width="fill_parent"
        	android:layout_height="fill_parent"
-       	android:layout_weight="2">
+       	android:layout_weight="3">
     </View>
- 		 
- 		 
- 		 
+ 		  		  		
  	<LinearLayout
   		xmlns:android="http://schemas.android.com/apk/res/android"
   		android:orientation="vertical"
@@ -21,7 +19,6 @@
   		android:layout_height="fill_parent" 
   		android:layout_weight="3">
  		 
-
 	 	<TextView 
 			android:text="for"		
 			android:layout_width="fill_parent" 
@@ -31,24 +28,26 @@
 		</TextView>  
 	
 		<TextView 
-			android:text=""
+			android:text="My Orgname Here"
 			android:id="@+id/txtOrganizationName" 
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:gravity="center"
+			android:layout_height="wrap_content"			
 			android:textSize="20dip"
+			android:gravity="center"
 			android:textStyle="bold"
+			android:textColor="@android:color/black"
 			android:padding="5dip">
 		</TextView>	
 		
 		<TextView 
-			android:text=""
+			android:text="2011.##"
 			android:id="@+id/txtVersion" 
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:gravity="center"
+			android:layout_height="fill_parent"			
 			android:textSize="15dip"
-			android:padding="5dip">
+			android:textColor="@android:color/black"
+			android:padding="5dip"
+			android:gravity="bottom|right">
 		</TextView>	
 		
 	</LinearLayout>	

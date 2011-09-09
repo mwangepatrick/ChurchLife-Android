@@ -1,10 +1,13 @@
 package com.acstechnologies.churchlifev2;
 
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 
@@ -27,7 +30,7 @@ public class MainActivity extends TabActivity {
             setContentView(R.layout.main);		             
 
             Resources res = getResources(); 	// Resource object to get Drawables
-            TabHost tabHost = getTabHost();  	// The activity TabHost
+            final TabHost tabHost = getTabHost();  	// The activity TabHost
             TabHost.TabSpec spec;  				// Resusable TabSpec for each tab
             Intent intent;  					// Reusable Intent for each tab
             
@@ -51,6 +54,17 @@ public class MainActivity extends TabActivity {
                           .setContent(intent);
             tabHost.addTab(spec);
 
+            
+            // Close the soft input keyboard every time the user changes to a different tab
+            tabHost.setOnTabChangedListener(new OnTabChangeListener()
+            {
+            	public void onTabChanged(String tabId)
+                {
+            		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            		imm.hideSoftInputFromWindow(tabHost.getApplicationWindowToken(), 0);
+                }
+            });
+                       
             tabHost.setCurrentTab(0);
             
         }

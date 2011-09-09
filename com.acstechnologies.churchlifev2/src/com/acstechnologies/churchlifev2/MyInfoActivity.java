@@ -17,6 +17,7 @@ public class MyInfoActivity extends OptionsActivity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.myinfo);		
              
         bindControls();

@@ -52,7 +52,8 @@ public class IndividualActivityLoader  {
     			    		    		
     			try {
 	    			if (msg.what == 0) {	        	
-	    					    					    			
+	    					    					
+	    				// individual found.  load the activity to view details
 	           	 		Intent intent = new Intent();
 	           	 		intent.setClass(_context, IndividualActivity.class); 		           	 	
 	           	 		intent.putExtra("individual", msg.getData().getString("individual"));
@@ -99,7 +100,8 @@ public class IndividualActivityLoader  {
 	    			WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl());
 	    	    	IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
 	    	    	
-	    	    	Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+	    	    	// Return the response object (as string) to the message handler above
+	    	    	Message msg = handler.obtainMessage();	
 	    	    	msg.what = 0;
 	    	    	
 	    	    	Bundle b = new Bundle();

@@ -10,11 +10,11 @@
 	    <ImageView android:id="@+id/individualImageView" 
 	    		   android:src="@drawable/no_person_photo"	    		  
 	    		   android:layout_alignParentTop="true" 
-	    		   android:layout_alignParentLeft="true"
-	    		   android:scaleType="fitCenter"
+	    		   android:layout_alignParentLeft="true"	    		   	    		 
 	    		   android:layout_margin="5dip"
 	    		   android:layout_height="70sp"
-	    		   android:layout_width="70sp">
+	    		   android:layout_width="70sp" 
+	    		   android:scaleType="centerCrop">
 	   	</ImageView>
 	
 		<TextView 		
@@ -25,7 +25,7 @@
 				android:textStyle="bold"
 				android:textSize="17sp"
 				android:layout_marginLeft="5dip"
-				android:textColor="@color/White"
+				android:textColor="@android:color/white"
 				android:layout_toRightOf="@+id/individualImageView">
 		</TextView>
 	</LinearLayout>

@@ -72,6 +72,11 @@ public class CustomListItem {
 		_action1Image = action1Image;
 		
 		_valueLine2 = line2;
+		
+		if (line2 != null) {
+			_valueLine2Visible = (line2.length() > 0);
+		}
+		
 		_action2Tag = action2Tag;
 		_action2Image = action2Image;		
 	}

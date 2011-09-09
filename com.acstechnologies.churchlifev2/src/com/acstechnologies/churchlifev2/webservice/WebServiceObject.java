@@ -1,5 +1,9 @@
 package com.acstechnologies.churchlifev2.webservice;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -315,8 +319,32 @@ public class WebServiceObject {
 	}
 		
 
-
-	
+	protected Date getDateValue(String keyname, int indexer) throws AppException{
+		
+		JSONObject o = getItem(indexer);
+		
+		if (o == null) {
+			throw AppException.AppExceptionFactory(
+			ExceptionInfo.TYPE.APPLICATION, ExceptionInfo.SEVERITY.CRITICAL, 
+			"100", "WebServiceObject.getStringValue", 
+			String.format("Invalid read attempt.  No record found at index %s.", indexer));	
+		}
+		else {
+			SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a"); 		
+			String value =  WebServiceObject.getJsonValue(keyname, o);
+			
+			try {
+				return dateFormatter.parse(value);
+			} catch (ParseException e) {
+				throw AppException.AppExceptionFactory(e,
+						   ExceptionInfo.TYPE.UNEXPECTED,
+						   ExceptionInfo.SEVERITY.CRITICAL, 
+						   "100",           												    
+						   "EventsResponse.getStartDate",
+						   String.format("Error attempting to format the date %s.", value)); 
+			}								
+		}	
+	}
 	
 	
 	

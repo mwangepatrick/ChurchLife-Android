@@ -33,7 +33,9 @@ public class IndividualListActivity extends OptionsActivity {
 	private ProgressDialog _progressD;
 	private String _progressText;
 	
-	IndividualsResponse _wsIndividuals;					// results of the web service call
+	ArrayAdapter<String> _itemArrayAdapter;			
+	IndividualsResponse _wsIndividuals;		// results of the web service call
+	
 	AppPreferences _appPrefs;  	
 	
 	EditText txtSearch;
@@ -55,7 +57,8 @@ public class IndividualListActivity extends OptionsActivity {
         	 // Wire up the search button                     
              btnSearch.setOnClickListener(new OnClickListener() {		
              	public void onClick(View v) {	    					
-						_wsIndividuals = null;				// Button click always starts a new search (clears out any prior search results)
+						_wsIndividuals = null;				// Button click always starts a new search (clears out any prior search results)						
+						_itemArrayAdapter = null;
 						doSearchWithProgressWindow();
              	}		
      		 });     
@@ -151,16 +154,42 @@ public class IndividualListActivity extends OptionsActivity {
 	    			removeDialog(DIALOG_PROGRESS_INDIVIDUALS);
 	    			
 	    			try {
-		    			if (msg.what == 0) {	        			
-		       	             String[] names = _wsIndividuals.getFullNameList(true, getResources().getString(R.string.IndividualList_More));
-		       	             
-		       	             // If no results...add the 'No records found.' message.
-		       	             if (names.length == 0) {		       	            
-		       	            	names =  new String[] { getResources().getString(R.string.IndividualList_NoResults) };				       	            	
-		       	             }
-		       	             
-		       	             lv1.setAdapter(new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default, names));
-		       	             
+		    			if (msg.what == 0) {
+		    				
+		    				// If this is the initial search, create an adapter...otherwise this is the result of
+		    				//  the use selecting a 'More Results' item.  If so, remove that item and load more results.
+		    				if (_itemArrayAdapter == null ) {
+		    					_itemArrayAdapter = new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default);
+		    					lv1.setAdapter(_itemArrayAdapter);
+		    				}
+		    				else {		    				
+		    					// Remove the 'More Results...' item before loading more.
+		    					String moreItem = _itemArrayAdapter.getItem(_itemArrayAdapter.getCount()-1);
+		    					_itemArrayAdapter.remove(moreItem); 	    						    						    						    						    					
+		    				}
+		    						    						    						    			
+		    				// Check for empty 
+		    				if (_wsIndividuals.getLength() == 0) {
+		    					_itemArrayAdapter.add(getResources().getString(R.string.IndividualList_NoResults));
+		    					
+		    				}
+		    				else {
+				    		    			    		    		    		    	
+		    					// Add all items from the latest web service request to the adapter
+			    				for (int i = 0; i < _wsIndividuals.getLength(); i++) {				    					
+			    					_itemArrayAdapter.add(_wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i));	  
+			    				}
+			    				
+		    				    // If the web service indicates more records...Add the 'More Records' item
+			    				if (_wsIndividuals.getHasMore() == true) {
+			    					_itemArrayAdapter.add(getResources().getString(R.string.IndividualList_More));
+			    				}
+			    					    			    		    			  
+		    				}	
+		    				
+		    				// Notify the adapter that the data has been updated/set (so the view will be updated)		    				
+		    				((ArrayAdapter<String>)lv1.getAdapter()).notifyDataSetChanged();
+
 		       	             // Hide the keyboard
 		       	             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		       	             imm.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
@@ -233,7 +262,7 @@ public class IndividualListActivity extends OptionsActivity {
     		// First, look for the max position as an item for that position will not exist in 
     		//  the records returned from the webservice.  This is the 'more records' item.  If
     		//  this is selected get the next set of records.  (Remember the array is 0 based)
-       	 	if (position == _wsIndividuals.getLength()) {         	 		
+       	 	if (position != 0 && position % _wsIndividuals.getLength() == 0) {         	 		
        	 		doSearchWithProgressWindow();
        	 	}
        	 	else {

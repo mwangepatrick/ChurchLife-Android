@@ -14,7 +14,10 @@ import com.acstechnologies.churchlifev2.webservice.RESTClient.RequestMethod;
  * 
  */
 public class WebServiceHandler {
-		
+	
+	static final String APPLICATION_ID_KEY = "ApplicationId";
+	static final String APPLICATION_ID_VALUE = "123-123-123";
+	
 	String _baseUrl = null;
 	
 	/** 
@@ -33,6 +36,8 @@ public class WebServiceHandler {
 
 		LoginResponse wsObject = null;
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/validate");
+    	
+    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
     	
     	client.AddParam("sitenumber", siteNumber);
     	client.AddParam("username", username);
@@ -72,6 +77,8 @@ public class WebServiceHandler {
 
 		LoginResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/findbyemail");
+    	
+    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
     	
     	client.AddParam("email", emailAddress);
     	client.AddParam("password", password);    	    	 
@@ -120,6 +127,7 @@ public class WebServiceHandler {
     	
     	String auth = client.getB64Auth(username,password);     	
     	client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
     	
     	try {
     	    client.Execute(RequestMethod.GET);
@@ -143,6 +151,7 @@ public class WebServiceHandler {
 		
 		String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
+		client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
 		
 		try {
 			client.Execute(RequestMethod.GET);
@@ -177,13 +186,13 @@ public class WebServiceHandler {
 	 *  @return 				IndividualResponse (WebServiceObject)   
 	 *  @throws AppException 
 	 *  */ 	
-	public EventResponse getEvents(String username, String password, String siteNumber, 
+	public EventsResponse getEvents(String username, String password, String siteNumber, 
 								   Date startDate, Date stopDate, int startingRecordId, int maxRecordId) throws AppException {
 
-		EventResponse wsObject = null;		    
+		EventsResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/events");
     	  	    	
-    	SimpleDateFormat dateformater = new SimpleDateFormat("MM-dd-yyyy");
+    	SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
 
     	client.AddParam("startDate", dateformater.format(startDate));
     	client.AddParam("stopDate", dateformater.format(stopDate));
@@ -192,10 +201,11 @@ public class WebServiceHandler {
     	
     	String auth = client.getB64Auth(username,password);     	
     	client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
     	
     	try {
     	    client.Execute(RequestMethod.GET);
-			wsObject= new EventResponse(client.getResponse());								
+			wsObject= new EventsResponse(client.getResponse());								
     	}
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
@@ -207,7 +217,30 @@ public class WebServiceHandler {
 		return wsObject;
 	}
 	
-
+	public EventResponse getEvent(String username, String password, String siteNumber, String eventId) throws AppException {
+		
+		EventResponse wsObject = null;		    		
+		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/events/" + eventId);   	
+		
+		String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+		client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+		
+		try {
+			client.Execute(RequestMethod.GET);
+			wsObject = new EventResponse(client.getResponse());								
+		}
+		catch (AppException e)	{
+			// Add some parameters to the error for logging
+			ExceptionInfo info = e.addInfo();
+			info.setContextId("WebserviceHandler.getEvent");
+			info.getParameters().put("siteNumber", siteNumber);
+			info.getParameters().put("eventId", eventId);    		
+			throw e;
+		}    	
+		return wsObject;
+	}
+	
 	// Constructor
 	public WebServiceHandler(String webServiceUrl)	{
 		_baseUrl = webServiceUrl;

@@ -50,49 +50,7 @@ public class IndividualsResponse extends WebServiceObject {
 	// Unlisted 
 	public Boolean getUnlisted(int indexer)		throws AppException { return Boolean.parseBoolean(getStringValue("Unlisted", indexer)); }
 	
-	
-	/**
-	 * Formats a listing of full names (first + last) of all of the people in this object
-	 * 
-	 * @param includeMore  if more than the requested number of results exist, a 'more' will be added
-	 * 						to the end of this list.
-	 * @return String[]
-	 */
-	public String[] getFullNameList(Boolean includeMore) throws AppException {
-		return getFullNameList(includeMore, "...");  //Default text to display
-	}
-	
-	public String[] getFullNameList(Boolean includeMore, String moreTextValue) throws AppException {
-		
-		try {			
-			String[] result;
-		
-			// Create the names array and assign a 'more' item if specified
-			if (this.getHasMore() == true && includeMore == true) {
-				result =  new String[getLength()+1];			 						 
-				result[getLength()] = moreTextValue;
-			}
-			else {
-				 result =  new String[getLength()];
-			}
-	
-			// Build the name list array and return it
-			for (int i = 0; i < getLength(); i++) {		   		   
-				result[i] = this.getFirstName(i) + " " + this.getLastName(i);		  
-			}							
-			
-			return result;
-		}
-		catch (AppException e) {			
-			// Add specific exception information
-			ExceptionInfo ei = e.addInfo();
-			ei.setContextId("WebServiceObject.getFullNameList");
-			ei.setSeverity(ExceptionInfo.SEVERITY.CRITICAL);
-			ei.setErrorDescription("Error attempting to format names array.");					
-			throw e;
-		}	
-	}
-	
+
 	// Constructor
 	public IndividualsResponse(String responseString) throws AppException {
 		super(responseString);	

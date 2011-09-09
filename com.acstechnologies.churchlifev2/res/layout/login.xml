@@ -1,214 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@color/Login.Background" 
-    android:orientation="vertical">
-        
-	<ImageView
-	    	android:id="@+id/imageView1" 
-	    	android:layout_height="wrap_content"
-	    	android:layout_width="match_parent"
-	    	android:src="@drawable/homelogo"	    
-	    	android:layout_gravity="center"
-	    	android:paddingLeft="50dip"
-	    	android:paddingTop="50dip"
-	    	android:paddingRight="50dip">
-	</ImageView>  
-	      	
-	<ViewFlipper
-		android:id="@+id/ViewFlipper01"
-		android:layout_height="wrap_content" 
-		android:layout_width="match_parent">
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroller"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true" >
+
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent" 
+	    android:background="@color/Login.Background" 
+	    android:orientation="vertical">
+	        
+		<ImageView
+		    	android:id="@+id/imageView1" 
+		    	android:layout_height="wrap_content"
+		    	android:layout_width="match_parent"
+		    	android:src="@drawable/homelogo"	    
+		    	android:layout_gravity="center"
+		    	android:paddingLeft="50dip"
+		    	android:paddingTop="50dip"
+		    	android:paddingRight="50dip">
+		</ImageView>  
+		      	
+		<ViewFlipper
+			android:id="@+id/ViewFlipper01"
+			android:layout_height="wrap_content" 
+			android:layout_width="match_parent">
+				
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" 
+			    android:background="@drawable/roundedcornershape" 
+			    android:layout_margin="10dip"
+			    android:padding="5dip"
+			    android:layout_gravity="center"
+			    android:stretchColumns="1"
+			    android:shrinkColumns="1">
+			    		      				   
+			<TableRow>			
+				<TextView 
+				android:text="@string/Login.Email"			
+				android:id="@+id/TextView01" 
+				android:layout_width="wrap_content" 
+				android:layout_height="match_parent"
+				android:gravity="center_vertical"
+				android:textStyle="bold">
+				</TextView>
+				<EditText 
+				android:text="" 
+				android:id="@+id/txtEmail" 
+				android:hint=""		
+				android:layout_width="match_parent" 
+				android:layout_height="match_parent"
+				android:singleLine="true"			
+				android:inputType="textEmailAddress">
+				</EditText>
+			</TableRow>
 			
-		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content" 
-		    android:background="@drawable/roundedcornershape" 
-		    android:layout_margin="10dip"
-		    android:padding="5dip"
-		    android:layout_gravity="center"
-		    android:stretchColumns="1"
-		    android:shrinkColumns="1">
-		    		      				   
-		<TableRow>			
-			<TextView 
-			android:text="@string/Login.Email"			
-			android:id="@+id/TextView01" 
-			android:layout_width="wrap_content" 
-			android:layout_height="match_parent"
-			android:gravity="center_vertical"
-			android:textStyle="bold">
-			</TextView>
-			<EditText 
-			android:text="" 
-			android:id="@+id/txtEmail" 
-			android:hint=""		
-			android:layout_width="match_parent" 
-			android:layout_height="match_parent"
-			android:singleLine="true"			
-			android:inputType="textEmailAddress">
-			</EditText>
-		</TableRow>
-		
-		<TableRow>
-			<TextView 
-				android:text="@string/Login.Password" 
-				android:id="@+id/TextView02" 
+			<TableRow>
+				<TextView 
+					android:text="@string/Login.Password" 
+					android:id="@+id/TextView02" 
+					android:layout_width="wrap_content" 
+					android:layout_height="fill_parent"
+					android:gravity="center_vertical"			
+					android:textStyle="bold">
+				</TextView>
+				<EditText 
+					android:text="" 
+					android:id="@+id/txtEmailPassword" 
+					android:hint=""
+					android:layout_width="fill_parent" 
+					android:layout_height="fill_parent"
+					android:singleLine="true"
+					android:password="true">
+				</EditText>
+			</TableRow>	
+			<TableRow>
+				<TextView			
+					android:text="@string/Login.RememberMe" 
+					android:id="@+id/TextView02" 
+					android:gravity="center_vertical"
+					android:layout_height="match_parent"
+					android:layout_width="wrap_content" 				
+					android:textStyle="bold"
+					android:layout_marginRight="3dip">
+				</TextView>	
+				<CheckBox 
+					android:text="" 
+					android:layout_gravity="left"
+					android:id="@+id/chkRememberMe" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content">
+				</CheckBox>
+			</TableRow>
+			</TableLayout>
+			
+			
+			
+			
+			<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" 
+			    android:background="@drawable/roundedcornershape" 
+			    android:layout_margin="10dip"
+			    android:padding="5dip"
+			    android:layout_gravity="center"
+			    android:stretchColumns="1">		     		    
+			<TableRow>			
+				<TextView 
+				android:text="@string/Login.Username" 
+				android:id="@+id/TextView01b" 
+				android:layout_width="wrap_content" 
+				android:layout_height="fill_parent"
+				android:gravity="center_vertical"
+				android:textStyle="bold">
+				</TextView>
+				<EditText 
+				android:text="" 
+				android:id="@+id/txtUsername" 
+				android:hint=""
+				android:singleLine="true"
+				android:layout_width="fill_parent" 
+				android:layout_height="fill_parent">
+				</EditText>
+			</TableRow>
+			
+			<TableRow>			
+				<TextView 
+				android:text="@string/Login.SiteNumber" 
+				android:id="@+id/TextView01c" 
 				android:layout_width="wrap_content" 
 				android:layout_height="fill_parent"
 				android:gravity="center_vertical"			
 				android:textStyle="bold">
-			</TextView>
-			<EditText 
+				</TextView>
+				<EditText 
 				android:text="" 
-				android:id="@+id/txtEmailPassword" 
+				android:id="@+id/txtSiteNumber" 
 				android:hint=""
+				android:inputType="number"			
 				android:layout_width="fill_parent" 
-				android:layout_height="fill_parent"
-				android:singleLine="true"
-				android:password="true">
-			</EditText>
-		</TableRow>	
-		<TableRow>
-			<TextView			
-				android:text="@string/Login.RememberMe" 
-				android:id="@+id/TextView02" 
-				android:gravity="center_vertical"
-				android:layout_height="match_parent"
-				android:layout_width="wrap_content" 				
-				android:textStyle="bold"
-				android:layout_marginRight="3dip">
-			</TextView>	
-			<CheckBox 
-				android:text="" 
-				android:layout_gravity="left"
-				android:id="@+id/chkRememberMe" 
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content">
-			</CheckBox>
-		</TableRow>
-		</TableLayout>
-		
-		
-		
-		
-		<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content" 
-		    android:background="@drawable/roundedcornershape" 
-		    android:layout_margin="10dip"
-		    android:padding="5dip"
-		    android:layout_gravity="center"
-		    android:stretchColumns="1">		     		    
-		<TableRow>			
-			<TextView 
-			android:text="@string/Login.Username" 
-			android:id="@+id/TextView01b" 
-			android:layout_width="wrap_content" 
-			android:layout_height="fill_parent"
-			android:gravity="center_vertical"
-			android:textStyle="bold">
-			</TextView>
-			<EditText 
-			android:text="" 
-			android:id="@+id/txtUsername" 
-			android:hint=""
-			android:singleLine="true"
-			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent">
-			</EditText>
-		</TableRow>
-		
-		<TableRow>			
-			<TextView 
-			android:text="@string/Login.SiteNumber" 
-			android:id="@+id/TextView01c" 
-			android:layout_width="wrap_content" 
-			android:layout_height="fill_parent"
-			android:gravity="center_vertical"			
-			android:textStyle="bold">
-			</TextView>
-			<EditText 
-			android:text="" 
-			android:id="@+id/txtSiteNumber" 
-			android:hint=""
-			android:inputType="number"			
-			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent">
-			</EditText>
-		</TableRow>
-		
-		<TableRow>
-			<TextView 
-				android:text="@string/Login.Password" 
-				android:id="@+id/TextView02b" 
-				android:layout_width="wrap_content" 
-				android:layout_height="fill_parent"
-				android:gravity="center_vertical"	
-				android:singleLine="true"		
-				android:textStyle="bold">
-			</TextView>
-			<EditText 
-				android:text="" 
-				android:id="@+id/txtPassword" 
-				android:hint=""
+				android:layout_height="fill_parent">
+				</EditText>
+			</TableRow>
+			
+			<TableRow>
+				<TextView 
+					android:text="@string/Login.Password" 
+					android:id="@+id/TextView02b" 
+					android:layout_width="wrap_content" 
+					android:layout_height="fill_parent"
+					android:gravity="center_vertical"	
+					android:singleLine="true"		
+					android:textStyle="bold">
+				</TextView>
+				<EditText 
+					android:text="" 
+					android:id="@+id/txtPassword" 
+					android:hint=""
+					android:layout_width="fill_parent" 
+					android:layout_height="fill_parent"
+					android:password="true">
+				</EditText>
+			</TableRow>		
+			<TableRow></TableRow>			
+			<TableRow>
+				<TextView			
+					android:text="@string/Login.RememberMe" 
+					android:id="@+id/TextView03b" 
+					android:gravity="center_vertical"
+					android:layout_height="match_parent"
+					android:layout_width="wrap_content" 				
+					android:textStyle="bold"
+					android:layout_marginRight="3dip">
+				</TextView>	
+				<CheckBox 
+					android:text="" 
+					android:layout_gravity="left"
+					android:id="@+id/chkRememberMe2" 
+					android:layout_width="wrap_content" 
+					android:layout_height="wrap_content">
+				</CheckBox>
+			</TableRow>
+			</TableLayout>			
+		</ViewFlipper>
+			
+			<Button			
+				android:text="@string/Login.Login" 
+				android:id="@+id/btnLogin"
 				android:layout_width="fill_parent" 
-				android:layout_height="fill_parent"
-				android:password="true">
-			</EditText>
-		</TableRow>		
-		<TableRow></TableRow>			
-		<TableRow>
-			<TextView			
-				android:text="@string/Login.RememberMe" 
-				android:id="@+id/TextView03b" 
-				android:gravity="center_vertical"
-				android:layout_height="match_parent"
-				android:layout_width="wrap_content" 				
-				android:textStyle="bold"
-				android:layout_marginRight="3dip">
-			</TextView>	
-			<CheckBox 
-				android:text="" 
-				android:layout_gravity="left"
-				android:id="@+id/chkRememberMe2" 
-				android:layout_width="wrap_content" 
-				android:layout_height="wrap_content">
-			</CheckBox>
-		</TableRow>
-		</TableLayout>			
-	</ViewFlipper>
+				android:layout_height="wrap_content"
+				android:layout_margin="10dip">
+			</Button>
+					
+					
+			<LinearLayout android:layout_width="match_parent" 
+						  android:gravity="center_horizontal" 
+						  android:layout_height="wrap_content" 
+						  android:layout_gravity="bottom">
+							
+				<ImageButton android:layout_height="wrap_content" 
+						android:src="@drawable/icon_light_dot" 
+						android:id="@+id/imageButtonView1" 
+						android:layout_width="wrap_content"
+						android:background="@null">
+				</ImageButton>	
+				<ImageButton android:layout_height="wrap_content" 
+						android:src="@drawable/icon_dark_dot" 
+						android:id="@+id/imageButtonView2" 
+						android:layout_width="wrap_content"
+						android:background="@null">
+				</ImageButton>				
+			</LinearLayout>		
 		
-		<Button			
-			android:text="@string/Login.Login" 
-			android:id="@+id/btnLogin"
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:layout_margin="10dip">
-		</Button>
-				
-				
-		<LinearLayout android:layout_width="match_parent" 
-					  android:gravity="center_horizontal" 
-					  android:layout_height="wrap_content" 
-					  android:layout_gravity="bottom">
-						
-			<ImageButton android:layout_height="wrap_content" 
-					android:src="@drawable/icon_light_dot" 
-					android:id="@+id/imageButtonView1" 
-					android:layout_width="wrap_content"
-					android:background="@null">
-			</ImageButton>	
-			<ImageButton android:layout_height="wrap_content" 
-					android:src="@drawable/icon_dark_dot" 
-					android:id="@+id/imageButtonView2" 
-					android:layout_width="wrap_content"
-					android:background="@null">
-			</ImageButton>				
-		</LinearLayout>		
-	
-</LinearLayout>
+	</LinearLayout>
 
+</ScrollView>
 
 
