@@ -16,9 +16,9 @@ import com.acstechnologies.churchlifev2.webservice.RESTClient.RequestMethod;
 public class WebServiceHandler {
 	
 	static final String APPLICATION_ID_KEY = "ApplicationId";
-	static final String APPLICATION_ID_VALUE = "123-123-123";
-	
+		
 	String _baseUrl = null;
+	String _applicationId = "";			//app-specific key that gets sent with every request
 	
 	/** 
 	 *  Used to validate/authenticate with the acstechnologies web service layer.
@@ -37,7 +37,7 @@ public class WebServiceHandler {
 		LoginResponse wsObject = null;
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/validate");
     	
-    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
     	client.AddParam("sitenumber", siteNumber);
     	client.AddParam("username", username);
@@ -78,7 +78,7 @@ public class WebServiceHandler {
 		LoginResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/findbyemail");
     	
-    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
     	client.AddParam("email", emailAddress);
     	client.AddParam("password", password);    	    	 
@@ -127,7 +127,7 @@ public class WebServiceHandler {
     	
     	String auth = client.getB64Auth(username,password);     	
     	client.AddHeader("Authorization", auth);
-    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
     	try {
     	    client.Execute(RequestMethod.GET);
@@ -151,7 +151,7 @@ public class WebServiceHandler {
 		
 		String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
-		client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+		client.AddHeader(APPLICATION_ID_KEY, _applicationId);
 		
 		try {
 			client.Execute(RequestMethod.GET);
@@ -201,7 +201,7 @@ public class WebServiceHandler {
     	
     	String auth = client.getB64Auth(username,password);     	
     	client.AddHeader("Authorization", auth);
-    	client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
     	try {
     	    client.Execute(RequestMethod.GET);
@@ -224,7 +224,7 @@ public class WebServiceHandler {
 		
 		String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
-		client.AddHeader(APPLICATION_ID_KEY, APPLICATION_ID_VALUE);
+		client.AddHeader(APPLICATION_ID_KEY, _applicationId);
 		
 		try {
 			client.Execute(RequestMethod.GET);
@@ -242,8 +242,9 @@ public class WebServiceHandler {
 	}
 	
 	// Constructor
-	public WebServiceHandler(String webServiceUrl)	{
+	public WebServiceHandler(String webServiceUrl, String applicationId)	{
 		_baseUrl = webServiceUrl;
+		_applicationId = applicationId;
 	}
 	
 }

@@ -45,9 +45,10 @@ public class EventListItemAdapter extends BaseAdapter {
 	 *
 	 */
 	static class ListViewHolder {		 
-		 TextView titleTextView;
-		 TextView timeTextView;
-		 TextView dateTextView;
+		String id = "";
+		TextView titleTextView;
+		TextView timeTextView;
+		TextView dateTextView;
 	}
 
 	
@@ -84,10 +85,11 @@ public class EventListItemAdapter extends BaseAdapter {
 		}
 		
 		//zzz add header if different
-		
+		holder.id = currentItem.getId();
 		holder.titleTextView.setText(currentItem.getTitle());			
 		holder.timeTextView.setText(currentItem.getTimeText());			
 		holder.dateTextView.setText(currentItem.getDateText());
+		
 		
 		return convertView;	
 		//}

@@ -1,7 +1,7 @@
 package com.acstechnologies.churchlifev2.webservice;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
-import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
+
 
 /**
  * 

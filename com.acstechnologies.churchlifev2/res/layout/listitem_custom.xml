@@ -9,15 +9,15 @@
 			android:text="Title"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"				
-			android:textSize="19sp"
-			android:textColor="@android:color/white">
+			android:textColor="@color/Mustard">
 	</TextView>
 
 	<TextView 		
 			android:id="@+id/valueLine1TextView" 
 			android:text="value for line 1"
 			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
+			android:layout_height="wrap_content"
+			android:textSize="15sp"				
 			android:textColor="@android:color/white"
 			android:layout_below="@+id/titleTextView">
 	</TextView>
@@ -26,7 +26,8 @@
 			android:id="@+id/valueLine2TextView" 
 			android:text="value for line 2"
 			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
+			android:layout_height="wrap_content"
+			android:textSize="15sp"				
 			android:textColor="@android:color/white"
 			android:layout_below="@+id/valueLine1TextView">
 	</TextView>

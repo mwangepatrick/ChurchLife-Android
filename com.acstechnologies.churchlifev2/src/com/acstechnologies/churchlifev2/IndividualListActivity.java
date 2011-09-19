@@ -33,7 +33,7 @@ public class IndividualListActivity extends OptionsActivity {
 	private ProgressDialog _progressD;
 	private String _progressText;
 	
-	ArrayAdapter<String> _itemArrayAdapter;			
+	ArrayAdapter<DefaultListItem> _itemArrayAdapter;
 	IndividualsResponse _wsIndividuals;		// results of the web service call
 	
 	AppPreferences _appPrefs;  	
@@ -65,8 +65,9 @@ public class IndividualListActivity extends OptionsActivity {
              
              // Wire up list on click - display person detail activity
              lv1.setOnItemClickListener(new OnItemClickListener() {
-                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {                	 
-                	 ItemSelected(position);                	                 	
+                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {                 	 
+                	 DefaultListItem itemSelected = (DefaultListItem)parent.getAdapter().getItem(position);                	                	
+                	 ItemSelected(itemSelected.getId(), itemSelected.getDescription());                	                 	
                  }
                });             	         	         	         	         	 
         }
@@ -159,36 +160,37 @@ public class IndividualListActivity extends OptionsActivity {
 		    				// If this is the initial search, create an adapter...otherwise this is the result of
 		    				//  the use selecting a 'More Results' item.  If so, remove that item and load more results.
 		    				if (_itemArrayAdapter == null ) {
-		    					_itemArrayAdapter = new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default);
+		    					//_itemArrayAdapter = new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default);
+		    					_itemArrayAdapter = new ArrayAdapter<DefaultListItem>(IndividualListActivity.this, R.layout.listitem_default);
+		    					
 		    					lv1.setAdapter(_itemArrayAdapter);
 		    				}
 		    				else {		    				
 		    					// Remove the 'More Results...' item before loading more.
-		    					String moreItem = _itemArrayAdapter.getItem(_itemArrayAdapter.getCount()-1);
+		    					DefaultListItem moreItem = _itemArrayAdapter.getItem(_itemArrayAdapter.getCount()-1);
 		    					_itemArrayAdapter.remove(moreItem); 	    						    						    						    						    					
 		    				}
 		    						    						    						    			
 		    				// Check for empty 
-		    				if (_wsIndividuals.getLength() == 0) {
-		    					_itemArrayAdapter.add(getResources().getString(R.string.IndividualList_NoResults));
-		    					
+		    				if (_wsIndividuals.getLength() == 0) {		    					
+		    					_itemArrayAdapter.add(new DefaultListItem("", getResources().getString(R.string.IndividualList_NoResults)));		    					
 		    				}
 		    				else {
 				    		    			    		    		    		    	
 		    					// Add all items from the latest web service request to the adapter
-			    				for (int i = 0; i < _wsIndividuals.getLength(); i++) {				    					
-			    					_itemArrayAdapter.add(_wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i));	  
+			    				for (int i = 0; i < _wsIndividuals.getLength(); i++) {			    								    								    			
+			    					_itemArrayAdapter.add(new DefaultListItem(Integer.toString(_wsIndividuals.getIndvId(i)), _wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i)));
 			    				}
 			    				
 		    				    // If the web service indicates more records...Add the 'More Records' item
-			    				if (_wsIndividuals.getHasMore() == true) {
-			    					_itemArrayAdapter.add(getResources().getString(R.string.IndividualList_More));
+			    				if (_wsIndividuals.getHasMore() == true) {			    					
+			    					_itemArrayAdapter.add(new DefaultListItem("", getResources().getString(R.string.IndividualList_More)));
 			    				}
 			    					    			    		    			  
 		    				}	
 		    				
 		    				// Notify the adapter that the data has been updated/set (so the view will be updated)		    				
-		    				((ArrayAdapter<String>)lv1.getAdapter()).notifyDataSetChanged();
+		    				((ArrayAdapter<DefaultListItem>)lv1.getAdapter()).notifyDataSetChanged();
 
 		       	             // Hide the keyboard
 		       	             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -230,7 +232,7 @@ public class IndividualListActivity extends OptionsActivity {
 		    	    		startingRecordId = _wsIndividuals.getMaxResult();
 		    	    	}
 		    	    	
-		    	    	WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());
+		    	    	WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 		    	    	_wsIndividuals = wh.getIndividuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), searchText, startingRecordId, 0);
 		    	    	handler.sendEmptyMessage(0);
 	    			}
@@ -256,22 +258,21 @@ public class IndividualListActivity extends OptionsActivity {
     }
     
     // Occurs when a user selects an individual on the listview.    
-    private void ItemSelected(int position)
+    private void ItemSelected(String individualId, String individualName)
     {    	    
     	try {
-    		// First, look for the max position as an item for that position will not exist in 
-    		//  the records returned from the webservice.  This is the 'more records' item.  If
-    		//  this is selected get the next set of records.  (Remember the array is 0 based)
-       	 	if (position != 0 && position % _wsIndividuals.getLength() == 0) {         	 		
+    		// First, see if this is an 'individual' that was selected or a 'more records' item.
+    		//  if more...load the next 50 records.
+       	 	if (individualId == "") {         	 		
        	 		doSearchWithProgressWindow();
        	 	}
        	 	else {
        	 		// display the individual
-       	 		String name = _wsIndividuals.getFirstName(position) + " " + _wsIndividuals.getLastName(position);
+       	 		String name = individualName;
        	 		String dialogText = String.format(getString(R.string.Individual_ProgressDialog), name); 
  
        	 		IndividualActivityLoader loader = new IndividualActivityLoader(this, dialogText);
-       	 		loader.loadIndividualWithProgressWindow(_wsIndividuals.getIndvId(position)); 
+       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId)); 
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -281,7 +282,5 @@ public class IndividualListActivity extends OptionsActivity {
 		}  
     }
     
-
-
     	    
 }    

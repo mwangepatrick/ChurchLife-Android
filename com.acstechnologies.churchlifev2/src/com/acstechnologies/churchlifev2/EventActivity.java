@@ -1,8 +1,11 @@
 package com.acstechnologies.churchlifev2;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import android.os.Bundle;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
@@ -13,13 +16,15 @@ import com.acstechnologies.churchlifev2.webservice.EventResponse;
 public class EventActivity extends OptionsActivity {
 
 	EventResponse _wsEvent;					// results of the web service call
+	Date _dateSelected;						// passed in date selected (used in recurring events)
+	
 	AppPreferences _appPrefs;  	
 	
 	TextView titleTextView;
 	TextView timeRangeTextView;
-	TextView locationTextView;
 	TextView monthNameTextView;
 	TextView monthDayTextView;
+	ListView detailsListview;
 	
 	 @Override
 	 public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,10 @@ public class EventActivity extends OptionsActivity {
 	             }
 	             else {
 	            	 _wsEvent = new EventResponse(extraBundle.getString("event"));
+	            	 
+	            	 SimpleDateFormat sdf = new SimpleDateFormat(EventListItem.EVENT_FULLDATE_FORMAT);	            	 
+	            	 _dateSelected = sdf.parse(extraBundle.getString("dateselected"));
+	            	 
 	            	 bindData();
 	             }	        	 
 	        }
@@ -63,8 +72,9 @@ public class EventActivity extends OptionsActivity {
 	    	monthDayTextView = (TextView)this.findViewById(R.id.monthDayTextView);
 	    	
 	    	titleTextView = (TextView)this.findViewById(R.id.titleTextView);
-	    	timeRangeTextView = (TextView)this.findViewById(R.id.timeRangeTextView);
-	    	locationTextView = (TextView)this.findViewById(R.id.locationTextView);	    	
+	    	timeRangeTextView = (TextView)this.findViewById(R.id.timeRangeTextView);	    	
+	    	
+	    	detailsListview = (ListView)this.findViewById(R.id.detailsListview);
 	    }
 	    
 	    
@@ -75,16 +85,34 @@ public class EventActivity extends OptionsActivity {
 	     */
 	    private void bindData() throws AppException {
 	    		    	    		    	
-	    	SimpleDateFormat displayTime = new SimpleDateFormat(EventListActivity.EVENT_TIME_FORMAT);
+	    	SimpleDateFormat displayTime = new SimpleDateFormat(EventListItem.EVENT_TIME_FORMAT);
 	    	String start = displayTime.format(_wsEvent.getStartDate());
 	    	String stop = displayTime.format(_wsEvent.getStopDate());
 	    		    	
-	    	monthNameTextView.setText(new SimpleDateFormat("MMM").format(_wsEvent.getStartDate()));	    	
-	    	monthDayTextView.setText(new SimpleDateFormat("dd").format(_wsEvent.getStartDate()));
+	    	// passed in selected date - get the month and day portion of the passed in date	    	
+	    	monthNameTextView.setText(new SimpleDateFormat("MMM").format(_dateSelected));	    	
+	    	monthDayTextView.setText(new SimpleDateFormat("dd").format(_dateSelected));
 	    	
 			titleTextView.setText(_wsEvent.getEventName());			
 			timeRangeTextView.setText(String.format("%s - %s", start, stop));
-			locationTextView.setText(_wsEvent.getLocation());
+			
+			// listview of details
+			ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem> ();
+			
+			// location
+			itemList.add(new DefaultListItem("0", _wsEvent.getLocation(), getResources().getString(R.string.Event_Location)));
+			
+			// description
+			DefaultListItem description = new DefaultListItem("1", _wsEvent.getDescription(), getResources().getString(R.string.Event_Description));
+			description.setContainsHtml(true);
+			itemList.add(description);
+			
+			detailsListview.setAdapter(new DefaultListItemAdapter(this, itemList));
+			
+			
+			//detailsListview
+			
+			
 	    }
 	    
 }

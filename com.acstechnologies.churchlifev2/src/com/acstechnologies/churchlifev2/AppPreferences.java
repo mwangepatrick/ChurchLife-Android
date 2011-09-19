@@ -15,16 +15,13 @@ public class AppPreferences {
      */
      private static final String APP_SHARED_PREFS = "com.acstechnologies.churchlifev2_preferences"; //  Name of the file -.xml
           
-     /**
-      * This value SHOULD ALWAYS be changed and kept secret!
-      */
-     private static final String SEED = "##initialseedvalue##";
-                   
-     
-     
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
 
+     public static String EncryptionSeedValue() {
+    	 return config.SEED;
+     }
+     
      public AppPreferences(Context context)
      {    	 
          this.appSharedPrefs = context.getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);    	
@@ -93,7 +90,7 @@ public class AppPreferences {
     	
  		String encryptedValue = appSharedPrefs.getString(keyName, "");
  		if (encryptedValue.length() > 0){ 				
- 			result = SimpleCryptography.decrypt(SEED, encryptedValue);
+ 			result = SimpleCryptography.decrypt(EncryptionSeedValue(), encryptedValue);
  		} 		
         return result;        
      }
@@ -103,7 +100,7 @@ public class AppPreferences {
     	String encryptedString = "";
     		
   		if (value.length() > 0){				
-  			encryptedString = SimpleCryptography.encrypt(SEED, value);
+  			encryptedString = SimpleCryptography.encrypt(EncryptionSeedValue(), value);
   		}
   		prefsEditor.putString(keyName, encryptedString);
   	    prefsEditor.commit();   	    	     	

@@ -2,6 +2,8 @@
 <resources>  
     <string name="app_name">Church Life v.2</string>
     
+    <string name="Dialog.Ok">Ok</string>
+    
     <string name="Splash.NoConnectionTitle">Network Unavailable</string>   
     <string name="Splash.NoConnection">Unable to connect to the internet.  Please check your connection and try again.</string>  
     
@@ -35,15 +37,18 @@
 	<string name="Individual.EmailAction">"Email %s"</string>
 	<string name="Individual.AddressAction">"View %s address"</string>
 	<string name="Individual_FamilyMemberAction">View family member</string>
-
+	<string name="Individual.CreateContact">Add to Contacts</string>
+	<string name="Individual.ContactAdded">Contact has been added.</string>
 
 	<string name="EventList.NoResults">Sorry, no events exist.</string>
 	<string name="EventList.ProgressDialog">"Loading events. Please wait..."</string>
-
+	<string name="EventList.More">More Results</string>
 
 	<string name="Event.ProgressDialog">"Retrieving %s. Please wait..."</string>
+	<string name="Event.Location">Location</string>
+	<string name="Event.Description">Description</string>
 
-	<color name="Login.Background">#E6DFE0</color>	
-	<color name="MediumGrey">#9E9E9E</color>	
-	
+
+
+    
 </resources>

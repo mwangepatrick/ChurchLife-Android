@@ -1,72 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:orientation="vertical"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:padding="5sp" >
-
-
-	<LinearLayout android:id="@+id/calendarLayout"
-	    		  android:layout_height="60sp"
-	    		  android:layout_width="60sp" 
-  				  android:orientation="vertical"  				 
-  				  android:background="@drawable/calendar_bg" >
-  				  
-  		<TextView 		
-			android:id="@+id/monthNameTextView" 
-			android:text="Sep"
-			android:layout_width="match_parent" 
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:textStyle="bold"	
-			android:textColor="@android:color/white">
-		</TextView>
-
-	<TextView 		
-			android:id="@+id/monthDayTextView" 
-			android:text="15"
-			android:gravity="center"
-			android:layout_width="match_parent" 
-			android:layout_height="match_parent"
-			android:textStyle="bold"
-			android:textSize="30sp"
-			android:textColor="@android:color/black">
-	</TextView>	  
-  				  
-	</LinearLayout>
-
+  android:layout_height="match_parent">
     
-    <TextView 		
-			android:id="@+id/titleTextView" 
-			android:text="Title"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"				
-			android:textSize="19sp"
-			android:layout_marginLeft="5dip"
-			android:textColor="@android:color/white"
-			android:layout_toRightOf="@+id/calendarLayout">
-	</TextView>
-
-	<TextView 		
-			android:id="@+id/timeRangeTextView" 
-			android:text="value for line 1"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:layout_marginLeft="5dip"	
-			android:layout_toRightOf="@+id/calendarLayout"		
-			android:layout_below="@+id/titleTextView">
-	</TextView>
-
-	<TextView 		
-			android:id="@+id/locationTextView" 
-			android:text="value for line 2"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:layout_marginLeft="5dip"
-			android:layout_toRightOf="@+id/calendarLayout"				
-			android:layout_below="@+id/timeRangeTextView">
-	</TextView>
+   <RelativeLayout 
+   	  android:id="@+id/topLinearLayout"
+   	  android:layout_width="match_parent"
+	  android:layout_height="wrap_content"
+	  android:background="@color/MediumGrey"	  
+	  android:padding="5sp">
+				  
+	    <LinearLayout android:id="@+id/calendarLayout"
+		    		  android:layout_height="70sp"
+		    		  android:layout_width="70sp" 
+	  				  android:orientation="vertical">
+	  				  
+	  		<TextView 		
+				android:id="@+id/monthNameTextView" 
+				android:text="Sep"
+				android:layout_width="match_parent" 
+				android:layout_height="wrap_content"	
+				android:gravity="center"
+				android:textColor="@android:color/white"
+				android:background="@color/Maroon"
+				android:textStyle="bold">
+			</TextView>
 	
-</RelativeLayout>
+			<TextView 		
+					android:id="@+id/monthDayTextView" 
+					android:text="15"
+					android:gravity="center"
+					android:textStyle="bold"
+					android:textSize="35sp"
+					android:textColor="@android:color/black"
+					android:background="@android:color/white" 
+					android:layout_width="match_parent" 
+					android:layout_height="match_parent">
+			</TextView>	    				 
+		</LinearLayout>
+		
+	    <TextView 		
+				android:id="@+id/titleTextView" 
+				android:text="Title"
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"				
+				android:textSize="19sp"
+				android:layout_marginLeft="5dip"
+				android:textColor="@android:color/white"	
+				android:layout_toRightOf="@+id/calendarLayout">
+		</TextView>
+	
+		<TextView 		
+				android:id="@+id/timeRangeTextView" 
+				android:text="9:00 - 10:00"				
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content"			
+				android:layout_marginLeft="5dip"	
+				android:textColor="@android:color/white"
+				android:layout_toRightOf="@+id/calendarLayout"
+				android:layout_below="@+id/titleTextView">
+		</TextView>
+	</RelativeLayout>
+	
+	<ListView
+	  android:id="@+id/detailsListview"
+	  android:layout_width="match_parent"
+	  android:layout_height="wrap_content"
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:orientation="vertical"	  	 	 
+	  android:layout_below="@+id/topLinearLayout">    
+	</ListView>	
+	
+</LinearLayout>

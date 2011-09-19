@@ -65,7 +65,11 @@ public class CustomListItemAdapter extends BaseAdapter {
 		ListViewHolder holder = null;
 		CustomListItem currentItem = _items.get(position);;
 		
-		if (convertView == null) {
+		// normally we would re-use convertView if it is not null; however, since the views
+		//  have visibility changes depending on the data, we must re-inflate and re-create
+		//  them each time.  This is ok here since it is a small list.
+
+//		if (convertView == null) {
 			
 			 LayoutInflater inflater = LayoutInflater.from(_context);
 			 convertView = inflater.inflate(R.layout.listitem_custom, null); 
@@ -76,10 +80,10 @@ public class CustomListItemAdapter extends BaseAdapter {
 			 holder.valueLine2TextView = (TextView) convertView.findViewById(R.id.valueLine2TextView);				 			
 			 				 				 							 			 					
 			 convertView.setTag(holder);
-		}
-		else {
-			 holder = (ListViewHolder) convertView.getTag();
-		}
+//		}
+//		else {
+//			 holder = (ListViewHolder) convertView.getTag();
+//		}
 		
 		//-----------------------------------------------------------------
 		// Now that we have the holder, update it for the current item
@@ -88,6 +92,9 @@ public class CustomListItemAdapter extends BaseAdapter {
 		if (currentItem.getValueLine2Visible() == false) {
 			holder.valueLine2TextView.setVisibility(View.GONE);
 		}
+		else {
+			holder.valueLine2TextView.setVisibility(View.VISIBLE);
+		}
 		 
 		Drawable image = null;
 		 
@@ -95,6 +102,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 		holder.action1ImageButton = (ImageButton)convertView.findViewById(R.id.action1ImageButton);				 				
 		image = currentItem.getAction1Image();
 		if (image != null) {
+			holder.action1ImageButton.setVisibility(View.VISIBLE);
 			holder.action1ImageButton.setImageDrawable(image);	
 			holder.action1ImageButton.setTag(currentItem.getAction1Tag());	
 			holder.action1ImageButton.setOnClickListener(_clickHandler);	
@@ -107,6 +115,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 		 holder.action2ImageButton = (ImageButton)convertView.findViewById(R.id.action2ImageButton);
 		 image = currentItem.getAction2Image();
 		 if (image != null) {
+			 holder.action1ImageButton.setVisibility(View.VISIBLE);
 			 holder.action2ImageButton.setImageDrawable(image);	
 			 holder.action2ImageButton.setTag(currentItem.getAction2Tag());
 			 holder.action2ImageButton.setOnClickListener(_clickHandler);					 

@@ -54,7 +54,6 @@ public class LoginActivity extends OptionsActivity {
 	EditText txtUserName;
 	EditText txtPassword;
 	EditText txtSiteNumber;	
-	CheckBox chkRemember2;
 	
 	private static final int DIALOG_CHURCH_LIST = 1;
 	private static final int DIALOG_PROGRESS = 2;	
@@ -222,8 +221,7 @@ public class LoginActivity extends OptionsActivity {
     	view2 = vf.getChildAt(1); 	
     	txtUserName = (EditText)this.findViewById(R.id.txtUsername);
     	txtPassword = (EditText)this.findViewById(R.id.txtPassword);
-    	txtSiteNumber = (EditText)this.findViewById(R.id.txtSiteNumber);
-    	chkRemember2 =( CheckBox)this.findViewById(R.id.chkRememberMe2);    	       
+    	txtSiteNumber = (EditText)this.findViewById(R.id.txtSiteNumber);  	       
     }
                
     /** 
@@ -394,8 +392,7 @@ public class LoginActivity extends OptionsActivity {
 	 */    
     private LoginResponse doLogin() throws AppException
     {	
-		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl());    		
-		//LoginResponse wsl = null;
+		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);   			
 			
 		// Get (default) form values (from view1)
 		String usernameOrEmail = txtEmail.getText().toString();
@@ -444,7 +441,6 @@ public class LoginActivity extends OptionsActivity {
     	
     	if (vf.getCurrentView() == view2){
     		password = txtPassword.getText().toString();
-    		remember = chkRemember2.isChecked();
     	}    	
     	
     	// If the 'remember me' checkbox was checked, save user preferences 

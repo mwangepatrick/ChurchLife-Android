@@ -8,17 +8,18 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
@@ -40,6 +41,8 @@ import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
  */
 public class IndividualActivity extends OptionsActivity {
 
+    public final static int ADD_CONTACT = 100;
+    
 	//static final int DIALOG_PROGRESS = 0;
 	//private ProgressDialog _progressD;
 	
@@ -75,7 +78,16 @@ public class IndividualActivity extends OptionsActivity {
 	             else {
 	            	 _wsIndividual = new IndividualResponse(extraBundle.getString("individual"));
 	            	 bindData();
-	             }	        	 
+	             }	        
+	             
+	            
+	             // Wire up the add to contacts button                     
+	             nameTextView.setOnClickListener(new OnClickListener() {		
+	             	public void onClick(View v) {	            		     	             		
+	             		addIndividualToContacts();            		
+	             	}		
+	     		});  
+	             
 	        }
 	    	catch (Exception e) {
 	    		ExceptionHelper.notifyUsers(e, IndividualActivity.this);
@@ -103,7 +115,7 @@ public class IndividualActivity extends OptionsActivity {
     private void bindControls(){	    	
     	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
     	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
-    	detailsListview = (ListView)this.findViewById(R.id.detailsListview);
+    	detailsListview = (ListView)this.findViewById(R.id.detailsListview);    	
     }
     
     
@@ -141,6 +153,10 @@ public class IndividualActivity extends OptionsActivity {
 			String phoneAction = "phone:" + fullPhoneNumber;
 			String smsAction = "sms:" + fullPhoneNumber;
 
+			
+			// only set the 'text message' icon if the number is text-able
+			// TODO:  what property to check?  doesn't seem to be in the current properties returned
+			
 			listItems.add(new CustomListItem(String.format(titleString, phone.getPhoneType()),
 											 fullPhoneNumber, phoneAction, getResources().getDrawable(R.drawable.sym_action_call),
 											 null, smsAction, getResources().getDrawable(R.drawable.sms)));			
@@ -334,5 +350,83 @@ public class IndividualActivity extends OptionsActivity {
         	finish();
         }
     };    
+    
+    
+    
+
+    
+    // launch intent to add this person to the phone contacts
+    private void addIndividualToContacts() {
+    	
+    	try {
+//        	Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+//        	intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+
+        	Intent intent = new Intent(Intent.ACTION_INSERT);
+        	intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+    		
+        	// See android.provider.ContactsContract.Intents.Insert for the complete list.
+        	intent.putExtra(ContactsContract.Intents.Insert.NAME, _wsIndividual.getFirstName() + " "  + _wsIndividual.getLastName());
+        	
+        	// Phone Numbers - can add up to 3   	
+        	ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
+
+        	for (int i=0; i < phoneList.size(); i++) {
+        		
+        		String phoneNumber =  String.format("(%s)%s", phoneList.get(i).getAreaCode(), phoneList.get(i).getPhoneNumber());
+        		String phoneType = phoneList.get(i).getPhoneType();        		
+        		
+        		switch(i) {
+        			case 0:
+        				intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber);
+                		intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, phoneType);
+        				break;
+        			case 1:
+        				intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE, phoneNumber);
+                		intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE_TYPE, phoneType);
+        				break;
+        			case 2:
+        				intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE, phoneNumber);
+                		intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE_TYPE, phoneType);
+        				break;        			        	
+        		}        		        		
+        	}
+
+        	
+        	// Email addresses
+        	
+        	
+        	// Addresses - ???
+        	        
+        	// Send with it a unique request code, so when you get called back, you can
+        	// check to make sure it is from the intent you launched 
+        	startActivityForResult(intent, ADD_CONTACT);    		    		    	
+    		
+    	} catch (AppException ae) {
+			ExceptionHelper.notifyNonUsers(ae);						
+			ExceptionHelper.notifyUsers(ae, this);
+		}	    	    	    	
+    }
 	 
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
+      super.onActivityResult(reqCode, resultCode, data);
+
+      switch (reqCode) {
+        case (ADD_CONTACT) :
+          if (resultCode == Activity.RESULT_OK) {
+           
+            Toast.makeText(IndividualActivity.this, R.string.Individual_ContactAdded, Toast.LENGTH_LONG).show();
+            //Uri contactData = data.getData();            
+            //  Cursor c =  managedQuery(contactData, null, null, null, null);
+            //  if (c.moveToFirst()) {
+            //    String name = c.getString(c.getColumnIndexOrThrow(People.NAME));
+            //    // TODO Whatever you want to do with the selected contact name.
+            //  }
+          }
+          break;
+      }
+    }
+
+    
 }

@@ -14,15 +14,11 @@ import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -31,9 +27,6 @@ public class EventListActivity extends OptionsActivity {
 
 	static final int DIALOG_PROGRESS_EVENTS = 0;
 	static final int DIALOG_PROGRESS_EVENT = 1;
-	
-	static final String EVENT_DATE_FORMAT = "EEE MMM d";
-	static final String EVENT_TIME_FORMAT = "h:mm a";
 	
 	private ProgressDialog _progressD;
 	private String _progressText;
@@ -69,8 +62,9 @@ public class EventListActivity extends OptionsActivity {
          
             // Wire up list on click - display event detail activity
             lv1.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {                	 
-                	ItemSelected(position);                	                 	
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {          
+                	EventListItem item = (EventListItem)parent.getAdapter().getItem(position);                 	                
+                	ItemSelected(item);               	                 	
                 }
               });         	
         }           
@@ -137,30 +131,29 @@ public class EventListActivity extends OptionsActivity {
 	    					_itemList = new ArrayList<EventListItem>();
 	    				}
 	    				else {
-	    					// This is a search from the 'More Results' listitem.  
-	    					// Remove that item before loading more.
+	    					// This was a search from the 'More Results' listitem.  
+	    					// Remove that item before loading the ones just retrieved.
 	    					_itemList.remove(_itemList.size()-1); 	    						    						    						    						    					
 	    				}
 	    				
 	    				// Check for empty
 	    				if (_wsEvents.getLength() == 0) {
-	    					//just for now - view needs to pick up that this is a single item and display accordingly
-	    					_itemList.add(new EventListItem(getResources().getString(R.string.EventList_NoResults), "", ""));
+	    					//TODO view needs to pick up that this is a single item and display a single item (centered) 
+	    					//     (it is currently using the same display as the event item)
+	    					_itemList.add(new EventListItem("", getResources().getString(R.string.EventList_NoResults), null));
 	    				}
 	    				else {
-		    		    	SimpleDateFormat displayDate = new SimpleDateFormat(EVENT_DATE_FORMAT);    	
-		    		    	SimpleDateFormat displayTime = new SimpleDateFormat(EVENT_TIME_FORMAT);
-		    		    			    		    		    		    	
+		    		    			    		    		    		    
 		    				for (int i = 0; i < _wsEvents.getLength(); i++) {	
 		    					
-		    					_itemList.add(new EventListItem(_wsEvents.getEventName(i), 
-		    								   displayDate.format(_wsEvents.getStartDate(i)),
-		    								   displayTime.format(_wsEvents.getStartDate(i))));	  
+		    					_itemList.add(new EventListItem(_wsEvents.getEventId(i),
+		    													_wsEvents.getEventName(i), 
+		    													_wsEvents.getStartDate(i)));	  
 		    				}
 		    				
 	    				    // Add the 'More...' at the bottom of the list
-		    				if (_wsEvents.getHasMore() == true) {
-		    					_itemList.add(new EventListItem("More Results...", "", ""));		//just for now...change 
+		    				if (_wsEvents.getHasMore() == true) {		    				
+		    					_itemList.add(new EventListItem("", getResources().getString(R.string.EventList_More), null));	
 		    				}
 
 		    				// Set the adapter to use the arraylist of EventListItem 
@@ -200,9 +193,11 @@ public class EventListActivity extends OptionsActivity {
     				GlobalState gs = (GlobalState) getApplication();
         	    	    		    	    		    
     				// Search for 1 year's worth of data starting today (at 00:00 time)
-    		    	Calendar cal = Calendar.getInstance();
-    		    	cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_WEEK), 0, 0, 0);
-    		    	
+    		    	Calendar cal = Calendar.getInstance();    		    	    		    	
+    		    	cal.set(Calendar.HOUR, 0);
+    		    	cal.set(Calendar.MINUTE, 0);
+    		    	cal.set(Calendar.SECOND, 0);
+    		    	    
     		    	Date start = cal.getTime();    		    	
     		        cal.roll(Calendar.YEAR, 1);
     		        Date stop = cal.getTime();
@@ -214,7 +209,7 @@ public class EventListActivity extends OptionsActivity {
 	    	    		startingRecordId = _wsEvents.getMaxResult();
 	    	    	}
 	    	    	
-	    	    	WebServiceHandler wh1 = new WebServiceHandler(_appPrefs.getWebServiceUrl());
+	    	    	WebServiceHandler wh1 = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 	    	    	_wsEvents = wh1.getEvents(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), start, stop, startingRecordId, 0);
 
 	    	    	handler.sendEmptyMessage(0);
@@ -241,20 +236,19 @@ public class EventListActivity extends OptionsActivity {
     }
     
     // Occurs when a user selects an individual on the listview.    
-    private void ItemSelected(int position)
+    //private void ItemSelected(String eventId, String eventName)
+    private void ItemSelected(EventListItem itemSelected)
     {    	    
     	try {
-    		// First, look for the max position as an item for that position will not exist in 
-    		//  the records returned from the webservice.  This is the 'more records' item.  If
-    		//  this is selected get the next set of records.  (Remember the array is 0 based)
-    		if (position != 0 && position % _wsEvents.getLength() == 0) {               	 		
+    		// First, see if this is an 'event' that was selected or a 'more records' item.
+    		//  if more...load the next 50 records.
+    		if (itemSelected.getId().equals("")) {
        	 		loadEventsWithProgressDialog();
        	 	}
        	 	else {
        	 		// Show the selected event detail
-       	 		_progressText = String.format(getString(R.string.Event_ProgressDialog), _wsEvents.getEventName(position));
-       	 		
-       	 		loadEventWithProgressDialog(_wsEvents.getEventId(position));       	 		
+       	 		 _progressText = String.format(getString(R.string.Event_ProgressDialog), itemSelected.getTitle());       	 		
+       	 		loadEventWithProgressDialog(itemSelected);       	 		
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -270,7 +264,8 @@ public class EventListActivity extends OptionsActivity {
      *   to retrieve a SINGLE event.  Then launches the event activity to display
      *   
      */
-    private void loadEventWithProgressDialog(final String eventId)
+    //private void loadEventWithProgressDialog(final String eventId)
+    private void loadEventWithProgressDialog(final EventListItem eventSelected)
     {               	    			   
     	showDialog(DIALOG_PROGRESS_EVENT);
     	
@@ -288,6 +283,11 @@ public class EventListActivity extends OptionsActivity {
 	    				Intent intent = new Intent();
 	           	 		intent.setClass(EventListActivity.this, EventActivity.class); 		           	 	
 	           	 		intent.putExtra("event", msg.getData().getString("event"));
+	           	 		
+	           	 		SimpleDateFormat sdf = new SimpleDateFormat(EventListItem.EVENT_FULLDATE_FORMAT);
+	           	 		String dateString = sdf.format(eventSelected.getEventDate());	           	 			           	 		           	 			           	 		
+	           	 		intent.putExtra("dateselected", dateString); 
+	           	 		
 	           	 		startActivity(intent);	    				
 	       			}
 	       			else if (msg.what < 0) {
@@ -316,16 +316,16 @@ public class EventListActivity extends OptionsActivity {
     		public void run() {
     			try {    				    				
     				GlobalState gs = (GlobalState) getApplication();
-	    	    	WebServiceHandler wh1 = new WebServiceHandler(_appPrefs.getWebServiceUrl());
+	    	    	WebServiceHandler wh1 = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 	    	    	
-	    	    	EventResponse er = wh1.getEvent(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventId);
+	    	    	EventResponse er = wh1.getEvent(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getId());
 
 	    	    	// Return the response object (as string) to the message handler above
 	    	    	Message msg = handler.obtainMessage();		
 	    	    	msg.what = 0;
 	    	    	
 	    	    	Bundle b = new Bundle();
-    				b.putString("event", er.toString());
+    				b.putString("event", er.toString());   
     				msg.setData(b);
     						    	    		    	    			    	  
 	    	    	handler.sendMessage(msg);

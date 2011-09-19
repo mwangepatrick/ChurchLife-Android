@@ -25,12 +25,7 @@
         	android:summary="This allows you to enter the service URL."
             android:defaultValue="https://api.accessacs.com"
             android:title="Service URL"
-            android:key="serviceurl" android:name="serviceurl"/>             
-		<EditTextPreference
-        	android:summary="This allows you to enter a test"
-            android:defaultValue="blah"
-            android:title="test"
-            android:key="test" android:name="TestPreference"/>		                                                                                
+            android:key="serviceurl" android:name="serviceurl"/>		                                                                                
     </PreferenceCategory>
      
 </PreferenceScreen>

@@ -97,7 +97,7 @@ public class IndividualActivityLoader  {
 	    			GlobalState gs = (GlobalState) _context.getApplicationContext();
 	    			AppPreferences appPrefs =  new AppPreferences(_context.getApplicationContext());
 	    			
-	    			WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl());
+	    			WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 	    	    	IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
 	    	    	
 	    	    	// Return the response object (as string) to the message handler above

@@ -10,26 +10,39 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name" 
     			 android:name="com.acstechnologies.churchlifev2.GlobalState">
+    			 
+    			 
+    			 
         <activity android:name=".SplashActivity"
                   android:theme="@android:style/Theme.NoTitleBar">
                   
-            <intent-filter>
+  			<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
+
         </activity>
         
         <activity
         	android:name=".TestActivity"
-        	android:theme="@android:style/Theme.NoTitleBar">        	           
+        	android:theme="@android:style/Theme.NoTitleBar"
+        	android:windowSoftInputMode="adjustPan">   
+        	   
+
+                          	        
 		</activity>	
+		
+		
+		
+		
 		
         <activity android:name=".LoginActivity"
 				  android:label="@string/app_name"
-				  android:theme="@android:style/Theme.NoTitleBar"
-				  android:windowSoftInputMode="adjustResize">
-				  
+				  android:theme="@android:style/Theme.NoTitleBar"				               
+				  android:windowSoftInputMode="adjustPan">
+				  		
+ 
+            	            
 		</activity>		
 		<activity android:name=".MainActivity" 
 				android:label="@string/app_name"

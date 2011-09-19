@@ -1,6 +1,7 @@
 package com.acstechnologies.churchlifev2;
 
 import com.acstechnologies.churchlifev2.R;
+import com.acstechnologies.churchlifev2.ChurchLifeDialog.ReadyListener;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.webservice.LoginResponse;
@@ -13,8 +14,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
+import android.widget.Button;
 
 public class SplashActivity extends Activity {
 
@@ -35,14 +39,38 @@ public class SplashActivity extends Activity {
         }
     }
         
-    public boolean isOnline() {
+    public boolean isOnline() {    	
     	 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    	 return cm.getActiveNetworkInfo().isConnectedOrConnecting();    	     	 
+    	 NetworkInfo ni = cm.getActiveNetworkInfo();
+    	 
+    	 if (ni != null) {
+    		return ni.isConnectedOrConnecting();  
+    	 }
+    	 else {
+    		 return false;
+    	 }    	    	     	 
     }
 
     protected Dialog onCreateDialog(int id) {
 		 switch(id) {
 	     case DIALOG_PROGRESS_NONETWORK:
+
+	    	 ChurchLifeDialog dialog = new ChurchLifeDialog(this, "test", null);
+	    	 //dialog.setOnDismissListener(listener);
+	    	 
+	    	 Button okBtn = (Button)dialog.findViewById(R.id.buttonOk);
+	    	 
+//	    	 okBtn.setOnClickListener(new OnClickListener() {
+//	             public void onClick(DialogInterface dialog, int id) {
+//	                 dialog.cancel();
+//	                 finish();
+//	             }
+//	         });
+	    	 
+	    	 
+	    	 return dialog;
+	    	 
+	    	 /*
 	    	 
 	    	 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    	 
@@ -57,7 +85,7 @@ public class SplashActivity extends Activity {
 	         });
 	    	 
 	    	 return builder.create();
-	    	 
+	    	 */
 	     default:
 	    	 return null;
 	     }
@@ -122,7 +150,7 @@ public class SplashActivity extends Activity {
            	            
         if (auth1.length() > 0 && auth2.length() > 0){
             	
-         	WebServiceHandler wh = new WebServiceHandler(prefs.getWebServiceUrl());    		            		
+         	WebServiceHandler wh = new WebServiceHandler(prefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);    		            		
            	LoginResponse response = wh.login(auth1, auth2, auth3);            	
            	result = (response.getStatusCode() == 0);
            	
