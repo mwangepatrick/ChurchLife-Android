@@ -7,9 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -23,13 +22,11 @@ public class CustomListItemAdapter extends BaseAdapter {
 	
 	private ArrayList<CustomListItem> _items;
 	private Context _context;
-	private OnClickListener _clickHandler = null;			// called on image button click (see listitem_custom.xml)
 
 	// Constructor
-	public CustomListItemAdapter(Context context, ArrayList<CustomListItem> items, OnClickListener clickHandler) {			
+	public CustomListItemAdapter(Context context, ArrayList<CustomListItem> items) { 	
 		_context = context;
 		_items = items;		
-		_clickHandler = clickHandler;
 	}
 	
 	public Context getContext()			{  return _context;				}
@@ -52,8 +49,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 		 TextView titleTextView;
 		 TextView valueLine1TextView;
 		 TextView valueLine2TextView;
-		 ImageButton action1ImageButton;	  //rightmost image button (default)	 		
-		 ImageButton action2ImageButton;		 
+		 ImageView actionImageView;	  	 
 	}
 
 	
@@ -64,12 +60,8 @@ public class CustomListItemAdapter extends BaseAdapter {
 		
 		ListViewHolder holder = null;
 		CustomListItem currentItem = _items.get(position);;
-		
-		// normally we would re-use convertView if it is not null; however, since the views
-		//  have visibility changes depending on the data, we must re-inflate and re-create
-		//  them each time.  This is ok here since it is a small list.
-
-//		if (convertView == null) {
+	
+		if (convertView == null) {
 			
 			 LayoutInflater inflater = LayoutInflater.from(_context);
 			 convertView = inflater.inflate(R.layout.listitem_custom, null); 
@@ -78,12 +70,13 @@ public class CustomListItemAdapter extends BaseAdapter {
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.valueLine1TextView = (TextView) convertView.findViewById(R.id.valueLine1TextView);			
 			 holder.valueLine2TextView = (TextView) convertView.findViewById(R.id.valueLine2TextView);				 			
-			 				 				 							 			 					
+			 holder.actionImageView = (ImageView) convertView.findViewById(R.id.actionImageView);			
+			 
 			 convertView.setTag(holder);
-//		}
-//		else {
-//			 holder = (ListViewHolder) convertView.getTag();
-//		}
+		}
+		else {
+			 holder = (ListViewHolder) convertView.getTag();
+		}
 		
 		//-----------------------------------------------------------------
 		// Now that we have the holder, update it for the current item
@@ -96,33 +89,15 @@ public class CustomListItemAdapter extends BaseAdapter {
 			holder.valueLine2TextView.setVisibility(View.VISIBLE);
 		}
 		 
-		Drawable image = null;
-		 
-		// ImageButton for Action1 (can be turned off if image is null)
-		holder.action1ImageButton = (ImageButton)convertView.findViewById(R.id.action1ImageButton);				 				
-		image = currentItem.getAction1Image();
+		Drawable image = currentItem.getActionImage();
 		if (image != null) {
-			holder.action1ImageButton.setVisibility(View.VISIBLE);
-			holder.action1ImageButton.setImageDrawable(image);	
-			holder.action1ImageButton.setTag(currentItem.getAction1Tag());	
-			holder.action1ImageButton.setOnClickListener(_clickHandler);	
+			 holder.actionImageView.setVisibility(View.VISIBLE);
+			 holder.actionImageView.setImageDrawable(image);	
+			 holder.actionImageView.setTag(currentItem.getActionTag());				 
 		}
 		else {
-			holder.action1ImageButton.setVisibility(View.INVISIBLE);					 									 
-		}				
-		
-		 // ImageButton for Action2  (can be turned off if image is null)
-		 holder.action2ImageButton = (ImageButton)convertView.findViewById(R.id.action2ImageButton);
-		 image = currentItem.getAction2Image();
-		 if (image != null) {
-			 holder.action1ImageButton.setVisibility(View.VISIBLE);
-			 holder.action2ImageButton.setImageDrawable(image);	
-			 holder.action2ImageButton.setTag(currentItem.getAction2Tag());
-			 holder.action2ImageButton.setOnClickListener(_clickHandler);					 
-		 }
-		 else {
-			 holder.action2ImageButton.setVisibility(View.INVISIBLE);
-		 }					
+			 holder.actionImageView.setVisibility(View.INVISIBLE);
+		}					
 		 			
 		holder.titleTextView.setText(currentItem.getTitle());		
 		holder.valueLine1TextView.setText(currentItem.getValueLine1());			

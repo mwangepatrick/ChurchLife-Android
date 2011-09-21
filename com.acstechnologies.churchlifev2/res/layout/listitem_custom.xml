@@ -17,7 +17,7 @@
 			android:text="value for line 1"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
-			android:textSize="15sp"				
+			android:textSize="19sp"				
 			android:textColor="@android:color/white"
 			android:layout_below="@+id/titleTextView">
 	</TextView>
@@ -27,29 +27,20 @@
 			android:text="value for line 2"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"
-			android:textSize="15sp"				
+			android:textSize="19sp"				
 			android:textColor="@android:color/white"
 			android:layout_below="@+id/valueLine1TextView">
 	</TextView>
-	   	  
-    <ImageButton android:id="@+id/action2ImageButton" 
-    		   android:src="@drawable/sms"
-    		   android:background="@android:color/transparent" 
-    		   android:layout_height="wrap_content" 
-    		   android:layout_width="wrap_content" 		    		 
-    		   android:layout_margin="5dip"    		  
-    		   android:layout_toLeftOf="@+id/action1ImageButton">
-   	</ImageButton>
-   	  
-   	<ImageButton
-   		android:id="@+id/action1ImageButton" 
-   		android:src="@drawable/call_contact"  
+	   	     	  
+   	<ImageView
+   		android:id="@+id/actionImageView" 
+   		android:src="@drawable/call_sms"  
    		android:layout_height="wrap_content"
    		android:layout_width="wrap_content"   		
    		android:background="@android:color/transparent" 
    		android:layout_margin="5dip"
    		android:layout_alignParentRight="true">
-   	</ImageButton>
+   	</ImageView>
    	   	   	
 </RelativeLayout>
 

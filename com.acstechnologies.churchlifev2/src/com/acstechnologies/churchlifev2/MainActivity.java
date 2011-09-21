@@ -17,6 +17,8 @@ import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
  *    
  * @author softwarearchitect
  *
+ * tabs at bottom:  http://stackoverflow.com/questions/2395661/android-tabs-at-the-bottom
+ *
  */
 public class MainActivity extends TabActivity {
 
@@ -37,20 +39,23 @@ public class MainActivity extends TabActivity {
             // Initialize a TabSpec for each tab and add it to the TabHost
             
             // TAB - People
-            intent = new Intent().setClass(this, IndividualListActivity.class);
-            spec = tabHost.newTabSpec("people").setIndicator("People", res.getDrawable(R.drawable.ic_tab_people))
-                          .setContent(intent);
+            intent = new Intent().setClass(this, IndividualListActivity.class);                     
+            spec = tabHost.newTabSpec("people")         
+            			  .setIndicator(res.getString(R.string.TabPeople), 
+            			   res.getDrawable(R.drawable.ic_tab_people))
+                          .setContent(intent);             
             tabHost.addTab(spec);
 
+            
             // TAB - Calendar
             intent = new Intent().setClass(this, EventListActivity.class);
-            spec = tabHost.newTabSpec("calendar").setIndicator("Calendar", res.getDrawable(R.drawable.ic_tab_calendar))
+            spec = tabHost.newTabSpec("calendar").setIndicator(res.getString(R.string.TabCalendar), res.getDrawable(R.drawable.ic_tab_calendar))
                           .setContent(intent);
             tabHost.addTab(spec);
 
             // Tab - My Info
             intent = new Intent().setClass(this, MyInfoActivity.class);
-            spec = tabHost.newTabSpec("myinfo").setIndicator("My Church", res.getDrawable(R.drawable.ic_tab_info))
+            spec = tabHost.newTabSpec("myinfo").setIndicator(res.getString(R.string.TabMyInfo), res.getDrawable(R.drawable.ic_tab_info))
                           .setContent(intent);
             tabHost.addTab(spec);
 

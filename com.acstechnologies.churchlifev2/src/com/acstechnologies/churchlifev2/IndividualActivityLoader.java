@@ -52,7 +52,7 @@ public class IndividualActivityLoader  {
     			    		    		
     			try {
 	    			if (msg.what == 0) {	        	
-	    					    					
+	    				
 	    				// individual found.  load the activity to view details
 	           	 		Intent intent = new Intent();
 	           	 		intent.setClass(_context, IndividualActivity.class); 		           	 	

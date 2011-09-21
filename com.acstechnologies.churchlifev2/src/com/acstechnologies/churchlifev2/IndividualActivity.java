@@ -9,6 +9,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,10 +19,12 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
@@ -41,8 +46,10 @@ import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
  */
 public class IndividualActivity extends OptionsActivity {
 
-    public final static int ADD_CONTACT = 100;
+    private final static int ADD_CONTACT = 100;
     
+    private static final int DIALOG_PHONE_SELECT = 200;
+       
 	//static final int DIALOG_PROGRESS = 0;
 	//private ProgressDialog _progressD;
 	
@@ -79,9 +86,8 @@ public class IndividualActivity extends OptionsActivity {
 	            	 _wsIndividual = new IndividualResponse(extraBundle.getString("individual"));
 	            	 bindData();
 	             }	        
-	             
-	            
-	             // Wire up the add to contacts button                     
+	             	            
+	             // Wire up the 'add to contacts' feature                      
 	             nameTextView.setOnClickListener(new OnClickListener() {		
 	             	public void onClick(View v) {	            		     	             		
 	             		addIndividualToContacts();            		
@@ -95,18 +101,46 @@ public class IndividualActivity extends OptionsActivity {
 	    	}  	        
 	    }
 
-//	 protected Dialog onCreateDialog(int id) {
-//		 switch(id) {
+	 
+	 
+	 protected Dialog onCreateDialog(int id, Bundle args) {
+		 switch(id) {
+		 
+		 // if user selects a phone number, ask which action to perform
+		 case DIALOG_PHONE_SELECT:
+			 
+			 // Get the phone number passed to this dialog (so we can use it as a title)
+			 final String phoneNumber = args.getString("phonenumber");
+			 			 
+			 final CharSequence[] items = new CharSequence[2];
+			 items[0] = (String)this.getResources().getText(R.string.Individual_PhoneNumberDial);	// call the number
+			 items[1] = (String)this.getResources().getText(R.string.Individual_PhoneNumberText); 	// send a text message
+	        	
+			 AlertDialog.Builder b = new AlertDialog.Builder(IndividualActivity.this);	        	         	        
+		     b.setTitle(phoneNumber);           
+		     b.setItems(items, new DialogInterface.OnClickListener() {
+		    	 public void onClick(DialogInterface dialog, int which) {		              		    				    			 
+		    		 if (which == 0) {
+		    			 callPhoneNumber(phoneNumber);
+		    		 }
+		    		 else {
+		    			 sendTextMessage(phoneNumber);		
+		    		 }		    		 
+		    	 }
+		     });
+		        
+		     return b.create();			
+		        
 //	     case DIALOG_PROGRESS:
 //	    	 _progressD = new ProgressDialog(IndividualActivity.this);
 //	         _progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
 //	         _progressD.setIndeterminate(true);
 //	         _progressD.setCancelable(false);
 //	    	 return _progressD;	  
-//	     default:
-//	    	 return null;
-//	     }
-//	 }
+	     default:
+	    	 return null;
+	     }
+	 }
    
 	 
     /**
@@ -150,16 +184,15 @@ public class IndividualActivity extends OptionsActivity {
 		for (IndividualPhone phone : phoneList) {
 			
 			String fullPhoneNumber = String.format("(%s) %s", phone.getAreaCode(), phone.getPhoneNumber());
-			String phoneAction = "phone:" + fullPhoneNumber;
-			String smsAction = "sms:" + fullPhoneNumber;
-
-			
+					
 			// only set the 'text message' icon if the number is text-able
 			// TODO:  what property to check?  doesn't seem to be in the current properties returned
-			
+			String defaultAction = "phone:" + fullPhoneNumber;
+			//String dialAction = "phonedial:" + fullPhoneNumber;
+			//String smsAction = "phonesms:" + fullPhoneNumber;
+						
 			listItems.add(new CustomListItem(String.format(titleString, phone.getPhoneType()),
-											 fullPhoneNumber, phoneAction, getResources().getDrawable(R.drawable.sym_action_call),
-											 null, smsAction, getResources().getDrawable(R.drawable.sms)));			
+											 fullPhoneNumber, "", defaultAction, getResources().getDrawable(R.drawable.call_sms)));			
 		}
 		
 		
@@ -169,7 +202,7 @@ public class IndividualActivity extends OptionsActivity {
 		ArrayList<IndividualEmail> emailList = _wsIndividual.getEmails();
 		for (IndividualEmail email : emailList) {
 			listItems.add(new CustomListItem(String.format(titleString, email.getEmailType()),
-											 email.getEmailAddress(),											
+											 email.getEmailAddress(), "",											
 											 "email:" + email.getEmailAddress(),
 											 getResources().getDrawable(R.drawable.sym_action_email)));			
 		}
@@ -183,12 +216,9 @@ public class IndividualActivity extends OptionsActivity {
 			String actionTag = String.format("map:%s %s %s, %s %s", address.getAddress(), address.getAddress2(), address.getCity(), address.getState(), address.getZipcode());
 			
 			listItems.add(new CustomListItem(String.format(titleString, address.getAddressType()),
-											 address.getAddress(),											
+											 address.getAddress(), addressLine2,											
 											 actionTag,
-											 getResources().getDrawable(R.drawable.ic_menu_compass),
-											 addressLine2,
-											 null, 
-											 null));			
+											 getResources().getDrawable(R.drawable.ic_menu_compass)));			
 		}
 				
 		// Family members - add to listitems
@@ -197,24 +227,18 @@ public class IndividualActivity extends OptionsActivity {
 		ArrayList<IndividualFamilyMember> memberList = _wsIndividual.getFamilyMembers();
 		for (IndividualFamilyMember member : memberList) {
 			listItems.add(new CustomListItem(titleString,
-											 String.format("%s %s", member.getFirstName(), member.getLastName()),											
+											 String.format("%s %s", member.getFirstName(), member.getLastName()), "", 											
 											 "individual:" + Integer.toString(member.getIndividualId()),
 											 getResources().getDrawable(R.drawable.user)));			
 		}
-		
-		// This handles the button click of the custom list item image buttons.  
-		//  The listview itself is not clickable (cannot be once a focusable/clickable 
-		//  element is on the view...http://code.google.com/p/android/issues/detail?id=3414)
-		//
-		// The button tag contains the 'command' or instructions of what to do and any 
-		//  data needed.  Example:  phone:888-123-1234
-		OnClickListener myClickListener = new OnClickListener() {
-			public void onClick(View v) {	
-				doAction(v.getTag().toString());
-			}
-		};
-				
-		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems, myClickListener));
+					
+		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems));				
+		detailsListview.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
+            	CustomListItem item = (CustomListItem)parent.getAdapter().getItem(position);
+            	doAction(item.getActionTag());            	
+            }
+          });  
 		
 		//works
 		//TextView headerText = new TextView(this);
@@ -263,9 +287,16 @@ public class IndividualActivity extends OptionsActivity {
     	String argument = actionTag.substring(actionTag.indexOf(":")+1);
     	
     	if (command.equals("phone")) {
+    		
+    		// ask user to text or dial the number
+        	Bundle args = new Bundle();
+        	args.putString("phonenumber", argument);      
+        	showDialog(DIALOG_PHONE_SELECT, args); 
+        	        	        	    		    		    		
+    	}else if (command.equals("phonedial")) {    		
     		callPhoneNumber(argument);
     		
-    	}else if (command.equals("sms")) {
+    	}else if (command.equals("phonesms")) {
     		sendTextMessage(argument);
     		
     	}else if (command.equals("email")) {
@@ -351,9 +382,6 @@ public class IndividualActivity extends OptionsActivity {
         }
     };    
     
-    
-    
-
     
     // launch intent to add this person to the phone contacts
     private void addIndividualToContacts() {

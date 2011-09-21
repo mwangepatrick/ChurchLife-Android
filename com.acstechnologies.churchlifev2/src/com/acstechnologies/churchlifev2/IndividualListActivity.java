@@ -10,6 +10,7 @@ import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -272,7 +273,7 @@ public class IndividualListActivity extends OptionsActivity {
        	 		String dialogText = String.format(getString(R.string.Individual_ProgressDialog), name); 
  
        	 		IndividualActivityLoader loader = new IndividualActivityLoader(this, dialogText);
-       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId)); 
+       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId));       	 						
        	 	}       	 	       	 	
     	}
         catch (Exception e) {

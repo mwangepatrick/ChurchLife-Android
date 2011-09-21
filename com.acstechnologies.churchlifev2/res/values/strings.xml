@@ -4,6 +4,13 @@
     
     <string name="Dialog.Ok">Ok</string>
     
+    <string name="TabPeople">People</string>
+    <string name="TabCalendar">Calendar</string>    
+    <string name="TabMyInfo">My Church</string>
+    
+    
+    
+    
     <string name="Splash.NoConnectionTitle">Network Unavailable</string>   
     <string name="Splash.NoConnection">Unable to connect to the internet.  Please check your connection and try again.</string>  
     
@@ -39,6 +46,9 @@
 	<string name="Individual_FamilyMemberAction">View family member</string>
 	<string name="Individual.CreateContact">Add to Contacts</string>
 	<string name="Individual.ContactAdded">Contact has been added.</string>
+	<string name="Individual.PhoneNumberDial">Call This Number</string>
+	<string name="Individual.PhoneNumberText">Send Text Message</string>
+	
 
 	<string name="EventList.NoResults">Sorry, no events exist.</string>
 	<string name="EventList.ProgressDialog">"Loading events. Please wait..."</string>
