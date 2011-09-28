@@ -1,44 +1,69 @@
 package com.acstechnologies.churchlifev2;
 
 import com.acstechnologies.churchlifev2.R;
-import com.acstechnologies.churchlifev2.ChurchLifeDialog.ReadyListener;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.webservice.LoginResponse;
+import com.acstechnologies.churchlifev2.webservice.WaitForInternet;
+import com.acstechnologies.churchlifev2.webservice.WaitForInternetCallback;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextThemeWrapper;
-import android.widget.Button;
 
 public class SplashActivity extends Activity {
-
-	static final int DIALOG_PROGRESS_NONETWORK = 0;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);       
+                       
+        doNetworkOperationWithConnectCheck();
         
-        if (isOnline() == false)
-        {
-        	showDialog(DIALOG_PROGRESS_NONETWORK);        	
-        }
-        else {
-        	new AutoLoginTask().execute();				// login in background
-        }
+        //test...
+        // call
+        //  new new AutoLoginTask().execute();				// login in background
+        //  add exception handler to ui handler - see handler
+        
+//        // Perform network action inside a network check with "retry/exit" dialog
+//        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
+//        	public void onConnectionSuccess() {
+//        		new AutoLoginTask().execute();				// login in background
+//        	}        		 
+//        	public void onConnectionFailure() {        		
+//        		finish();
+//        	}
+//        };          
+//        WaitForInternet.setCallback(callback);
+                       
     }
         
+    /**
+     * Wraps the network operation to be performed with a connection check "retry/exit" dialog box
+     * @param object 
+     * 
+     */
+    private void doNetworkOperationWithConnectCheck() {
+    	
+        // Perform network action inside a network check with "retry/exit" dialog
+        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
+        	public void onConnectionSuccess() {
+        		new AutoLoginTask().execute();		//perform action (connection available)
+        	}        		 
+        	public void onConnectionFailure() {        		
+        		finish();							// exit this task (user selected 'exit' - connection unavailable)
+        	}
+        };          
+        WaitForInternet.setCallback(callback);        
+    }
+    
+    // NOTE:  Currently NOT used
     public boolean isOnline() {    	
     	 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
     	 NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -51,46 +76,6 @@ public class SplashActivity extends Activity {
     	 }    	    	     	 
     }
 
-    protected Dialog onCreateDialog(int id) {
-		 switch(id) {
-	     case DIALOG_PROGRESS_NONETWORK:
-
-	    	 ChurchLifeDialog dialog = new ChurchLifeDialog(this, "test", null);
-	    	 //dialog.setOnDismissListener(listener);
-	    	 
-	    	 Button okBtn = (Button)dialog.findViewById(R.id.buttonOk);
-	    	 
-//	    	 okBtn.setOnClickListener(new OnClickListener() {
-//	             public void onClick(DialogInterface dialog, int id) {
-//	                 dialog.cancel();
-//	                 finish();
-//	             }
-//	         });
-	    	 
-	    	 
-	    	 return dialog;
-	    	 
-	    	 /*
-	    	 
-	    	 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    	 
-	    	 builder.setMessage(R.string.Splash_NoConnection);
-	    	 builder.setTitle(R.string.Splash_NoConnection);
-	    	 builder.setCancelable(true);	    	 	    	 
-	    	 builder.setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-	             public void onClick(DialogInterface dialog, int id) {
-	                 dialog.cancel();
-	                 finish();
-	             }
-	         });
-	    	 
-	    	 return builder.create();
-	    	 */
-	     default:
-	    	 return null;
-	     }
-	 }
-    
     /**
      *  Executes on a background thread.  If error, log the message and
      *    route the user to the login page.
@@ -123,6 +108,11 @@ public class SplashActivity extends Activity {
     				nextIntent = new Intent(SplashActivity.this, MainActivity.class);    
            	}
            	else {
+           		
+           		//zzz test
+           		// if exception is internet down, show dialog with retry/exit (wait)
+           		
+           		
            		ExceptionHelper.notifyNonUsers(e);            	
            	}
         					

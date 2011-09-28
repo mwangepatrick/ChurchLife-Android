@@ -1,6 +1,8 @@
 package com.acstechnologies.churchlifev2.exceptionhandling;
 
 
+import com.acstechnologies.churchlifev2.ChurchLifeDialog;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
@@ -25,11 +27,17 @@ public class ExceptionHelper {
 		    	ShowAlert(context, ae.extractErrorDescription());		    		
 		    } 
 		    else if(ae.getErrorType() == ExceptionInfo.TYPE.APPLICATION) {
-
+		    	
 		    	// The error was not caused by user / client.
 		    	// Just show a standard error message.
-		    	ShowAlert(context, ae.extractErrorDescription());		    			    	
-		    }		  
+		    	ShowAlert(context, ae.extractErrorDescription());			    			    			    	
+		    }		  		 
+		    else if(ae.getErrorType() == ExceptionInfo.TYPE.NOCONNECTION) {
+		    	
+		    	// Show connection error dialog box
+		    	final ChurchLifeDialog dialog = new ChurchLifeDialog(context);
+		    	dialog.show();
+		    }
 		    else if(ae.getErrorType() == ExceptionInfo.TYPE.UNEXPECTED) {
 
 		    	String msg = String.format("An unexpected error has occurred.  The error is: %s", ae.extractErrorDescription());		    	

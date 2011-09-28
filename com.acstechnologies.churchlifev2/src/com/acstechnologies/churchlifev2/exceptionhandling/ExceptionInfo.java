@@ -11,7 +11,7 @@ public class ExceptionInfo {
 	}
 	
 	public enum TYPE {
-		UNEXPECTED,APPLICATION,VALIDATION		
+		UNEXPECTED,APPLICATION,VALIDATION,NOCONNECTION		
 	}
 		
 	protected Throwable cause                = null;

@@ -4,57 +4,55 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.Button;
 
 public class ChurchLifeDialog extends Dialog {
 
-    private String _name;
-    private ReadyListener _readyListener;
+    private Button btnClose;
+    private Button btnRetry;
+	
+    private View.OnClickListener _closeListener;
+    private View.OnClickListener _retryListener;
     
-	
-	
-	public interface ReadyListener {
-		public void ready(String name);
-	}
-
-	
-	
-	
-	public ChurchLifeDialog(Context context, String name, ReadyListener readyListener) {
+    public void setCloseListener(View.OnClickListener listener) {
+    	_closeListener = listener;
+    }
+    
+    public void setRetryListener(View.OnClickListener listener) {
+    	_retryListener = listener;
+    }   
+    
+	// Constructor
+	public ChurchLifeDialog(Context context) {
 		super(context);
-		_name = name;
-		_readyListener = readyListener;
-				
-		
+
 		/** 'Window.FEATURE_NO_TITLE' - Used to hide the title */
-		//requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
-		/** Design the dialog in main.xml file */
-		//setContentView(R.layout.main);
-		
-		//okButton = (Button) findViewById(R.id.OkButton);
-		//okButton.setOnClickListener(this);
-			
+		requestWindowFeature(Window.FEATURE_NO_TITLE);		
 	}
 	
 	  @Override
 	  public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.dialog_networkerror);
-	        //setTitle("Enter your Name ");
 	        
-	        Button buttonOK = (Button) findViewById(R.id.buttonOk);
-	        buttonOK.setOnClickListener(new OKListener());
-	        //etName = (EditText) findViewById(R.id.EditText01);
+	        getWindow().setLayout(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);	// Make full screen dialog
+	        
+	        bindControls();						// Set state variables to their form controls	       
 	    }
 	
-	    private class OKListener implements android.view.View.OnClickListener {
-	        @Override
-	        public void onClick(View v) {
-	           // _readyListener.ready(String.valueOf(etName.getText()));
-	            ChurchLifeDialog.this.dismiss();
-	        }
-	    }
-	    
+	  
+	  /**
+	  *  Links state variables to their respective form controls
+	  */
+	  private void bindControls(){
+	    	
+		  btnClose = (Button)this.findViewById(R.id.btnClose);	
+		  btnClose.setOnClickListener(_closeListener);
+	    	
+		  btnRetry = (Button)this.findViewById(R.id.btnRetry);	
+		  btnRetry.setOnClickListener(_retryListener);  
+	  }
+	    	    
 }

@@ -14,8 +14,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -55,6 +58,21 @@ public class IndividualListActivity extends OptionsActivity {
         	         	 
         	 bindControls();								// Set state variables to their form controls
         	         	 
+        	 // If a list of people is present, clear it when the user 
+        	 //  begins to enter different search text
+        	 TextWatcher tw = new TextWatcher() {
+        		 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        		 public void onTextChanged(CharSequence s, int start, int before, int count) { 
+        			 _itemArrayAdapter = null;
+        			 if (lv1.getAdapter() != null ) {
+        				 ((ArrayAdapter<DefaultListItem>)lv1.getAdapter()).clear();        				
+        			 }
+        		 }
+        		 public void afterTextChanged(Editable arg0) {}        		 
+        	 };         		
+        	 txtSearch.addTextChangedListener(tw);
+        	 
+        	
         	 // Wire up the search button                     
              btnSearch.setOnClickListener(new OnClickListener() {		
              	public void onClick(View v) {	    					
@@ -161,9 +179,7 @@ public class IndividualListActivity extends OptionsActivity {
 		    				// If this is the initial search, create an adapter...otherwise this is the result of
 		    				//  the use selecting a 'More Results' item.  If so, remove that item and load more results.
 		    				if (_itemArrayAdapter == null ) {
-		    					//_itemArrayAdapter = new ArrayAdapter<String>(IndividualListActivity.this, R.layout.listitem_default);
-		    					_itemArrayAdapter = new ArrayAdapter<DefaultListItem>(IndividualListActivity.this, R.layout.listitem_default);
-		    					
+		    					_itemArrayAdapter = new ArrayAdapter<DefaultListItem>(IndividualListActivity.this, R.layout.listitem_default);		    					
 		    					lv1.setAdapter(_itemArrayAdapter);
 		    				}
 		    				else {		    				

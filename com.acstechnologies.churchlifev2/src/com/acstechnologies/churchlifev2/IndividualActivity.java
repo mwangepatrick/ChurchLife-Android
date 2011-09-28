@@ -166,8 +166,15 @@ public class IndividualActivity extends OptionsActivity {
     		individualImageView.setImageDrawable(image);	    	        
     	}
     	
-    	// name											
-		nameTextView.setText(_wsIndividual.getFirstName() + " " + _wsIndividual.getLastName());
+    	// Name	- build it out of the available parts
+    	String name = "";
+    	if ( _wsIndividual.getTitle().length() > 0 ) 		{ name =  _wsIndividual.getTitle() 						+ " ";	}
+    	if ( _wsIndividual.getFirstName().length() > 0 ) 	{ name = name + _wsIndividual.getFirstName()			+ " "; 	}
+    	if ( _wsIndividual.getGoesbyName().length() > 0 ) 	{ name = name + "(" + _wsIndividual.getGoesbyName() 	+ ") "; }    	
+    	if ( _wsIndividual.getMiddleName().length() > 0 ) 	{ name = name + _wsIndividual.getMiddleName() 			+ " "; 	}
+    	if ( _wsIndividual.getLastName().length() > 0 ) 	{ name = name + _wsIndividual.getLastName() 			+ " "; 	}
+    	       	
+		nameTextView.setText(name);
 
 		// Build a list of all individual details (one list) including phone numbers,
 		//  email addresses, addresses, and family members.  Use the custom list adapter
@@ -212,7 +219,10 @@ public class IndividualActivity extends OptionsActivity {
 		
 		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
 		for (IndividualAddress address : addressList) {
-			String addressLine2 = String.format("%s, %s  %s", address.getCity(), address.getState(), address.getZipcode());
+			String addressLine2 = "";
+			if (address.getCity().length() > 0 && address.getState().length() > 0) {
+				addressLine2 = String.format("%s, %s  %s", address.getCity(), address.getState(), address.getZipcode());
+			}			
 			String actionTag = String.format("map:%s %s %s, %s %s", address.getAddress(), address.getAddress2(), address.getCity(), address.getState(), address.getZipcode());
 			
 			listItems.add(new CustomListItem(String.format(titleString, address.getAddressType()),

@@ -4,14 +4,67 @@
   android:orientation="horizontal"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="@drawable/network_error">
+  android:background="@color/darkblue">
   
-  <Button 
-  		android:id="@+id/buttonOk" 
-  		android:text="@string/Dialog.Ok"	  		
-  		android:layout_width="wrap_content" 
-  		android:layout_height="wrap_content"
-  		android:layout_gravity="bottom">
-  </Button>
-    
+	<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  android:orientation="vertical"
+	  android:layout_width="match_parent"
+	  android:layout_height="wrap_content"
+	  android:layout_gravity="center">
+	
+		<ImageView android:src="@drawable/wireless2" 
+		  	android:id="@+id/imageView1" 
+		  	android:layout_gravity="center" 
+		  	android:padding="10dp"
+		  	android:layout_width="175dp" 
+		  	android:layout_height="190dp">
+		</ImageView>
+	
+		<TextView
+			android:text="@string/Dialog.NoConnectionLine1"
+			android:layout_width="match_parent" 
+	  		android:layout_height="wrap_content"
+	  		android:textSize="20sp"				
+			android:textColor="@android:color/white"
+			android:textStyle="bold"	
+			android:gravity="center"
+			android:padding="10sp">	
+		</TextView>
+	
+		<TextView
+			android:text="@string/Dialog.NoConnectionLine2"
+			android:textColor="@android:color/white"
+			android:layout_width="match_parent" 
+	  		android:layout_height="wrap_content"
+	  		android:gravity="center">	
+		</TextView>
+				
+		<LinearLayout
+			  xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:orientation="horizontal"
+			  android:layout_width="match_parent"
+			  android:layout_height="wrap_content"
+			  android:layout_gravity="bottom"
+			  android:gravity="center_horizontal" 
+			  android:padding="20dp">
+		
+			<Button			
+				android:text="@string/Dialog.Retry" 
+				android:id="@+id/btnRetry"
+				android:layout_width="match_parent" 
+				android:layout_height="wrap_content"
+				android:layout_weight="1">
+			</Button>
+			<Button			
+				android:text="@string/Dialog.Exit" 
+				android:id="@+id/btnClose"
+				android:layout_width="match_parent" 
+				android:layout_height="wrap_content"
+				android:layout_weight="1">
+			</Button>
+		</LinearLayout>
+				
+										
+	</LinearLayout>
 </LinearLayout>

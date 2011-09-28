@@ -3,6 +3,11 @@ package com.acstechnologies.churchlifev2.webservice;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 import com.acstechnologies.churchlifev2.webservice.RESTClient.RequestMethod;
@@ -18,7 +23,8 @@ public class WebServiceHandler {
 	static final String APPLICATION_ID_KEY = "ApplicationId";
 		
 	String _baseUrl = null;
-	String _applicationId = "";			//app-specific key that gets sent with every request
+	String _applicationId = "";			// app-specific key that gets sent with every request
+	Activity _currentActivity;			// not required (can be null)
 	
 	/** 
 	 *  Used to validate/authenticate with the acstechnologies web service layer.
@@ -189,6 +195,8 @@ public class WebServiceHandler {
 	public EventsResponse getEvents(String username, String password, String siteNumber, 
 								   Date startDate, Date stopDate, int startingRecordId, int maxRecordId) throws AppException {
 
+		isOnlineCheck();
+		
 		EventsResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/events");
     	  	    	
@@ -241,10 +249,64 @@ public class WebServiceHandler {
 		return wsObject;
 	}
 	
+//	
+//	// Do the execution of the web request wrapped in a network connection 'retry/exit' dialog
+//	//  only do if context of the activity was passed to this class
+//	public void ExecuteRequest(final RESTClient client, final RequestMethod method) throws AppException
+//	{
+//		if (_currentActivity != null)
+//		{			
+//	        WaitForInternetCallback callback = new WaitForInternetCallback(_currentActivity) {
+//	        	public void onConnectionSuccess() { 
+//	        		client.Execute(method);				// perform action (connection available)
+//	        	}        		 
+//	        	public void onConnectionFailure() {        		
+//	        		_currentActivity.finish();			// exit this task (user selected 'exit' - connection unavailable)
+//	        	}
+//	        };          
+//	        WaitForInternet.setCallback(callback);  			
+//		}
+//		else
+//		{
+//			client.Execute(method);
+//		}
+//	}
+	
+	public void isOnlineCheck() throws AppException {
+		//if (isOnline() == false){
+		if (1 == 1){
+			throw AppException.AppExceptionFactory(
+					   ExceptionInfo.TYPE.NOCONNECTION,
+					   ExceptionInfo.SEVERITY.CRITICAL, 
+					   "100",           												    
+					   "WebServiceHandler.isOnlineCheck",
+					   "");
+		}
+	}
+	
+    public boolean isOnline() {    	
+   	 ConnectivityManager cm = (ConnectivityManager) _currentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+   	 NetworkInfo ni = cm.getActiveNetworkInfo();
+   	 
+   	 if (ni != null) {
+   		return ni.isConnectedOrConnecting();  
+   	 }
+   	 else {
+   		 return false;
+   	 }    	    	     	 
+   }
+    
+	
 	// Constructor
 	public WebServiceHandler(String webServiceUrl, String applicationId)	{
 		_baseUrl = webServiceUrl;
 		_applicationId = applicationId;
+	}
+
+	public WebServiceHandler(String webServiceUrl, String applicationId, Activity currentActivity)	{
+		_baseUrl = webServiceUrl;
+		_applicationId = applicationId;
+		_currentActivity = currentActivity;
 	}
 	
 }

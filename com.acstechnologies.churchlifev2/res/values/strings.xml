@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>  
     <string name="app_name">Church Life v.2</string>
-    
+
+    <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
+    <string name="Dialog.NoConnectionLine2">Please check your connection and try again.</string>
+          
     <string name="Dialog.Ok">Ok</string>
+    <string name="Dialog.Retry">Retry</string>
+    <string name="Dialog.Close">Close</string>
+    <string name="Dialog.Exit">Exit</string>
     
     <string name="TabPeople">People</string>
     <string name="TabCalendar">Calendar</string>    
     <string name="TabMyInfo">My Church</string>
     
-    
-    
-    
-    <string name="Splash.NoConnectionTitle">Network Unavailable</string>   
-    <string name="Splash.NoConnection">Unable to connect to the internet.  Please check your connection and try again.</string>  
-    
-     
     <string name="Login.Email">Email</string>   
     <string name="Login.Password">Password</string>
     <string name="Login.RememberMe">Remember Me</string>    
