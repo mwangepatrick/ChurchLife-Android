@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
-import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
-import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 import com.acstechnologies.churchlifev2.webservice.IndividualResponse;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
@@ -51,6 +49,8 @@ public class IndividualActivityLoader  {
     		public void handleMessage(Message msg) {
     			    		    		
     			try {
+    				_progressDialog.dismiss();
+    				
 	    			if (msg.what == 0) {	        	
 	    				
 	    				// individual found.  load the activity to view details
@@ -58,30 +58,16 @@ public class IndividualActivityLoader  {
 	           	 		intent.setClass(_context, IndividualActivity.class); 		           	 	
 	           	 		intent.putExtra("individual", msg.getData().getString("individual"));
 	           	 		_context.startActivity(intent);
-	           	 		
-	           	 		_progressDialog.dismiss();
-	           	 		
+	           	 			           	 			           	 
 	           	 		if (postRun != null) {
 	           	 			postRun.run();	
 	           	 		}
 	           	 		
 	       			}
-	       			else if (msg.what < 0) {
-
-	       				_progressDialog.dismiss();
-	       				
-	       				// If < 0, the exception text is in the message bundle.  Throw it
-	       				
-	       				//TODO:
-	       				//  (we should examine it to see if is is one that should be raised as critical
-	       				//   or something that is just a validation message, etc.)
-	       				String errMsg = msg.getData().getString("Exception");	       
-	       				throw AppException.AppExceptionFactory(
-	       					  ExceptionInfo.TYPE.UNEXPECTED,
-	 						   ExceptionInfo.SEVERITY.CRITICAL, 
-	 						   "100",           												    
-	 						   "doSearchWithProgressWindow.handleMessage",
-	 						   errMsg);	       				
+	       			else if (msg.what < 0) {	       				
+	       				// If < 0, the exception is in the message bundle.  Throw it
+	       				Bundle b = msg.getData();
+	       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadIndividualWithProgressWindow.handleMessage");	    	
 	       			}	    				
     			}
     			catch (Exception e) {
@@ -112,19 +98,11 @@ public class IndividualActivityLoader  {
     			}
     			catch (Exception e) {    				
     				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-    				
-    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+    				    				
+    				Message msg = handler.obtainMessage();
     				msg.what = -1;
-    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
-    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
-    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
-    				
-    				String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
-    				Bundle b = new Bundle();
-    				b.putString("Exception", returnMessage);
-    				msg.setData(b);
-    				
-    				handler.sendMessage(msg);    				
+    				msg.setData(ExceptionHelper.getBundleForException(e));	
+    				handler.sendMessage(msg);      				   			
     			}    			       	    	    	    	
     		 }
     	};

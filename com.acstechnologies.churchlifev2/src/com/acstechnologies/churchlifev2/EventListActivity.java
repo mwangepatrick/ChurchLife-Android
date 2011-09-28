@@ -10,8 +10,6 @@ import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
 import com.acstechnologies.churchlifev2.webservice.EventResponse;
 import com.acstechnologies.churchlifev2.webservice.EventsResponse;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternet;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternetCallback;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Dialog;
@@ -64,9 +62,7 @@ public class EventListActivity extends OptionsActivity {
 //        	
 //        	//adapter.addSection("Security", new SimpleAdapter(this, security, R.layout.list_complex,  new String[] { ITEM_TITLE, ITEM_CAPTION }, new int[] { R.id.list_complex_title, R.id.list_complex_caption }));  
 //        	   
-//        	lv1.setAdapter(adapter);  
-        	        	
-        	//doNetworkOperationWithConnectCheck(NETWORK_OPERATION_EVENTS, null);
+//        	lv1.setAdapter(adapter);          	                
         	
         	loadEventsWithProgressDialog();
          
@@ -116,34 +112,6 @@ public class EventListActivity extends OptionsActivity {
     	lv1 = (ListView)this.findViewById(R.id.ListView01);
     }
     
-    
-    
-    /**
-     * Wraps the network operation to be performed with a connection check "retry/exit" dialog box
-     * @param object 
-     * 
-     */
-    private void doNetworkOperationWithConnectCheck(final int networkOperation, final Object args) {
-    	
-        // Perform network action inside a network check with "retry/exit" dialog
-        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
-        	public void onConnectionSuccess() {
-        		switch(networkOperation) {
-        		case NETWORK_OPERATION_EVENTS:
-        			loadEventsWithProgressDialog();
-        			break;
-        		case NETWORK_OPERATION_EVENT:
-        			loadEventWithProgressDialog((EventListItem)args);
-        			break;        		
-        		}
-        											// perform action (connection available)
-        	}        		 
-        	public void onConnectionFailure() {        		
-        		finish();							// exit this task (user selected 'exit' - connection unavailable)
-        	}
-        };          
-        WaitForInternet.setCallback(callback);        
-    }
 
     /**
      * Displays a progress dialog and launches a background thread to connect to a web service
@@ -207,48 +175,20 @@ public class EventListActivity extends OptionsActivity {
 	       				// If < 0, the exception details are in the message bundle.  Throw it 
 	       				//  and let the exception handler (below) handle it
 	       				Bundle b = msg.getData();
-	       				
-	       				ExceptionInfo.SEVERITY s = ExceptionInfo.SEVERITY.valueOf(b.getString("exceptionseverity"));
-	       				ExceptionInfo.TYPE t = ExceptionInfo.TYPE.valueOf(b.getString("exceptiontype"));
-	       				String errormsg = b.getString("exceptionmessage");
-	       				
-	       				throw AppException.AppExceptionFactory(t, s, "100", "loadEventsWithProgressDialog.handleMessage", errormsg);      	       				
+	       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadEventsWithProgressDialog.handleMessage");	
 	       			}	    				
     			}    			
-    			catch (AppException ae) {
-    				// for connection errors we want to know when user dismisses 
-    				//  in order to retry the search
-    				if (ae.getErrorType() == ExceptionInfo.TYPE.NOCONNECTION) {
-    					
-    					// Show connection error dialog box
-    			    	ChurchLifeDialog dialog = new ChurchLifeDialog(EventListActivity.this);
-    			    	dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-    			            @Override
-    			            public void onDismiss(DialogInterface dialog) {
-    			                //close this activity (so the user can try again) - but take the user
-    			            	//  to the person search activity
-    			            	//finish();    		
-    			            	TabHost host = ((TabActivity)getParent()).getTabHost();
-    			                host.setCurrentTab(0);
-    			                //zzz this closes the app!  only want to close the child activity
-    			                EventListActivity.this.finish();
-    			                //zzz probably show a 'reload' button on this form - or figure out
-    			                //  a way to close this child activity without shutting down the application
-    			                
-
-    			            }
-    			    	});    			    	
-    			    	dialog.show();    			    	    		
-    				}
-    				else {
-        				ExceptionHelper.notifyUsers(ae, EventListActivity.this);
-        	    		ExceptionHelper.notifyNonUsers(ae); 	
-    				}
-    			}
     			catch (Exception e) {
-    				ExceptionHelper.notifyUsers(e, EventListActivity.this);
-    	    		ExceptionHelper.notifyNonUsers(e); 				    				
-    			}    			    			    			    			   				    			    		  
+    				
+    				if ((e instanceof AppException) && 
+    					(((AppException)e).getErrorType() == ExceptionInfo.TYPE.NOCONNECTION)){
+    					handleNetworkExceptionWithRetry();    					
+    				} 
+    				else {    				
+    					ExceptionHelper.notifyUsers(e, EventListActivity.this);
+    	    			ExceptionHelper.notifyNonUsers(e);
+    				}
+    			}     			    			    			    			   				    			    		  
     		}
     	};
     	
@@ -281,27 +221,11 @@ public class EventListActivity extends OptionsActivity {
     			}
     			catch (Exception e) {    				
     				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-    				
-    				Message msg = handler.obtainMessage();		// return exception details as part of the message
+
+    				Message msg = handler.obtainMessage();
     				msg.what = -1;
-    				
-    				Bundle b = new Bundle();
-    				    		
-    				if(e instanceof AppException)  {
-    					b.putString("exceptiontype", ((AppException)e).getErrorType().toString());
-    					b.putString("exceptionseverity", ((AppException)e).getErrorSeverity().toString());
-    					b.putString("exceptionmessage", ((AppException)e).extractErrorDescription());
-    				}
-    				else {
-    					String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
-        				
-    					b.putString("exceptiontype", ExceptionInfo.TYPE.UNEXPECTED.toString());
-    					b.putString("exceptionseverity", ExceptionInfo.SEVERITY.CRITICAL.toString());
-    					b.putString("exceptionmessage", returnMessage);
-    				}
-    				
-    				msg.setData(b);			
-    				handler.sendMessage(msg);    				
+    				msg.setData(ExceptionHelper.getBundleForException(e));	
+    				handler.sendMessage(msg);       				
     			}    			       	    	    	    	
     		 }
     	};
@@ -316,16 +240,13 @@ public class EventListActivity extends OptionsActivity {
     	try {
     		// First, see if this is an 'event' that was selected or a 'more records' item.
     		//  if more...load the next 50 records.
-    		if (itemSelected.getId().equals("")) {
-    			doNetworkOperationWithConnectCheck(NETWORK_OPERATION_EVENTS, null);
-       	 		//loadEventsWithProgressDialog();
+    		if (itemSelected.getId().equals("")) {    			
+       	 		loadEventsWithProgressDialog();
        	 	}
        	 	else {
        	 		// Show the selected event detail
-       	 		 _progressText = String.format(getString(R.string.Event_ProgressDialog), itemSelected.getTitle());
-       	 		 
-       	 		doNetworkOperationWithConnectCheck(NETWORK_OPERATION_EVENT, itemSelected);
-       	 		//loadEventWithProgressDialog(itemSelected);       	 		
+       	 		_progressText = String.format(getString(R.string.Event_ProgressDialog), itemSelected.getTitle());       	 		        	 		
+       	 		loadEventWithProgressDialog(itemSelected);       	 		
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -341,7 +262,6 @@ public class EventListActivity extends OptionsActivity {
      *   to retrieve a SINGLE event.  Then launches the event activity to display
      *   
      */
-    //private void loadEventWithProgressDialog(final String eventId)
     private void loadEventWithProgressDialog(final EventListItem eventSelected)
     {               	    			   
     	showDialog(DIALOG_PROGRESS_EVENT);
@@ -368,25 +288,17 @@ public class EventListActivity extends OptionsActivity {
 	           	 		startActivity(intent);	    				
 	       			}
 	       			else if (msg.what < 0) {
-	       				// If < 0, the exception text is in the message bundle.  Throw it
-	       				
-	       				//TODO:
-	       				//  (we should examine it to see if is is one that should be raised as critical
-	       				//   or something that is just a validation message, etc.)
-	       				String errMsg = msg.getData().getString("Exception");	       
-	       				throw AppException.AppExceptionFactory(
-	       					  ExceptionInfo.TYPE.UNEXPECTED,
-	 						   ExceptionInfo.SEVERITY.CRITICAL, 
-	 						   "100",           												    
-	 						   "loadEventWithProgressDialog.handleMessage",
-	 						   errMsg);	       				
+	       				// If < 0, the exception details are in the message bundle.  Throw it 
+	       				//  and let the exception handler (below) handle it	       				
+	       				Bundle b = msg.getData();
+	       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadEventWithProgressDialog.handleMessage");	       				
 	       			}	    				
-    			}
-    			catch (Exception e) {
-    				ExceptionHelper.notifyUsers(e, EventListActivity.this);
-    	    		ExceptionHelper.notifyNonUsers(e)  ; 				    				
-    			}    			    			    			    			   				    			    		  
-    		}
+    			} 			
+    			catch (Exception e) {  				
+    					ExceptionHelper.notifyUsers(e, EventListActivity.this);
+    	    			ExceptionHelper.notifyNonUsers(e);
+    				}
+    			}    			    		
     	};
     	
     	Thread searchThread = new Thread() {  
@@ -409,23 +321,43 @@ public class EventListActivity extends OptionsActivity {
 	    	    	
     			}
     			catch (Exception e) {    				
-    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
+    				ExceptionHelper.notifyNonUsers(e);			// Log the full error,     				
     				
-    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+    				Message msg = handler.obtainMessage();
     				msg.what = -1;
-    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
-    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
-    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
-    				
-    				String returnMessage = String.format("An unexpected error has occurred while performing this search.  The error is %s.", e.getMessage());					    				    				    				    				    	
-    				Bundle b = new Bundle();
-    				b.putString("Exception", returnMessage);
-    				
-    				handler.sendMessage(msg);    				
+    				msg.setData(ExceptionHelper.getBundleForException(e));	
+    				handler.sendMessage(msg);    	    				
     			}    			       	    	    	    	
     		 }
     	};
     	searchThread.start();    	
+    }
+    
+    
+    //TODO:  problems here.  need to close just child activity (events listing) but doing so
+    //  closes the entire application
+    //
+    public void handleNetworkExceptionWithRetry() {
+    	
+		// Show connection error dialog box
+    	ChurchLifeDialog dialog = new ChurchLifeDialog(EventListActivity.this);
+    	dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                //close this activity (so the user can try again) - but take the user
+            	//  to the person search activity
+            	//finish();    		
+            	TabHost host = ((TabActivity)getParent()).getTabHost();
+                host.setCurrentTab(0);
+                //zzz this closes the app!  only want to close the child activity
+                EventListActivity.this.finish();
+                //zzz probably show a 'reload' button on this form - or figure out
+                //  a way to close this child activity without shutting down the application
+                
+
+            }
+    	});    			    	
+    	dialog.show(); 
     }
         
 }

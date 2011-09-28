@@ -3,8 +3,6 @@ package com.acstechnologies.churchlifev2.webservice;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -23,8 +21,8 @@ public class WebServiceHandler {
 	static final String APPLICATION_ID_KEY = "ApplicationId";
 		
 	String _baseUrl = null;
-	String _applicationId = "";			// app-specific key that gets sent with every request
-	Activity _currentActivity;			// not required (can be null)
+	String _applicationId = "";					// app-specific key that gets sent with every request
+	ConnectivityManager _connectivityManager;	// not required (can be null)
 	
 	/** 
 	 *  Used to validate/authenticate with the acstechnologies web service layer.
@@ -40,6 +38,8 @@ public class WebServiceHandler {
 	 *  */ 
 	public LoginResponse login(String username, String password, String siteNumber) throws AppException {
 
+		isOnlineCheck();
+		
 		LoginResponse wsObject = null;
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/validate");
     	
@@ -81,6 +81,8 @@ public class WebServiceHandler {
 	 *  */ 	
 	public LoginResponse login(String emailAddress, String password) throws AppException {
 
+		isOnlineCheck();
+		
 		LoginResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/accounts/findbyemail");
     	
@@ -124,6 +126,8 @@ public class WebServiceHandler {
 	public IndividualsResponse getIndividuals(String username, String password, String siteNumber, 
 											  String searchText, int startingRecordId, int maxRecordId) throws AppException {
 
+		isOnlineCheck();
+		
 		IndividualsResponse wsObject = null;		    
     	RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individuals");
     	  	    	
@@ -151,6 +155,8 @@ public class WebServiceHandler {
 	}
 	
 	public IndividualResponse getIndividual(String username, String password, String siteNumber, int individualId) throws AppException {
+		
+		isOnlineCheck();
 		
 		IndividualResponse wsObject = null;		    		
 		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/individuals/" + Integer.toString(individualId));   	
@@ -226,6 +232,8 @@ public class WebServiceHandler {
 	}
 	
 	public EventResponse getEvent(String username, String password, String siteNumber, String eventId) throws AppException {
+				
+		isOnlineCheck();
 		
 		EventResponse wsObject = null;		    		
 		RESTClient client = new RESTClient(_baseUrl + "/" + siteNumber + "/events/" + eventId);   	
@@ -248,52 +256,42 @@ public class WebServiceHandler {
 		}    	
 		return wsObject;
 	}
-	
-//	
-//	// Do the execution of the web request wrapped in a network connection 'retry/exit' dialog
-//	//  only do if context of the activity was passed to this class
-//	public void ExecuteRequest(final RESTClient client, final RequestMethod method) throws AppException
-//	{
-//		if (_currentActivity != null)
-//		{			
-//	        WaitForInternetCallback callback = new WaitForInternetCallback(_currentActivity) {
-//	        	public void onConnectionSuccess() { 
-//	        		client.Execute(method);				// perform action (connection available)
-//	        	}        		 
-//	        	public void onConnectionFailure() {        		
-//	        		_currentActivity.finish();			// exit this task (user selected 'exit' - connection unavailable)
-//	        	}
-//	        };          
-//	        WaitForInternet.setCallback(callback);  			
-//		}
-//		else
-//		{
-//			client.Execute(method);
-//		}
+
+
+//	public void onlineFail() throws AppException {
+//		throw AppException.AppExceptionFactory(
+//				   ExceptionInfo.TYPE.NOCONNECTION,
+//				   ExceptionInfo.SEVERITY.CRITICAL, 
+//				   "100",           												    
+//				   "WebServiceHandler.isOnlineCheck",
+//				   "Unable to connect to the network.  Please check your connection and try again.");
 //	}
 	
 	public void isOnlineCheck() throws AppException {
-		//if (isOnline() == false){
-		if (1 == 1){
+		if (isOnline() == false){
 			throw AppException.AppExceptionFactory(
 					   ExceptionInfo.TYPE.NOCONNECTION,
 					   ExceptionInfo.SEVERITY.CRITICAL, 
 					   "100",           												    
 					   "WebServiceHandler.isOnlineCheck",
-					   "");
+					   "Unable to connect to the network.  Please check your connection and try again.");
 		}
 	}
 	
-    public boolean isOnline() {    	
-   	 ConnectivityManager cm = (ConnectivityManager) _currentActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
-   	 NetworkInfo ni = cm.getActiveNetworkInfo();
-   	 
-   	 if (ni != null) {
-   		return ni.isConnectedOrConnecting();  
-   	 }
-   	 else {
-   		 return false;
-   	 }    	    	     	 
+    public boolean isOnline() {
+    	boolean result = true;		//default to true
+    	if (_connectivityManager != null) {
+		   	 
+		   	 NetworkInfo ni = _connectivityManager.getActiveNetworkInfo();
+		   	 
+		   	 if (ni != null) {
+		   		result = ni.isConnectedOrConnecting();  
+		   	 }
+		   	 else {
+		   		result = false;   		 
+		   	 }    	    	  
+    	}
+    	return result;
    }
     
 	
@@ -303,10 +301,10 @@ public class WebServiceHandler {
 		_applicationId = applicationId;
 	}
 
-	public WebServiceHandler(String webServiceUrl, String applicationId, Activity currentActivity)	{
+	public WebServiceHandler(String webServiceUrl, String applicationId, ConnectivityManager connManager)	{
 		_baseUrl = webServiceUrl;
 		_applicationId = applicationId;
-		_currentActivity = currentActivity;
+		_connectivityManager = connManager;
 	}
 	
 }

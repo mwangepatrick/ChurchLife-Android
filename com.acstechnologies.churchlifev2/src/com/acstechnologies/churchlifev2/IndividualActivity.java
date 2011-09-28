@@ -57,7 +57,8 @@ public class IndividualActivity extends OptionsActivity {
 	AppPreferences _appPrefs;  	
 	
 	ImageView individualImageView;						// form controls
-	TextView nameTextView;	
+	TextView nameTextView;
+	//ImageButton addContactImageButton;
 	ListView detailsListview;
 	
 	 @Override
@@ -87,12 +88,18 @@ public class IndividualActivity extends OptionsActivity {
 	            	 bindData();
 	             }	        
 	             	            
-	             // Wire up the 'add to contacts' feature                      
+//	             // Wire up the 'add to contacts' feature     
+//	             addContactImageButton.setOnClickListener(new OnClickListener() {		
+//	             	public void onClick(View v) {	        		             	
+//	             		addIndividualToContacts();   
+//	             	}		
+//	     		}); 
+	             
 	             nameTextView.setOnClickListener(new OnClickListener() {		
 	             	public void onClick(View v) {	            		     	             		
 	             		addIndividualToContacts();            		
 	             	}		
-	     		});  
+	     		 });  
 	             
 	        }
 	    	catch (Exception e) {
@@ -149,6 +156,7 @@ public class IndividualActivity extends OptionsActivity {
     private void bindControls(){	    	
     	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
     	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
+    	//addContactImageButton = (ImageButton)this.findViewById(R.id.addContactImageButton);    	
     	detailsListview = (ListView)this.findViewById(R.id.detailsListview);    	
     }
     

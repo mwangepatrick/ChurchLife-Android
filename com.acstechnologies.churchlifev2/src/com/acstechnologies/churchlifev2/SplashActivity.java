@@ -4,15 +4,10 @@ import com.acstechnologies.churchlifev2.R;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.webservice.LoginResponse;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternet;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternetCallback;
 import com.acstechnologies.churchlifev2.webservice.WebServiceHandler;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -24,57 +19,9 @@ public class SplashActivity extends Activity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);       
                        
-        doNetworkOperationWithConnectCheck();
-        
-        //test...
-        // call
-        //  new new AutoLoginTask().execute();				// login in background
-        //  add exception handler to ui handler - see handler
-        
-//        // Perform network action inside a network check with "retry/exit" dialog
-//        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
-//        	public void onConnectionSuccess() {
-//        		new AutoLoginTask().execute();				// login in background
-//        	}        		 
-//        	public void onConnectionFailure() {        		
-//        		finish();
-//        	}
-//        };          
-//        WaitForInternet.setCallback(callback);
-                       
+        new AutoLoginTask().execute();	// login in background                               
     }
         
-    /**
-     * Wraps the network operation to be performed with a connection check "retry/exit" dialog box
-     * @param object 
-     * 
-     */
-    private void doNetworkOperationWithConnectCheck() {
-    	
-        // Perform network action inside a network check with "retry/exit" dialog
-        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
-        	public void onConnectionSuccess() {
-        		new AutoLoginTask().execute();		//perform action (connection available)
-        	}        		 
-        	public void onConnectionFailure() {        		
-        		finish();							// exit this task (user selected 'exit' - connection unavailable)
-        	}
-        };          
-        WaitForInternet.setCallback(callback);        
-    }
-    
-    // NOTE:  Currently NOT used
-    public boolean isOnline() {    	
-    	 ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-    	 NetworkInfo ni = cm.getActiveNetworkInfo();
-    	 
-    	 if (ni != null) {
-    		return ni.isConnectedOrConnecting();  
-    	 }
-    	 else {
-    		 return false;
-    	 }    	    	     	 
-    }
 
     /**
      *  Executes on a background thread.  If error, log the message and
@@ -105,19 +52,16 @@ public class SplashActivity extends Activity {
             	
            	if (e == null) {			// no error
            		if (result == true)  	// if successful login, change the activity to which to navigate	        					
-    				nextIntent = new Intent(SplashActivity.this, MainActivity.class);    
+    				nextIntent = new Intent(SplashActivity.this, MainActivity.class); 
            	}
-           	else {
-           		
-           		//zzz test
-           		// if exception is internet down, show dialog with retry/exit (wait)
-           		
-           		
-           		ExceptionHelper.notifyNonUsers(e);            	
-           	}
-        					
-           	SplashActivity.this.startActivity(nextIntent);
-            SplashActivity.this.finish();            	            	
+           	else {           		
+           		ExceptionHelper.notifyNonUsers(e);
+           		ExceptionHelper.notifyUsers(e, SplashActivity.this);           		
+           	}      
+           	
+       		SplashActivity.this.startActivity(nextIntent);
+       		SplashActivity.this.finish();  
+       		
         }
     }
 

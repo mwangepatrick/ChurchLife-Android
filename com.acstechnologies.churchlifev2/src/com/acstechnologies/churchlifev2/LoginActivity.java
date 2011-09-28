@@ -75,7 +75,7 @@ public class LoginActivity extends OptionsActivity {
         	
             logoutCheck(); 						// Was this activity was called with a 'logout' parameter?
                                          
-            setContentView(R.layout.login);		// Present the login form to the user. 
+            setContentView(R.layout.login2);		// Present the login form to the user. 
             
             bindControls();						// Set state variables to their form controls
        	    
@@ -317,19 +317,11 @@ public class LoginActivity extends OptionsActivity {
 	    				// check to see if an exception was raised on the background thread
 	    				//  that performed the login web service call. 
 	    				if (msg.what < 0) {
-	    					//TODO:
-		       				//  (we should examine it to see if is is one that should be raised as critical
-		       				//   or something that is just a validation message, etc.)
-		       				String errMsg = msg.getData().getString("Exception");	       
-		       				throw AppException.AppExceptionFactory(
-		       					  ExceptionInfo.TYPE.UNEXPECTED,
-		 						   ExceptionInfo.SEVERITY.CRITICAL, 
-		 						   "100",           												    
-		 						   "doSearchWithProgressWindow.handleMessage",
-		 						   errMsg);	       		    					
+		       				Bundle b = msg.getData();
+		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "doLoginWithProgressWindow.handleMessage");		       					  		       			
 	    				}
 	    				else {
-							if (_wsLogin.getStatusCode() == 0) {        				
+							if (_wsLogin.getStatusCode() == 0 && _wsLogin.getLength() > 0) {        				
 								// In most cases, the return value is for a single site    
 								if (_wsLogin.getLength() == 1) {    					   		
 									navigateForward(_wsLogin.getSiteName(), _wsLogin.getSiteNumber(), _wsLogin.getUserName());																
@@ -345,10 +337,10 @@ public class LoginActivity extends OptionsActivity {
 							}	    					
 	    				}	    				
 	    			}
-					catch (Exception e) {
-						ExceptionHelper.notifyNonUsers(e) ; 	
-						ExceptionHelper.notifyUsers(e, LoginActivity.this);		    	    				    			
-		    		}   	      			    			    			    			   				    			    		 
+	    			catch (Exception e) {				
+	    				ExceptionHelper.notifyUsers(e, LoginActivity.this);
+	    	    		ExceptionHelper.notifyNonUsers(e);	    				
+	    			}    	    			
 	    		}
 	    	};
 	    	
@@ -360,18 +352,11 @@ public class LoginActivity extends OptionsActivity {
 	    			}
 	    			catch (Exception e) {    				
 	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-	    				
-	    				Message msg = handler.obtainMessage();		// return only the exception string as part of the message
+	    					    				
+	    				Message msg = handler.obtainMessage();
 	    				msg.what = -1;
-	    				//TODO:  revisit - this could bubble up info to the user that they don't need to see or won't understand.
-	    				//  use ExceptionHelper to get a string to show the user based on the exception type/severity, etc.
-	    				//  if appexception and not critical, return -1, ...if critical return -2, etc.
-	    				
-	    				String returnMessage = String.format("An unexpected error has occurred while attempting to login.  The error is %s.", e.getMessage());					    				    				    				    				    	
-	    				Bundle b = new Bundle();
-	    				b.putString("Exception", returnMessage);
-	    				
-	    				handler.sendMessage(msg);    				
+	    				msg.setData(ExceptionHelper.getBundleForException(e));	
+	    				handler.sendMessage(msg);    	    				  			
 	    			}    			       	    	    	    	
 	    		 }
 	    	};

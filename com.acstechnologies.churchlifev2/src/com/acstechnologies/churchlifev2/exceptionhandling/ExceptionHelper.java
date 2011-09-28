@@ -5,6 +5,7 @@ import com.acstechnologies.churchlifev2.ChurchLifeDialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 public class ExceptionHelper {
@@ -24,7 +25,7 @@ public class ExceptionHelper {
 		    	
 		    	// The error was caused by the user / client,
 		    	// show the cause and how to correct it.
-		    	ShowAlert(context, ae.extractErrorDescription());		    		
+		    	ShowAlert(context, ae.extractErrorDescription());
 		    } 
 		    else if(ae.getErrorType() == ExceptionInfo.TYPE.APPLICATION) {
 		    	
@@ -70,7 +71,7 @@ public class ExceptionHelper {
 	
 	
 	public static void notifyNonUsers(Throwable e){
-		
+
 		try {		
 			if(e instanceof AppException) {
 
@@ -122,5 +123,35 @@ public class ExceptionHelper {
 			Log.e(ERROR_TAG, unexpected.getMessage(), unexpected);
 			e.printStackTrace();
 		}		  		  		  
+	}
+	
+	// When a thread throws an exception, it wraps it in a bundle to send via the message handler
+	//   This helper creates the bundle for that purpose
+	public static Bundle getBundleForException(Throwable e) {
+		Bundle b = new Bundle();
+		
+		if(e instanceof AppException)  {
+			b.putString("exceptiontype", ((AppException)e).getErrorType().toString());
+			b.putString("exceptionseverity", ((AppException)e).getErrorSeverity().toString());
+			b.putString("exceptionmessage", ((AppException)e).extractErrorDescription());
+		}
+		else {
+			String returnMessage = String.format("An unexpected error has occurred while performing this operation.  The error is %s.", e.getMessage());					    				    				    				    				    	
+			
+			b.putString("exceptiontype", ExceptionInfo.TYPE.UNEXPECTED.toString());
+			b.putString("exceptionseverity", ExceptionInfo.SEVERITY.CRITICAL.toString());
+			b.putString("exceptionmessage", returnMessage);
+		}
+		
+		return b;		
+	}
+	
+	public static AppException getAppExceptionFromBundle(Bundle b, String source) {
+
+		ExceptionInfo.SEVERITY s = ExceptionInfo.SEVERITY.valueOf(b.getString("exceptionseverity"));
+		ExceptionInfo.TYPE t = ExceptionInfo.TYPE.valueOf(b.getString("exceptiontype"));
+		String errormsg = b.getString("exceptionmessage");
+			
+		return AppException.AppExceptionFactory(t, s, "100", source, errormsg);   			
 	}
 }

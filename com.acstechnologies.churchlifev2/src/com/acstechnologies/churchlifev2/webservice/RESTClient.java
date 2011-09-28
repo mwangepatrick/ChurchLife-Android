@@ -175,21 +175,21 @@ public class RESTClient {
 	            client.getConnectionManager().shutdown();
 	            
 	            throw AppException.AppExceptionFactory(e,
-						   ExceptionInfo.TYPE.UNEXPECTED,
+						   ExceptionInfo.TYPE.NOCONNECTION,
 						   ExceptionInfo.SEVERITY.CRITICAL, 
 						   "100",           												    
 						   "RESTClient.executeRequest",
-						   e.toString()); 
+						   e.getMessage()); 
 	        } 
 	        catch (IOException e) {
 	            client.getConnectionManager().shutdown();
 	            
 	            throw AppException.AppExceptionFactory(e,
-						   ExceptionInfo.TYPE.UNEXPECTED,
+						   ExceptionInfo.TYPE.NOCONNECTION,
 						   ExceptionInfo.SEVERITY.CRITICAL, 
 						   "100",           												    
 						   "RESTClient.executeRequest",
-						   "There was a problem connecting to the data service."); 
+						   e.getMessage()); 
 	        }
 	    }
 	    

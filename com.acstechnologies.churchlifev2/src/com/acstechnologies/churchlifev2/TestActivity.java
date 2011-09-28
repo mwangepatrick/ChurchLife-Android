@@ -3,8 +3,6 @@ package com.acstechnologies.churchlifev2;
 import java.util.ArrayList;
 
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternet;
-import com.acstechnologies.churchlifev2.webservice.WaitForInternetCallback;
 
 
 import android.app.Activity;
@@ -24,23 +22,23 @@ public class TestActivity extends Activity {
 	        setContentView(R.layout.test);
 	       
 	        
-	        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
-	        	public void onConnectionSuccess() {
-	        		Log.d("test","We have internet!");
-	        	}
-	        		 
-	        	public void onConnectionFailure() {
-	        		Log.d("test","failed to get internet connectivity...");
-	        		finish();
-	        	}
-	        };
-	        		   
-	        try {
-	        	WaitForInternet.setCallback(callback);
-	        } catch (SecurityException e) {
-	        	Log.w("test","Could not check network state.", e);
-	        	callback.onConnectionFailure();				
-	        }
+//	        WaitForInternetCallback callback = new WaitForInternetCallback(this) {
+//	        	public void onConnectionSuccess() {
+//	        		Log.d("test","We have internet!");
+//	        	}
+//	        		 
+//	        	public void onConnectionFailure() {
+//	        		Log.d("test","failed to get internet connectivity...");
+//	        		finish();
+//	        	}
+//	        };
+//	        		   
+//	        try {
+//	        	WaitForInternet.setCallback(callback);
+//	        } catch (SecurityException e) {
+//	        	Log.w("test","Could not check network state.", e);
+//	        	callback.onConnectionFailure();				
+//	        }
 
 	        		
 	        /*

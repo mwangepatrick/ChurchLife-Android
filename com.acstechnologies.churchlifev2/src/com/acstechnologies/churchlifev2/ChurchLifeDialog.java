@@ -53,6 +53,10 @@ public class ChurchLifeDialog extends Dialog {
 	    	
 		  btnRetry = (Button)this.findViewById(R.id.btnRetry);	
 		  btnRetry.setOnClickListener(_retryListener);  
+		  
+		  // For now we are NOT showing a retry/close
+		  btnClose.setVisibility(View.GONE);
+		  btnRetry.setVisibility(View.GONE);		  
 	  }
 	    	    
 }
