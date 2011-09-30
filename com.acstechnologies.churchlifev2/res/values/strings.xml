@@ -9,6 +9,8 @@
     <string name="Dialog.Retry">Retry</string>
     <string name="Dialog.Close">Close</string>
     <string name="Dialog.Exit">Exit</string>
+    <string name="Dialog.Yes">Yes</string>
+    <string name="Dialog.No">No</string>
     
     <string name="TabPeople">People</string>
     <string name="TabCalendar">Calendar</string>    
@@ -42,11 +44,14 @@
 	<string name="Individual.PhoneAction">"Call %s"</string>
 	<string name="Individual.EmailAction">"Email %s"</string>
 	<string name="Individual.AddressAction">"View %s address"</string>
-	<string name="Individual_FamilyMemberAction">View family member</string>
-	<string name="Individual.CreateContact">Add to Contacts</string>
-	<string name="Individual.ContactAdded">Contact has been added.</string>
+	<string name="Individual_FamilyMemberAction">View family member</string>	
 	<string name="Individual.PhoneNumberDial">Call This Number</string>
-	<string name="Individual.PhoneNumberText">Send Text Message</string>
+	<string name="Individual.PhoneNumberText">Send Text Message</string>	
+	
+	<string name="Individual.ContactCreateConfirm">Add this person to your Contacts?</string>
+	<string name="Individual.ContactCreateMenu">Add to Contacts</string>	
+	<string name="Individual.ContactCreated">This person has successfully been added to your Contacts.</string>
+	<string name="Individual.ContactCreateError">There was an error creating your contact.  Your contact could not be created.</string>
 	
 
 	<string name="EventList.NoResults">Sorry, no events exist.</string>

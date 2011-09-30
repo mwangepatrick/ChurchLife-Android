@@ -3,7 +3,7 @@
   				android:layout_width="fill_parent" 
    				android:layout_height="fill_parent" 
    				xmlns:android="http://schemas.android.com/apk/res/android"
-   				android:padding="2dip">
+   				android:padding="4dip">
 	<TextView 		
 			android:id="@+id/titleTextView" 
 			android:text="Title"
@@ -17,8 +17,7 @@
 			android:id="@+id/timeTextView" 
 			android:text="value for time"
 			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:textColor="@android:color/white"
+			android:layout_height="wrap_content"						
 			android:layout_below="@+id/titleTextView">
 	</TextView>
 	
@@ -27,7 +26,6 @@
 			android:text="value for date"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"			
-			android:textColor="@android:color/white"
 			android:layout_alignBaseline="@+id/timeTextView"
 			android:layout_toRightOf="@+id/timeTextView"
 			android:layout_alignParentRight="true"

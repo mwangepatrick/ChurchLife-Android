@@ -1,5 +1,6 @@
 package com.acstechnologies.churchlifev2;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -11,12 +12,23 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentProviderOperation;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Contacts;
+import android.provider.Contacts.People;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.RawContacts.Data;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -29,6 +41,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.acstechnologies.churchlifev2.exceptionhandling.AppException;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionHelper;
 import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo;
+import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.SEVERITY;
+import com.acstechnologies.churchlifev2.exceptionhandling.ExceptionInfo.TYPE;
 import com.acstechnologies.churchlifev2.webservice.IndividualAddress;
 import com.acstechnologies.churchlifev2.webservice.IndividualEmail;
 import com.acstechnologies.churchlifev2.webservice.IndividualFamilyMember;
@@ -49,6 +63,8 @@ public class IndividualActivity extends OptionsActivity {
     private final static int ADD_CONTACT = 100;
     
     private static final int DIALOG_PHONE_SELECT = 200;
+    private static final int DIALOG_ADD_CONTACT = 300;
+    
        
 	//static final int DIALOG_PROGRESS = 0;
 	//private ProgressDialog _progressD;
@@ -58,7 +74,6 @@ public class IndividualActivity extends OptionsActivity {
 	
 	ImageView individualImageView;						// form controls
 	TextView nameTextView;
-	//ImageButton addContactImageButton;
 	ListView detailsListview;
 	
 	 @Override
@@ -87,17 +102,17 @@ public class IndividualActivity extends OptionsActivity {
 	            	 _wsIndividual = new IndividualResponse(extraBundle.getString("individual"));
 	            	 bindData();
 	             }	        
-	             	            
-//	             // Wire up the 'add to contacts' feature     
-//	             addContactImageButton.setOnClickListener(new OnClickListener() {		
-//	             	public void onClick(View v) {	        		             	
-//	             		addIndividualToContacts();   
-//	             	}		
-//	     		}); 
-	             
+	             	            	             
+	             // If user selects the picture OR the name...ask them if they wish
+	             //  to add this user to their local phone contacts
+	             individualImageView.setOnClickListener(new OnClickListener() {		
+	             	public void onClick(View v) {	   
+	             		showDialog(DIALOG_ADD_CONTACT);	             		
+	             	}		
+	     		 });  
 	             nameTextView.setOnClickListener(new OnClickListener() {		
-	             	public void onClick(View v) {	            		     	             		
-	             		addIndividualToContacts();            		
+	             	public void onClick(View v) {	   
+	             		showDialog(DIALOG_ADD_CONTACT);	             	
 	             	}		
 	     		 });  
 	             
@@ -143,7 +158,25 @@ public class IndividualActivity extends OptionsActivity {
 //	         _progressD.setMessage(getString(R.string.IndividualList_ProgressDialog));
 //	         _progressD.setIndeterminate(true);
 //	         _progressD.setCancelable(false);
-//	    	 return _progressD;	  
+//	    	 return _progressD;	
+		     
+		 case DIALOG_ADD_CONTACT:
+			 
+			 AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			 builder.setMessage(this.getResources().getString(R.string.Individual_ContactCreateConfirm))
+			        .setCancelable(true)
+			        .setPositiveButton(this.getResources().getString(R.string.Dialog_Yes), new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int id) {
+			            	createContactEntry();			            	
+			            }
+			        })
+			        .setNegativeButton(this.getResources().getString(R.string.Dialog_No), new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int id) {
+			                 dialog.cancel();
+			            }
+			        });
+			 return builder.create();
+			 
 	     default:
 	    	 return null;
 	     }
@@ -155,8 +188,7 @@ public class IndividualActivity extends OptionsActivity {
      */
     private void bindControls(){	    	
     	individualImageView = (ImageView)this.findViewById(R.id.individualImageView);
-    	nameTextView = (TextView)this.findViewById(R.id.nameTextView);
-    	//addContactImageButton = (ImageButton)this.findViewById(R.id.addContactImageButton);    	
+    	nameTextView = (TextView)this.findViewById(R.id.nameTextView);    	
     	detailsListview = (ListView)this.findViewById(R.id.detailsListview);    	
     }
     
@@ -275,8 +307,9 @@ public class IndividualActivity extends OptionsActivity {
     	try {	    		
     		if (url.length() > 0) {
     			URL imageUrl = new URL(url);
-    			InputStream is = (InputStream) imageUrl.getContent();
+    			InputStream is = (InputStream) imageUrl.getContent();    			
     			d = Drawable.createFromStream(is, "src");
+    		
     		}
     	   return d;	    	   
     	} 
@@ -288,6 +321,37 @@ public class IndividualActivity extends OptionsActivity {
     		return null;
     	}
     }
+    
+    private byte[] ImageOperationsToByte(String url) {
+    	byte[] result = null;
+    	try {	    		
+    		if (url.length() > 0) {
+    			URL imageUrl = new URL(url);
+    			InputStream is = (InputStream) imageUrl.getContent();    			
+
+    			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+    			int nRead;
+    			byte[] data = new byte[16384];
+
+    			while ((nRead = is.read(data, 0, data.length)) != -1) {
+    				buffer.write(data, 0, nRead);
+    			}
+  				buffer.flush();
+  				result = buffer.toByteArray();    				    		
+    		}
+    	   return result;	    	   
+    	} 
+    	catch (MalformedURLException e) {
+    		ExceptionHelper.notifyNonUsers(e);
+    		return null;
+    	} catch (IOException e) {
+    		ExceptionHelper.notifyNonUsers(e);
+    		return null;
+    	}
+    }
+    
+    
     
     /**
      * actionTag must be in the format "command:data"
@@ -401,78 +465,131 @@ public class IndividualActivity extends OptionsActivity {
     };    
     
     
-    // launch intent to add this person to the phone contacts
-    private void addIndividualToContacts() {
+    protected void createContactEntry() {
     	
-    	try {
-//        	Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
-//        	intent.setType(ContactsContract.Contacts.CONTENT_ITEM_TYPE);
+    	//re-read
+    	//     http://groups.google.com/group/android-developers/browse_thread/thread/133816827efc8eb9/
+    	//about getting account type    	
 
-        	Intent intent = new Intent(Intent.ACTION_INSERT);
-        	intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-    		
-        	// See android.provider.ContactsContract.Intents.Insert for the complete list.
-        	intent.putExtra(ContactsContract.Intents.Insert.NAME, _wsIndividual.getFirstName() + " "  + _wsIndividual.getLastName());
-        	
-        	// Phone Numbers - can add up to 3   	
+        try
+        {	
+	        // Prepare contact creation request
+	        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+	        
+	        ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+	                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, null)
+	                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, null )
+	                .build());
+	
+	        // name
+	        String name = _wsIndividual.getFirstName() + " "  + _wsIndividual.getLastName();
+	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
+	                .build());
+	             
+	        // Phone number(s)
         	ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
+        	for (IndividualPhone phone : phoneList) {	
 
-        	for (int i=0; i < phoneList.size(); i++) {
-        		
-        		String phoneNumber =  String.format("(%s)%s", phoneList.get(i).getAreaCode(), phoneList.get(i).getPhoneNumber());
-        		String phoneType = phoneList.get(i).getPhoneType();        		
-        		
-        		switch(i) {
-        			case 0:
-        				intent.putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber);
-                		intent.putExtra(ContactsContract.Intents.Insert.PHONE_TYPE, phoneType);
-        				break;
-        			case 1:
-        				intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE, phoneNumber);
-                		intent.putExtra(ContactsContract.Intents.Insert.SECONDARY_PHONE_TYPE, phoneType);
-        				break;
-        			case 2:
-        				intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE, phoneNumber);
-                		intent.putExtra(ContactsContract.Intents.Insert.TERTIARY_PHONE_TYPE, phoneType);
-        				break;        			        	
-        		}        		        		
+        		String phoneNumber =  String.format("(%s)%s", phone.getAreaCode(), phone.getPhoneNumber());        		
+    	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+    	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+    	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM)
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, phone.getPhoneType())
+    	                .build());    	                		        	
         	}
-
-        	
-        	// Email addresses
-        	
-        	
-        	// Addresses - ???
-        	        
-        	// Send with it a unique request code, so when you get called back, you can
-        	// check to make sure it is from the intent you launched 
-        	startActivityForResult(intent, ADD_CONTACT);    		    		    	
+	        	        
+	        // Email address(es)
+        	ArrayList<IndividualEmail> emailList = _wsIndividual.getEmails();
+    		for (IndividualEmail email : emailList) {
+    			
+    	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+    	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+    	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+    	                .withValue(ContactsContract.CommonDataKinds.Email.DATA, email.getEmailAddress())
+    	                .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM)
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, email.getEmailType())
+    	                .build());    			    			    			
+    		}
     		
-    	} catch (AppException ae) {
-			ExceptionHelper.notifyNonUsers(ae);						
-			ExceptionHelper.notifyUsers(ae, this);
-		}	    	    	    	
+	        
+    		// Address(es)
+    		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
+    		for (IndividualAddress address : addressList) {		
+    		
+    	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+    	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+    	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)	                
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, address.getAddress())
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD, address.getAddress2())
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.CITY, address.getCity())
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, address.getState())
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, address.getZipcode())
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, address.getCountry())    			        
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM)
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, address.getAddressType())
+    	                .build());    			
+    		}
+    		
+	        // Picture
+	        byte[] pic = ImageOperationsToByte(_wsIndividual.getPictureUrl());
+	        
+	        if (pic != null) {
+		        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+		        		.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+		        		.withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)	 
+		        		.withValue(ContactsContract.Data.IS_SUPER_PRIMARY, 1)
+		        		.withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, pic)
+		        		.withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)
+		        		.build());
+	        }
+	        
+            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+            
+            //            R.string.Individual_ContactCreated
+            //zzz now showing up
+            Toast.makeText(IndividualActivity.this, "this is a test", Toast.LENGTH_LONG);
+        
+        } catch (Exception e) {
+        	        	        
+        	ExceptionHelper.notifyNonUsers(e);
+        	
+        	AppException ae = AppException.AppExceptionFactory(
+        			TYPE.APPLICATION, 
+        			SEVERITY.LOW, 
+        			"100", 
+        			"IndividualActivity.createContactEntry",
+        			getString(R.string.Individual_ContactCreateError));
+        	
+        	ExceptionHelper.notifyUsers(ae, this);
+        }	
     }
-	 
-    @Override
-    public void onActivityResult(int reqCode, int resultCode, Intent data) {
-      super.onActivityResult(reqCode, resultCode, data);
 
-      switch (reqCode) {
-        case (ADD_CONTACT) :
-          if (resultCode == Activity.RESULT_OK) {
-           
-            Toast.makeText(IndividualActivity.this, R.string.Individual_ContactAdded, Toast.LENGTH_LONG).show();
-            //Uri contactData = data.getData();            
-            //  Cursor c =  managedQuery(contactData, null, null, null, null);
-            //  if (c.moveToFirst()) {
-            //    String name = c.getString(c.getColumnIndexOrThrow(People.NAME));
-            //    // TODO Whatever you want to do with the selected contact name.
-            //  }
-          }
-          break;
-      }
-    }
+    
+    // menu - add to contacts menu option 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		menu.add(Menu.NONE, ADD_CONTACT, Menu.FIRST, R.string.Individual_ContactCreateMenu);  		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    case ADD_CONTACT:
+	    	createContactEntry();
+	    	return true;
+
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
 
     
 }
