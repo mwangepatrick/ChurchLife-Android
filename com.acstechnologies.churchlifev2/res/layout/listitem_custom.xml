@@ -34,7 +34,7 @@
 	   	     	  
    	<ImageView
    		android:id="@+id/actionImageView" 
-   		android:src="@drawable/call_sms"  
+   		android:src="@drawable/call_sms_w"  
    		android:layout_height="wrap_content"
    		android:layout_width="wrap_content"   		
    		android:background="@android:color/transparent" 

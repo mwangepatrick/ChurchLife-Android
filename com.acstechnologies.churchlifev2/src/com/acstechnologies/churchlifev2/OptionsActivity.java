@@ -35,6 +35,11 @@ public class OptionsActivity extends Activity {
 			menu.removeItem(R.id.signout);
 		}
 				
+		// Only show the 'select url' settings if SHOW_ADVANCED_SETTINGS 
+		if (config.SHOW_ADVANCED_SETTINGS == false) {
+			menu.removeItem(R.id.settings);
+		}
+		
 		return true;
 	}
 

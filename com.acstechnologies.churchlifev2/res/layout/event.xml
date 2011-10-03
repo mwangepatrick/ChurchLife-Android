@@ -10,8 +10,8 @@
    	  android:id="@+id/topLinearLayout"
    	  android:layout_width="match_parent"
 	  android:layout_height="wrap_content"
-	  android:background="@color/MediumGrey"	  
-	  android:padding="5sp">
+	  android:background="@color/MediumGrey"		   
+	  android:padding="10sp">
 				  
 	    <LinearLayout android:id="@+id/calendarLayout"
 		    		  android:layout_height="70sp"
@@ -71,7 +71,8 @@
 	  android:layout_height="wrap_content"
 	  xmlns:android="http://schemas.android.com/apk/res/android"
 	  android:orientation="vertical"	  	 	 
-	  android:layout_below="@+id/topLinearLayout">    
+	  android:layout_below="@+id/topLinearLayout"
+	  android:padding="10sp">    
 	</ListView>	
 	
 </LinearLayout>

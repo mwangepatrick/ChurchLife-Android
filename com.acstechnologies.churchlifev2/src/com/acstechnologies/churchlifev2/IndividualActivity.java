@@ -9,28 +9,21 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentProviderOperation;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Contacts;
-import android.provider.Contacts.People;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.RawContacts.Data;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -65,16 +58,14 @@ public class IndividualActivity extends OptionsActivity {
     private static final int DIALOG_PHONE_SELECT = 200;
     private static final int DIALOG_ADD_CONTACT = 300;
     
-       
-	//static final int DIALOG_PROGRESS = 0;
-	//private ProgressDialog _progressD;
-	
 	IndividualResponse _wsIndividual;					// results of the web service call
 	AppPreferences _appPrefs;  	
 	
 	ImageView individualImageView;						// form controls
 	TextView nameTextView;
 	ListView detailsListview;
+	
+	private float _lastXpercent = 0;					// last x position % touched (for use with phone/text message list item)
 	
 	 @Override
 	 public void onCreate(Bundle savedInstanceState) {
@@ -129,6 +120,7 @@ public class IndividualActivity extends OptionsActivity {
 		 switch(id) {
 		 
 		 // if user selects a phone number, ask which action to perform
+		 // NOT Currently used!
 		 case DIALOG_PHONE_SELECT:
 			 
 			 // Get the phone number passed to this dialog (so we can use it as a title)
@@ -239,7 +231,7 @@ public class IndividualActivity extends OptionsActivity {
 			//String smsAction = "phonesms:" + fullPhoneNumber;
 						
 			listItems.add(new CustomListItem(String.format(titleString, phone.getPhoneType()),
-											 fullPhoneNumber, "", defaultAction, getResources().getDrawable(R.drawable.call_sms)));			
+											 fullPhoneNumber, "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
 		}
 		
 		
@@ -282,13 +274,24 @@ public class IndividualActivity extends OptionsActivity {
 											 getResources().getDrawable(R.drawable.user)));			
 		}
 					
-		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems));				
+		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems));		
+		
+		// store off the last x touch (in percent of the total width) so that we know what to do 
+		//  on a phone entry (call the number of text the number) based on the touch position.
+		detailsListview.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {		
+				_lastXpercent = event.getX() / v.getWidth();
+				return false;
+			}
+        });  
+		
 		detailsListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
             	CustomListItem item = (CustomListItem)parent.getAdapter().getItem(position);
             	doAction(item.getActionTag());            	
             }
-          });  
+        });  
 		
 		//works
 		//TextView headerText = new TextView(this);
@@ -370,10 +373,22 @@ public class IndividualActivity extends OptionsActivity {
     	
     	if (command.equals("phone")) {
     		
+    		/* not currently used.
+    		 * 
     		// ask user to text or dial the number
         	Bundle args = new Bundle();
         	args.putString("phonenumber", argument);      
         	showDialog(DIALOG_PHONE_SELECT, args); 
+    		*/
+    		
+    		// if the user touched the first 85% of the item dial 
+    		//  the phone number; otherwise, do text messaging
+    		if (_lastXpercent <= .85) {
+    			callPhoneNumber(argument);
+    		}
+    		else {
+    			sendTextMessage(argument);
+    		}    		
         	        	        	    		    		    		
     	}else if (command.equals("phonedial")) {    		
     		callPhoneNumber(argument);
@@ -482,13 +497,25 @@ public class IndividualActivity extends OptionsActivity {
 	                .build());
 	
 	        // name
-	        String name = _wsIndividual.getFirstName() + " "  + _wsIndividual.getLastName();
+	        //String name = _wsIndividual.getFirstName() + " "  + _wsIndividual.getLastName();
 	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
+	                //.withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)	                
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, _wsIndividual.getFirstName())
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, _wsIndividual.getMiddleName())
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, _wsIndividual.getLastName())	                
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, _wsIndividual.getTitle())
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, _wsIndividual.getSuffix())	
 	                .build());
 	             
+	        // nickname
+	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+	                .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, _wsIndividual.getGoesbyName())
+	                .build());
+	        
 	        // Phone number(s)
         	ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
         	for (IndividualPhone phone : phoneList) {	
@@ -550,9 +577,8 @@ public class IndividualActivity extends OptionsActivity {
 	        
             getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
             
-            //            R.string.Individual_ContactCreated
-            //zzz now showing up
-            Toast.makeText(IndividualActivity.this, "this is a test", Toast.LENGTH_LONG);
+            // Notify user of success.
+            Toast.makeText(IndividualActivity.this,  R.string.Individual_ContactCreated, Toast.LENGTH_LONG).show();
         
         } catch (Exception e) {
         	        	        
@@ -583,7 +609,7 @@ public class IndividualActivity extends OptionsActivity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	    case ADD_CONTACT:
-	    	createContactEntry();
+	    	createContactEntry();	    	
 	    	return true;
 
 	    default:

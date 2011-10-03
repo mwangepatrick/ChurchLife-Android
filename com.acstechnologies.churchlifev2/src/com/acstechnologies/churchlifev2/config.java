@@ -16,4 +16,6 @@ public class config {
      */
     public  static final String SEED = "##initialseedvalue##";
     
+    public static final boolean SHOW_ADVANCED_SETTINGS = false;
+    
 }

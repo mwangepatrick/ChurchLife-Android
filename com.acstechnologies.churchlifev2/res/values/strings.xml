@@ -50,7 +50,7 @@
 	
 	<string name="Individual.ContactCreateConfirm">Add this person to your Contacts?</string>
 	<string name="Individual.ContactCreateMenu">Add to Contacts</string>	
-	<string name="Individual.ContactCreated">This person has successfully been added to your Contacts.</string>
+	<string name="Individual.ContactCreated">This person has been successfully added to your Contacts.</string>
 	<string name="Individual.ContactCreateError">There was an error creating your contact.  Your contact could not be created.</string>
 	
 
