@@ -7,7 +7,8 @@
      android:layout_height="wrap_content"  
      android:paddingTop="2dip"  
      android:paddingBottom="2dip"  
-     android:paddingLeft="5dip"  
+     android:paddingLeft="5dip"            
+     android:background="@color/DarkGrey"
      android:textColor="@android:color/white"
      style="?android:attr/listSeparatorTextViewStyle" >
  </TextView>

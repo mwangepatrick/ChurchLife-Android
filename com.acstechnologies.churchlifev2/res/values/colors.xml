@@ -3,6 +3,7 @@
     
     <color name="Login.Background">#E6DFE0</color>	
 	<color name="MediumGrey">#9E9E9E</color>
+	<color name="DarkGrey">#525050</color>
 	<color name="Maroon">#B3002C</color>	
 	<color name="Mustard">#F7DC0C</color>
 	<color name="translucent_black">#80000000</color>

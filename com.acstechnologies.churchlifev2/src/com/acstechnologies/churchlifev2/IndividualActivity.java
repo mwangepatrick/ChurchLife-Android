@@ -205,7 +205,8 @@ public class IndividualActivity extends OptionsActivity {
     	if ( _wsIndividual.getGoesbyName().length() > 0 ) 	{ name = name + "(" + _wsIndividual.getGoesbyName() 	+ ") "; }    	
     	if ( _wsIndividual.getMiddleName().length() > 0 ) 	{ name = name + _wsIndividual.getMiddleName() 			+ " "; 	}
     	if ( _wsIndividual.getLastName().length() > 0 ) 	{ name = name + _wsIndividual.getLastName() 			+ " "; 	}
-    	       	
+    	if ( _wsIndividual.getSuffix().length() > 0 ) 		{ name = name + _wsIndividual.getSuffix() 				+ " "; 	}
+    	    	       	
 		nameTextView.setText(name);
 
 		// Build a list of all individual details (one list) including phone numbers,
