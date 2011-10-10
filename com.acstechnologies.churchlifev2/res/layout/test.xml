@@ -2,77 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:layout_width="match_parent"
 	   	android:layout_height="match_parent" 	    
-	    android:orientation="vertical"
-	    android:background="@color/Login.Background" 	    
-		android:padding="10sp">
+	    android:orientation="vertical">
 
-	<ImageView
-	   	android:id="@+id/imageView1" 
-	   	android:layout_height="wrap_content"
-	   	android:layout_width="wrap_content"
-	    android:scaleType="center"
-	   	android:src="@drawable/homelogo"
-	   	android:layout_margin="5sp"	   		   
-	   	android:layout_gravity="center">
-	</ImageView>  
-			
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		    android:layout_width="match_parent"
-	   		android:layout_height="wrap_content" 
-	    	android:background="@drawable/roundedcornershape"
-	    	android:orientation="vertical"
-	    	android:padding="7sp">
-	    	
-				<EditText 
-					android:text="" 
-					android:id="@+id/txtEmail" 
-					android:hint="Email Address"		
-					android:layout_width="match_parent" 
-					android:layout_height="40sp"
-					android:singleLine="true"			
-					android:inputType="textEmailAddress"					
-					android:background="@android:color/transparent">
-				</EditText>
-				
-				<ImageView
-				    xmlns:android="http://schemas.android.com/apk/res/android"
-				    android:src="@android:drawable/divider_horizontal_bright"
-				    android:layout_width="fill_parent"
-				    android:layout_height="wrap_content"
-				    android:scaleType="fitXY">
-				</ImageView>
-					
-				<EditText 
-					android:text="" 
-					android:id="@+id/txtEmailPassword" 
-					android:hint="Password"
-					android:layout_width="fill_parent" 
-					android:layout_height="40sp"
-					android:singleLine="true"
-					android:password="true" 
-					android:background="@android:color/transparent">
-				</EditText>																
-	</LinearLayout>	    	
-			
-	<CheckBox 
-		android:text="Remember Me" 
-		android:layout_gravity="center"
-		android:id="@+id/chkRememberMe" 
-		android:textColor="#000000"
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content">
-	</CheckBox>
-	
-
-				
-	<Button			
-		android:text="@string/Login.Login" 
-		android:id="@+id/btnLogin"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content">
-	</Button>
-			
-	    
+  	<ListView
+   		android:id="@+id/ListView01"
+   		android:layout_height="wrap_content"
+   		android:layout_width="fill_parent"/>
+   			   
 </LinearLayout>
 	    
 

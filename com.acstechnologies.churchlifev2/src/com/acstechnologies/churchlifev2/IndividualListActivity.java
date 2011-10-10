@@ -192,7 +192,7 @@ public class IndividualListActivity extends OptionsActivity {
 				    		    			    		    		    		    	
 		    					// Add all items from the latest web service request to the adapter
 			    				for (int i = 0; i < _wsIndividuals.getLength(); i++) {			    								    								    			
-			    					_itemArrayAdapter.add(new DefaultListItem(Integer.toString(_wsIndividuals.getIndvId(i)), _wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i)));
+			    					_itemArrayAdapter.add(new DefaultListItem(Integer.toString(_wsIndividuals.getIndvId(i)), _wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i) + " " + _wsIndividuals.getSuffix(i)));
 			    				}
 			    				
 		    				    // If the web service indicates more records...Add the 'More Records' item

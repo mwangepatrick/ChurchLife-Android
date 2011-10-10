@@ -11,6 +11,7 @@ import com.acstechnologies.churchlifev2.webservice.LoginResponse;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -63,7 +65,7 @@ public class LoginActivity extends OptionsActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-                      
+        
         try
         {
             _appPrefs = new AppPreferences(getApplicationContext());           
@@ -105,9 +107,14 @@ public class LoginActivity extends OptionsActivity {
             
             // Wire up the login button                     
             btnLogin.setOnClickListener(new OnClickListener() {		
-            	public void onClick(View v) {	            		     
-            		if (inputIsValid()) 
-            			doLoginWithProgressWindow(); // login in with worker thread            		
+            	public void onClick(View v) {	            		                 		
+					if (inputIsValid()) {
+	       	            // Hide the keyboard            			            		
+            			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+	       	            imm.hideSoftInputFromWindow(btnLogin.getWindowToken(), 0);
+	       	             
+            			doLoginWithProgressWindow(); // login in with worker thread
+					}
             	}		
     		});     
             

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>  
-    <string name="app_name">Church Life v.2</string>
+    <string name="app_name">_Church Life</string>
 
     <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
     <string name="Dialog.NoConnectionLine2">Please check your connection and try again.</string>

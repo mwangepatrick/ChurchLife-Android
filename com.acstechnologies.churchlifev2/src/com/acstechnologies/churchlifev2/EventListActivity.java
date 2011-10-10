@@ -28,9 +28,6 @@ import android.content.DialogInterface;
 
 public class EventListActivity extends OptionsActivity {
 	
-	static final int NETWORK_OPERATION_EVENTS = 0;
-	static final int NETWORK_OPERATION_EVENT = 1;
-	
 	static final int DIALOG_PROGRESS_EVENTS = 0;
 	static final int DIALOG_PROGRESS_EVENT = 1;
 	
@@ -53,22 +50,13 @@ public class EventListActivity extends OptionsActivity {
         	
         	setContentView(R.layout.eventlist);
         	  
-        	bindControls();						// Set state variables to their form controls
-        	         	
-//        	//testing separated list adapter
-//        	SeparatedListAdapter adapter = new SeparatedListAdapter(this);  
-//        	adapter.addSection("Array test", new ArrayAdapter<String>(this, R.layout.eventlist, new String[]  { "First item", "Item two" }));  
-//        	adapter.addSection("Section Two", new ArrayAdapter<String>(this, R.layout.eventlist, new String[] { "Second One", "Item two" }));
-//        	
-//        	//adapter.addSection("Security", new SimpleAdapter(this, security, R.layout.list_complex,  new String[] { ITEM_TITLE, ITEM_CAPTION }, new int[] { R.id.list_complex_title, R.id.list_complex_caption }));  
-//        	   
-//        	lv1.setAdapter(adapter);          	                
+        	bindControls();						// Set state variables to their form controls        	                
         	
         	loadEventsWithProgressDialog();
          
             // Wire up list on click - display event detail activity
             lv1.setOnItemClickListener(new OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {          
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {  
                 	EventListItem item = (EventListItem)parent.getAdapter().getItem(position);                 	                
                 	ItemSelected(item);               	                 	
                 }
@@ -136,11 +124,6 @@ public class EventListActivity extends OptionsActivity {
 	    				if (_itemList == null ) {
 	    					_itemList = new ArrayList<EventListItem>();
 	    				}
-	    				else {
-	    					// This was a search from the 'More Results' listitem.  
-	    					// Remove that item before loading the ones just retrieved.
-	    					_itemList.remove(_itemList.size()-1); 	    						    						    						    						    					
-	    				}
 	    				
 	    				// Check for empty
 	    				if (_wsEvents.getLength() == 0) {
@@ -157,18 +140,15 @@ public class EventListActivity extends OptionsActivity {
 		    													_wsEvents.getStartDate(i)));	  
 		    				}
 		    				
-	    				    // Add the 'More...' at the bottom of the list
-		    				if (_wsEvents.getHasMore() == true) {		    				
-		    					_itemList.add(new EventListItem("", getResources().getString(R.string.EventList_More), null));	
-		    				}
+		    				// save index and top position (preserve scroll location)
+		    				int index = lv1.getFirstVisiblePosition();
+		    				View v = lv1.getChildAt(0);
+		    				int top = (v == null) ? 0 : v.getTop();
 
-		    				// Set the adapter to use the arraylist of EventListItem 
-		    				//  (if already set...refresh the adapter)
-		    			    if (lv1.getAdapter() == null) {
-		    			    	lv1.setAdapter(new EventListItemAdapter(EventListActivity.this, _itemList));
-		    			    } else {
-		    			        ((EventListItemAdapter)lv1.getAdapter()).refill(_itemList);
-		    			    }		    			    		    			   
+		    				lv1.setAdapter(getSeparatedListAdapter(_itemList, _wsEvents.getHasMore()));
+
+		    				// restore scroll position
+		    				lv1.setSelectionFromTop(index, top);		    				
 	    				}	    				
 	       			}
 	       			else if (msg.what < 0) {	       			
@@ -232,6 +212,52 @@ public class EventListActivity extends OptionsActivity {
     	searchThread.start();    
 	
     }
+    
+    //new
+    /**
+     * Iterates over the class level event item list and adds those events to a
+     *  separated list adapter (headers for month/year)
+     *   
+     * @return
+     */
+    public SeparatedListAdapter getSeparatedListAdapter(ArrayList<EventListItem> allItems, boolean addMoreLink) {
+		 
+		SeparatedListAdapter separatedAdapter = new SeparatedListAdapter(this);  
+		
+		String lastHeader = "";
+		ArrayList<EventListItem> itemsForMonthYear = null;
+		
+		for (EventListItem event : allItems) {
+			
+			// if new month, year...create a new 
+			if (event.getMonthYearText().equals(lastHeader) == false) {
+				
+				if (itemsForMonthYear != null) {
+					// add the items (with header) to the separated list adapter (the first time in this is null)
+					separatedAdapter.addSection(lastHeader, new EventListItemAdapter(EventListActivity.this, itemsForMonthYear));
+				}					
+				
+				// start a new list/header
+				itemsForMonthYear = new ArrayList<EventListItem>();
+				lastHeader = event.getMonthYearText();					
+			}
+			
+			//add this item to the current month/year
+			itemsForMonthYear.add(event);  		
+					
+		}
+		
+		//  If we have 'more results' add that item to the end of the last months items		        		
+		if (addMoreLink) {			
+			itemsForMonthYear.add(new EventListItem("", getResources().getString(R.string.EventList_More), null));
+		}
+
+		// Add the last arraylist built (the for each loop runs out of items before adding it)
+		separatedAdapter.addSection(lastHeader, new EventListItemAdapter(EventListActivity.this, itemsForMonthYear));		
+		
+		return separatedAdapter;
+	}
+    
     
     // Occurs when a user selects an individual on the listview.    
     //private void ItemSelected(String eventId, String eventName)

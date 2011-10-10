@@ -1,29 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:id="@+id/relativeLayout1" 
-  				android:layout_width="fill_parent" 
-   				android:layout_height="fill_parent" 
-   				xmlns:android="http://schemas.android.com/apk/res/android">
-	
-	<TextView 		
-			android:id="@+id/leftsideTextView" 
-			android:text="value on left"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:layout_marginLeft="2dip"
-			android:textColor="@android:color/white"
-			android:layout_alignParentLeft="true"
-			android:gravity="left">
-	</TextView>
-	
-	<TextView 		
-			android:id="@+id/rightsideTextView" 
-			android:text="value on right"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:layout_marginRight="2dip"
-			android:textColor="@android:color/white"
-			android:layout_alignParentRight="true"
-			android:gravity="right">
-	</TextView>
-	
-</RelativeLayout>
+<TextView  
+     xmlns:android="http://schemas.android.com/apk/res/android" 
+     android:text="September 2011" 
+     android:id="@+id/list_header_title"  
+     android:layout_width="fill_parent"  
+     android:layout_height="wrap_content"  
+     android:paddingTop="2dip"  
+     android:paddingBottom="2dip"  
+     android:paddingLeft="5dip"  
+     android:textColor="@android:color/white"
+     style="?android:attr/listSeparatorTextViewStyle" >
+ </TextView>
+	 

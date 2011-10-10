@@ -93,7 +93,7 @@ public class WebServiceHandler {
     	
     	try {
     	    client.Execute(RequestMethod.POST);
-			wsObject= new LoginResponse(client.getResponse());								
+			wsObject= new LoginResponse(client.	getResponse());								
     	}
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
