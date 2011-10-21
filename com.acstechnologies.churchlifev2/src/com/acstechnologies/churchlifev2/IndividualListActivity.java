@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 public class IndividualListActivity extends OptionsActivity {
 	
 	static final int DIALOG_PROGRESS_INDIVIDUALS = 0;
