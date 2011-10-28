@@ -175,8 +175,10 @@ public class EventListActivity extends OptionsActivity {
     	Thread searchThread = new Thread() {  
     		public void run() {
     			try {    				    				
-    				GlobalState gs = (GlobalState) getApplication();
-        	    	    		    	    		    
+    				//GlobalState gs = (GlobalState) getApplication();
+    				// zzz remove after testing 
+    				GlobalState gs = GlobalState.getInstance(); 
+    				
     				// Search for 1 year's worth of data starting today (at 00:00 time)
     		    	Calendar cal = Calendar.getInstance();    		    	    		    	
     		    	cal.set(Calendar.HOUR, 0);
@@ -330,7 +332,10 @@ public class EventListActivity extends OptionsActivity {
     	Thread searchThread = new Thread() {  
     		public void run() {
     			try {    				    				
-    				GlobalState gs = (GlobalState) getApplication();
+    				//GlobalState gs = (GlobalState) getApplication();
+    				// zzz remove after testing 
+    				GlobalState gs = GlobalState.getInstance(); 
+    				
 	    	    	WebServiceHandler wh1 = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 	    	    	
 	    	    	EventResponse er = wh1.getEvent(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getId());

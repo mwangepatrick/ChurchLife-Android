@@ -13,7 +13,7 @@ public class AppPreferences {
     /**
      * This value SHOULD ALWAYS be changed to match your package.
      */
-     private static final String APP_SHARED_PREFS = "com.acstechnologies.churchlifev2_preferences"; //  Name of the file -.xml
+     public static final String APP_SHARED_PREFS = "com.acstechnologies.churchlifev2_preferences"; //  Name of the file -.xml
           
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
@@ -71,15 +71,20 @@ public class AppPreferences {
    	 prefsEditor.commit();
     }
      
-     //Test     
-     public String getTest() {
-         return appSharedPrefs.getString("test", "");
+     // Application State - if application is destroyed by the OS, current state gets written to preferences
+     public String getApplicationState() throws AppException {
+         //return appSharedPrefs.getString("applicationstate", "");
+         return getEncryptedValue("applicationstate");
      }
-
-     public void setTest(String text) {
-         prefsEditor.putString("test", text);
-         prefsEditor.commit();
+     
+     // Application State - if application is re-created by the OS, state gets read from preferences
+     public void setApplicationState(String text) throws AppException {
+    	 setEncryptedValue("applicationstate", text);
+         //prefsEditor.putString("applicationstate", text);         
+         //prefsEditor.commit();
      }
+     
+     
      
      
           

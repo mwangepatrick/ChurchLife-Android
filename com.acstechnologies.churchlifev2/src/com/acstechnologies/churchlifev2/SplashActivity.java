@@ -90,7 +90,10 @@ public class SplashActivity extends Activity {
            	
            	if (result == true) {
         		// set global application variables	    				
-				GlobalState gs = (GlobalState) getApplication();
+				//GlobalState gs = (GlobalState) getApplication();
+				// zzz remove after testing 
+				GlobalState gs = GlobalState.getInstance(); 
+				
 				gs.setSiteName(response.getSiteName());
 				gs.setSiteNumber(response.getSiteNumber());
 				gs.setUserName(response.getUserName());

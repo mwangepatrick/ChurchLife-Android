@@ -91,7 +91,13 @@ public class IndividualListActivity extends OptionsActivity {
     	}  
         
     }
-   
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(IndividualListActivity.this,  "0. Resuming...", Toast.LENGTH_LONG).show();     
+    }
+    
     protected Dialog onCreateDialog(int id) {
         switch(id) {
         case DIALOG_PROGRESS_INDIVIDUAL:
@@ -158,7 +164,11 @@ public class IndividualListActivity extends OptionsActivity {
      */
     private void doSearchWithProgressWindow()
     {           
-    	if (inputIsValid()) {	    			    
+    	if (inputIsValid()) {	    	
+    		    	    		
+    		//debug
+    		Toast.makeText(IndividualListActivity.this,  "1.  Searching", Toast.LENGTH_LONG).show();
+    		
 	    	showDialog(DIALOG_PROGRESS_INDIVIDUALS);
 	    	
 	    	// This handler is called once the people search is complete.  It looks at the data returned
@@ -209,6 +219,11 @@ public class IndividualListActivity extends OptionsActivity {
 		       	             imm.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
 
 		       			}
+		    			//debug
+		    			else if (msg.what == 1) {
+		    				Toast.makeText(IndividualListActivity.this, msg.obj.toString(), Toast.LENGTH_LONG).show();
+	        							
+		       			}			    			
 		       			else if (msg.what < 0) {
 		       				// If < 0, the exception is in the message bundle.  Throw it
 		       				Bundle b = msg.getData();
@@ -225,9 +240,18 @@ public class IndividualListActivity extends OptionsActivity {
 	    	Thread searchThread = new Thread() {  
 	    		public void run() {
 	    			try {
-		    			GlobalState gs = (GlobalState) getApplication();
+		    			//GlobalState gs = (GlobalState) getApplication();
+	    				// zzz remove after testing 
+	    				GlobalState gs = GlobalState.getInstance(); 
+	    				
 		    	    	String searchText = txtSearch.getText().toString();
 		    	    	    	    
+		        		//debug
+		    	    	Message debugMsg1 = handler.obtainMessage();
+		    	    	debugMsg1.what = 1;
+		    	    	debugMsg1.obj = "2.  Search Text:" + searchText;
+		    	    	handler.sendMessage(debugMsg1);
+		        				        	
 		    	    	// If we have search results, and the call to this method is 
 		    	    	//  for 'more', we pick back up where we left off.
 		    	    	int startingRecordId = 0; 							// initialize	  	    	    	
@@ -235,8 +259,34 @@ public class IndividualListActivity extends OptionsActivity {
 		    	    		startingRecordId = _wsIndividuals.getMaxResult();
 		    	    	}
 		    	    	
+		    	    	//debug		
+		    	    	Message debugMsg2 = handler.obtainMessage();
+		    	    	debugMsg2.what = 1;
+		    	    	debugMsg2.obj = "3.  Starting Record:" + Integer.toString(startingRecordId);
+		    	    	handler.sendMessage(debugMsg2);
+		    	    	
+		    	    	//debug		
+		    	    	Message debugMsg2a = handler.obtainMessage();
+		    	    	debugMsg2a.what = 1;
+		    	    	debugMsg2a.obj = "4. Webservice Url :" + _appPrefs.getWebServiceUrl();
+		    	    	handler.sendMessage(debugMsg2a);
+		    	    	
+		    	    	//debug		
+		    	    	Message debugMsg2b = handler.obtainMessage();
+		    	    	debugMsg2b.what = 1;
+		    	    	debugMsg2b.obj = "5. Username : " + gs.getUserName();
+		    	    	handler.sendMessage(debugMsg2b);
+		    	    	
+		    	    			    	    			    	    			    	    
 		    	    	WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 		    	    	_wsIndividuals = wh.getIndividuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), searchText, startingRecordId, 0);
+		    	    			    	    	
+		    	    	//debug
+		    	    	Message debugMsg3 = handler.obtainMessage();
+		    	    	debugMsg3.what = 1;
+		        		debugMsg3.obj = "4.  Records Returned:" + Integer.toString(_wsIndividuals.getLength());
+		    	    	handler.sendMessage(debugMsg3);
+		    	    	
 		    	    	handler.sendEmptyMessage(0);
 	    			}
 	    			catch (Exception e) {    				
@@ -252,7 +302,7 @@ public class IndividualListActivity extends OptionsActivity {
 	    	searchThread.start();    
     	}
     }
-    
+        
     // Occurs when a user selects an individual on the listview.    
     private void ItemSelected(String individualId, String individualName)
     {    	    

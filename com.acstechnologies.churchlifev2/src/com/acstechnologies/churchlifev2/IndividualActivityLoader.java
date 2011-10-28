@@ -80,7 +80,10 @@ public class IndividualActivityLoader  {
     	Thread searchThread = new Thread() {  
     		public void run() {
     			try {
-	    			GlobalState gs = (GlobalState) _context.getApplicationContext();
+	    			//GlobalState gs = (GlobalState) _context.getApplicationContext();
+    				// zzz remove after testing 
+    				GlobalState gs = GlobalState.getInstance(); 
+    				
 	    			AppPreferences appPrefs =  new AppPreferences(_context.getApplicationContext());
 	    			
 	    			WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);

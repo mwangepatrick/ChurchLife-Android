@@ -23,7 +23,10 @@ public class MyInfoActivity extends OptionsActivity  {
         bindControls();
         
         // Site Name
-        GlobalState gs = (GlobalState) getApplication();        
+        //GlobalState gs = (GlobalState) getApplication();
+		// zzz remove after testing 
+		GlobalState gs = GlobalState.getInstance(); 
+		
         txtName.setText(gs.getSiteName());       
         
         // Application info

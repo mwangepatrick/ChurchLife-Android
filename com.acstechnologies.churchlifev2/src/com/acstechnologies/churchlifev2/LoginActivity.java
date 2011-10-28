@@ -72,7 +72,8 @@ public class LoginActivity extends OptionsActivity {
             _gestureDetector = new GestureDetector(new LoginSwipeDetector());            
                        
         	// Remove login credentials from global state - ALWAYS
-        	GlobalState gs = (GlobalState) getApplication();
+        	GlobalState gs = GlobalState.getInstance(); // zzz remove after testing (GlobalState) getApplication();
+        	
         	gs.clearApplicationSettings();  
         	
             logoutCheck(); 						// Was this activity was called with a 'logout' parameter?
@@ -439,11 +440,13 @@ public class LoginActivity extends OptionsActivity {
 		if (remember){			
 			_appPrefs.setAuth1(userName);	
 			_appPrefs.setAuth2(password);
-			_appPrefs.setAuth3(siteNumber);   			
+			_appPrefs.setAuth3(siteNumber);
+			_appPrefs.setOrganizationName(siteName); 
     	} 
 		
 		// Save login credentials to global state as they are needed for EVERY web service call
-		GlobalState gs = (GlobalState) getApplication();
+		//  (keep in mind that these need to be in state regardless of the 'remember me' setting)
+		GlobalState gs = GlobalState.getInstance(); // zzz remove after testing (GlobalState) getApplication();
 		gs.setSiteName(siteName);
 		gs.setSiteNumber(siteNumber);
 		gs.setUserName(userName);

@@ -14,7 +14,8 @@ public class config {
     /**
      * This value SHOULD ALWAYS be changed and kept secret!
      */
-    public  static final String SEED = "##initialseedvalue##";
+    //public  static final String SEED = "##initialseedvalue##";
+    public  static final String SEED = "@cst3chn0l0g13s!";
     
     public static final boolean SHOW_ADVANCED_SETTINGS = false;
     
