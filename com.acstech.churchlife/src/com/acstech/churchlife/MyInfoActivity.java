@@ -6,6 +6,7 @@ import com.acstech.churchlife.R;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -51,7 +52,8 @@ public class MyInfoActivity extends OptionsActivity  {
         
 		try {
 			info = manager.getPackageInfo(this.getPackageName(), 0);
-			result = info.versionName; 		       
+			String prefix = getResources().getString(R.string.MyInfo_VersionPrefix);
+			result = prefix + " " + info.versionName; 		       
 		} catch (NameNotFoundException e) {
 			ExceptionHelper.notifyNonUsers(e);		// do not raise any errors from here.  Non-catastrophic		
 		}

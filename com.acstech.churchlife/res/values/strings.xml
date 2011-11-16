@@ -62,6 +62,8 @@
 	<string name="Event.Location">Location</string>
 	<string name="Event.Description">Description</string>
 
+	<string name="MyInfo.VersionPrefix">version</string>
+
 
 
     
