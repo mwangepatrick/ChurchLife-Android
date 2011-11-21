@@ -145,12 +145,12 @@ public class LoginActivity extends OptionsActivity {
 	        switch (id) {
 	        case DIALOG_CHURCH_LIST:
 	        	
-	        	final String formatString = "%s - %s";    
+	        	final String formatString = "%s\n   %s";    
 	        	final CharSequence[] items = new CharSequence[_wsLogin.getLength()];
 	        		
 	        	// Build a list of select items from the class level login response object
-	        	for (int i=0;i< items.length;i++){         			
-	        		items[i] = String.format(formatString, _wsLogin.getSiteName(i), _wsLogin.getUserName(i));               			
+	        	for (int i=0;i< items.length;i++){  
+	        		items[i] = String.format(formatString,  _wsLogin.getSiteName(i), _wsLogin.getUserName(i));               			
 	        	} 
 	        		         									
 				AlertDialog.Builder b = new AlertDialog.Builder(LoginActivity.this);	        	         	        
