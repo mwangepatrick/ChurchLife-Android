@@ -1,5 +1,9 @@
 package com.acstech.churchlife.webservice;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -59,7 +63,7 @@ public class IndividualResponse extends WebServiceObject {
 	
 	// PictureUrl
 	public String getPictureUrl()		throws AppException { return getStringValue("PictureUrl", 0); }
-
+	
 	// FamilyPictureUrl
 	public String getFamilyPictureUrl()	throws AppException { return getStringValue("FamilyPictureUrl", 0); }
 	

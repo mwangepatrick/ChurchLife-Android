@@ -31,7 +31,17 @@
 			android:textColor="@android:color/white"
 			android:layout_below="@+id/valueLine1TextView">
 	</TextView>
-	   	     	  
+
+	<TextView 		
+			android:id="@+id/valueLine3TextView" 
+			android:text="value for line 3"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:textSize="19sp"				
+			android:textColor="@android:color/white"
+			android:layout_below="@+id/valueLine2TextView">
+	</TextView>
+		   	     	  
    	<ImageView
    		android:id="@+id/actionImageView" 
    		android:src="@drawable/call_sms_w"  

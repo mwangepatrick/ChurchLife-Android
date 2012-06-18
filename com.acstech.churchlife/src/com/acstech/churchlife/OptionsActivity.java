@@ -1,6 +1,7 @@
 package com.acstech.churchlife;
 
 import com.acstech.churchlife.R;
+import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,19 +28,24 @@ public class OptionsActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.menu, menu);
 
-		// If login activity is the current activity, no need for SignOut, etc.
-		//
-		//  We do want to allow it the Login page to access settings/preferences so that
-		//   a user could change the web service Url.		
-		if (this.getLocalClassName().equals("LoginActivity")){ 
-			menu.removeItem(R.id.signout);
+		try
+		{
+			// If login activity is the current activity, no need for SignOut, etc.		
+			if (this.getLocalClassName().equals("LoginActivity")){ 
+				menu.removeItem(R.id.signout);
+			}
+						
+			// Only show the 'select url' settings if in 'developer' mode				
+			AppPreferences prefs = new AppPreferences(getApplicationContext());
+			if (prefs.getDeveloperMode() == false) {
+				menu.removeItem(R.id.settings);
+			}
+						
 		}
-				
-		// Only show the 'select url' settings if SHOW_ADVANCED_SETTINGS 
-		if (config.SHOW_ADVANCED_SETTINGS == false) {
-			menu.removeItem(R.id.settings);
-		}
-		
+    	catch (Exception e) {
+    		ExceptionHelper.notifyUsers(e, OptionsActivity.this);
+    		ExceptionHelper.notifyNonUsers(e);   
+    	}		
 		return true;
 	}
 

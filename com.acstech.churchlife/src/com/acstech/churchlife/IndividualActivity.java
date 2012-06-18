@@ -193,8 +193,12 @@ public class IndividualActivity extends OptionsActivity {
      */
     private void bindData() throws AppException {
     	
-    	// image
-    	Drawable image = ImageOperations(_wsIndividual.getPictureUrl());
+    	// image - use family picture if individual picture is empty
+    	String imageUrl = _wsIndividual.getPictureUrl();
+    	if (imageUrl.trim().length() == 0) {
+    		imageUrl = _wsIndividual.getFamilyPictureUrl();
+    	}    		
+    	Drawable image = ImageOperations(imageUrl);
     	if (image != null) {
     		individualImageView.setImageDrawable(image);	    	        
     	}
@@ -223,17 +227,13 @@ public class IndividualActivity extends OptionsActivity {
 		
 		ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
 		for (IndividualPhone phone : phoneList) {
-			
-			String fullPhoneNumber = String.format("(%s) %s", phone.getAreaCode(), phone.getPhoneNumber());
-					
+							
 			// only set the 'text message' icon if the number is text-able
 			// TODO:  what property to check?  doesn't seem to be in the current properties returned
-			String defaultAction = "phone:" + fullPhoneNumber;
-			//String dialAction = "phonedial:" + fullPhoneNumber;
-			//String smsAction = "phonesms:" + fullPhoneNumber;
+			String defaultAction = "phone:" + phone.getPhoneNumberToDial();
 						
 			listItems.add(new CustomListItem(String.format(titleString, phone.getPhoneType()),
-											 fullPhoneNumber, "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
+											 phone.getPhoneNumberToDisplay(), "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
 		}
 		
 		
@@ -253,14 +253,16 @@ public class IndividualActivity extends OptionsActivity {
 		
 		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
 		for (IndividualAddress address : addressList) {
-			String addressLine2 = "";
-			if (address.getCity().length() > 0 && address.getState().length() > 0) {
-				addressLine2 = String.format("%s, %s  %s", address.getCity(), address.getState(), address.getZipcode());
-			}			
+			
+			String cityStateZip = "";
+	        if (address.getCity().trim().length() > 0 && address.getState().trim().length() > 0) {
+	        	cityStateZip = String.format("%s, %s  %s", address.getCity().trim(), address.getState().trim(), address.getZipcode().trim());
+	        }
+	            			
 			String actionTag = String.format("map:%s %s %s, %s %s", address.getAddress(), address.getAddress2(), address.getCity(), address.getState(), address.getZipcode());
 			
 			listItems.add(new CustomListItem(String.format(titleString, address.getAddressType()),
-											 address.getAddress(), addressLine2,											
+											 address.getAddress(), address.getAddress2(), cityStateZip,											
 											 actionTag,
 											 getResources().getDrawable(R.drawable.ic_menu_compass)));			
 		}

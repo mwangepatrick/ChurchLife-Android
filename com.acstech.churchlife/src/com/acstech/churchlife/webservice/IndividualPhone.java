@@ -3,6 +3,8 @@ package com.acstech.churchlife.webservice;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.string;
+
 import com.acstech.churchlife.BooleanHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
@@ -39,6 +41,27 @@ public class IndividualPhone {
 	
 	public String getPhoneNumber() throws AppException {
 		return WebServiceObject.getJsonValue("PhoneNumber", _baseObject); 	
+	}
+	
+	public String getPhoneNumberToDisplay()throws AppException {
+		
+		String unlisted = ""; 
+		if (getListed() == false){
+			unlisted = "(Unl)";
+		}
+		
+		if (getExtension().trim().length() > 0)
+        {
+            return String.format("(%s) %s x%s %s", getAreaCode(), getPhoneNumber(), getExtension(), unlisted);
+        }
+        else
+        {
+        	return String.format("(%s) %s %s", getAreaCode(), getPhoneNumber(), unlisted);
+        }	
+	}
+	
+	public String getPhoneNumberToDial()throws AppException {
+		return String.format("(%s) %s", getAreaCode(), getPhoneNumber());		
 	}
 	
 	public String getAreaCode() throws AppException {

@@ -3,7 +3,10 @@ package com.acstech.churchlife;
 import com.acstech.churchlife.R;
 
 import android.os.Bundle;  
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;  
 import android.preference.PreferenceCategory;
    
@@ -35,7 +38,30 @@ public class Preferences extends PreferenceActivity {
         mCategory.removePreference(mPref);
         
         mPref = (EditTextPreference) findPreference("auth3");  
-        mCategory.removePreference(mPref);     
+        mCategory.removePreference(mPref);
         
-    }              
+        // listen for changes to developer mode
+        CheckBoxPreference cPref = (CheckBoxPreference) findPreference("developermode");  
+        cPref.setOnPreferenceChangeListener(checkboxListener);
+                      
+    }   
+    
+    // check box change - developer mode.  if false, set url back to default
+    private OnPreferenceChangeListener checkboxListener = new OnPreferenceChangeListener() {
+
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            
+        	if (preference.getKey().equals("developermode")) {
+        		if (newValue.equals(Boolean.FALSE)) {
+        			
+        			// keep the logic for setting url in AppPreferences class
+        			AppPreferences prefs = new AppPreferences(getApplicationContext());
+        			prefs.setWebServiceUrl(config.SERVICE_URL_VALUE);        			
+        		}
+        	}        	
+            return true;
+        }
+    };
+
+    
 }  

@@ -3,7 +3,6 @@ package com.acstech.churchlife;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.webservice.LoginResponse;
 import com.acstech.churchlife.webservice.WebServiceHandler;
 import com.acstech.churchlife.R;
@@ -23,10 +22,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
@@ -68,9 +69,9 @@ public class LoginActivity extends OptionsActivity {
         
         try
         {
-            _appPrefs = new AppPreferences(getApplicationContext());           
-            _gestureDetector = new GestureDetector(new LoginSwipeDetector());            
-                       
+        	_appPrefs = new AppPreferences(getApplicationContext());           
+            _gestureDetector = new GestureDetector(new LoginSwipeDetector());                               
+                      
         	// Remove login credentials from global state - ALWAYS
         	GlobalState gs = GlobalState.getInstance(); 
         	
@@ -108,14 +109,18 @@ public class LoginActivity extends OptionsActivity {
             
             // Wire up the login button                     
             btnLogin.setOnClickListener(new OnClickListener() {		
-            	public void onClick(View v) {	            		                 		
-					if (inputIsValid()) {
-	       	            // Hide the keyboard            			            		
-            			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-	       	            imm.hideSoftInputFromWindow(btnLogin.getWindowToken(), 0);
-	       	             
-            			doLoginWithProgressWindow(); // login in with worker thread
-					}
+            	public void onClick(View v) {	  
+            		
+            		// check for 'developer mode' login
+            		if (checkDeveloperMode() == false) {            		
+						if (inputIsValid()) {
+		       	            // Hide the keyboard            			            		
+	            			InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		       	            imm.hideSoftInputFromWindow(btnLogin.getWindowToken(), 0);
+		       	             
+	            			doLoginWithProgressWindow(); // login in with worker thread
+						}
+            		}
             	}		
     		});     
             
@@ -125,6 +130,36 @@ public class LoginActivity extends OptionsActivity {
     		ExceptionHelper.notifyNonUsers(e);
     	}       
     }
+    
+    /**
+     * Update the site picklist dialog with the latest login's list of sites
+     * 
+     */
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+    	try
+    	{
+	    	if (id == DIALOG_CHURCH_LIST) {
+	    			    	
+	    		final String formatString = "%s\n   %s";    
+	        	final String[] items = new String[_wsLogin.getLength()];
+	        		
+	        	// Build a list of select items from the class level login response object
+	        	for (int i=0;i< items.length;i++){  
+	        		items[i] = String.format(formatString,  _wsLogin.getSiteName(i), _wsLogin.getUserName(i));               			
+	        	}         	               
+	    		
+	            ListAdapter itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);	
+	            AlertDialog ad = (AlertDialog) dialog;
+	            ad.getListView().setAdapter(itemsAdapter);		    	
+	    	}
+    	}
+    	catch (Exception e) {
+    		ExceptionHelper.notifyUsers(e, LoginActivity.this);
+    		ExceptionHelper.notifyNonUsers(e);   
+    	}		
+    }
+    
     
     /**
      * Shows a dialog to the user.
@@ -145,14 +180,9 @@ public class LoginActivity extends OptionsActivity {
 	        switch (id) {
 	        case DIALOG_CHURCH_LIST:
 	        	
-	        	final String formatString = "%s\n   %s";    
-	        	final CharSequence[] items = new CharSequence[_wsLogin.getLength()];
-	        		
-	        	// Build a list of select items from the class level login response object
-	        	for (int i=0;i< items.length;i++){  
-	        		items[i] = String.format(formatString,  _wsLogin.getSiteName(i), _wsLogin.getUserName(i));               			
-	        	} 
-	        		         									
+	        	// see onPrepareDialog for actual items loaded into this dialog
+	        	final CharSequence[] items = new CharSequence[0];
+	        	
 				AlertDialog.Builder b = new AlertDialog.Builder(LoginActivity.this);	        	         	        
 		        b.setTitle(R.string.Login_SiteSelectTitle);           
 		        b.setItems(items, new DialogInterface.OnClickListener() {
@@ -164,24 +194,8 @@ public class LoginActivity extends OptionsActivity {
 		        			String siteName = _wsLogin.getSiteName(which);
 			            	String siteNumber = _wsLogin.getSiteNumber(which);	            		
 			            	String userName = _wsLogin.getUserName(which);
-			            			            			            			            	
-			            	// Safety check - should never happen since we build the list of items
-			            	//  to display...but just in case the sitename/username the user selected 
-			            	//  differs from the sitename of that indexed item in the login response...
-			            	String labelShouldBe = String.format(formatString, _wsLogin.getSiteName(which), _wsLogin.getUserName(which));
 			            		
-			            	if (items[which].toString().equals(labelShouldBe)) {	            			
-			            		navigateForward(siteName, siteNumber, userName);
-			            	}	
-			            	else
-			            	{
-			            		// selected name does not match the info returned from login (should NEVER happen)	            			
-			            		throw AppException.AppExceptionFactory(ExceptionInfo.TYPE.APPLICATION, 
-			            											   ExceptionInfo.SEVERITY.HIGH,
-			            											   "100",
-			            											   "LoginActivity.onCreateDialog",
-			            											   "The site you selected does not match a site returned by login.");            			  
-			            	}	
+			            	navigateForward(siteName, siteNumber, userName);			    
 		            	}
 		            	catch (Exception e) {
 		                		ExceptionHelper.notifyUsers(e, LoginActivity.this);
@@ -259,6 +273,35 @@ public class LoginActivity extends OptionsActivity {
         }                
     }
     
+    /**
+     * if username is a 'special' login, put the application in 'developer' mode 
+     *   and allow the user to login with a normal username/password 
+     * @throws AppException 
+     */
+    private Boolean checkDeveloperMode() {
+    	Boolean result = false;
+    	try
+    	{	    	
+	    	String devLogin = (String)this.getResources().getText(R.string.Login_DeveloperLogin);
+	    	
+	    	if (txtEmail.getText().toString().equals(devLogin)) {     		    		    	
+	    		_appPrefs.setDeveloperMode(true);
+	    		
+	    		// clear username input and indicate to user
+	    		txtEmail.setText("");	    		
+	    		String msg = (String)this.getResources().getText(R.string.Login_DeveloperLoginMessage);
+	    		Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
+	    		
+	    		result = true;
+			}	    
+    	}
+		catch (Exception e) {				
+			ExceptionHelper.notifyUsers(e, LoginActivity.this);
+    		ExceptionHelper.notifyNonUsers(e);	    				
+		}
+    	return result;
+    }
+    
     
     /**
      * Ensures all form fields have valid input.  
@@ -329,6 +372,9 @@ public class LoginActivity extends OptionsActivity {
 		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "doLoginWithProgressWindow.handleMessage");		       					  		       			
 	    				}
 	    				else {
+	    					// set latest login object to the one returned in the message  	    					
+	    					_wsLogin = new LoginResponse(msg.getData().getString("login"));
+	    							
 							if (_wsLogin.getStatusCode() == 0 && _wsLogin.getLength() > 0) {        				
 								// In most cases, the return value is for a single site    
 								if (_wsLogin.getLength() == 1) {    					   		
@@ -354,9 +400,18 @@ public class LoginActivity extends OptionsActivity {
 	    	
 	    	Thread searchThread = new Thread() {  
 	    		public void run() {
-	    			try {
-	    				doLogin();
-		    	    	handler.sendEmptyMessage(0);
+	    			try {	    					    			
+	    				LoginResponse loginInfo = doLogin();	    				
+		    	    	
+		    	    	// Return the login object (as string) to the message handler above
+		    	    	Message msg = handler.obtainMessage();	
+		    	    	msg.what = 0;
+		    	    	
+		    	    	Bundle b = new Bundle();
+	    				b.putString("login", loginInfo.toString());
+	    				msg.setData(b);
+	    				
+	    				handler.sendMessage(msg);	    				
 	    			}
 	    			catch (Exception e) {    				
 	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
@@ -385,6 +440,7 @@ public class LoginActivity extends OptionsActivity {
 	 */    
     private LoginResponse doLogin() throws AppException
     {	
+    	LoginResponse login = null;
 		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);   			
 			
 		// Get (default) form values (from view1)
@@ -401,12 +457,12 @@ public class LoginActivity extends OptionsActivity {
 			
 		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
         if (siteNumber.length() > 0){
-        	_wsLogin = wh.login(usernameOrEmail, password, siteNumber);
+        	login = wh.login(usernameOrEmail, password, siteNumber);
         }
         else {
-        	_wsLogin = wh.login(usernameOrEmail, password);
+        	login = wh.login(usernameOrEmail, password);
         }  
-        return _wsLogin;
+        return login;
     }
     
   

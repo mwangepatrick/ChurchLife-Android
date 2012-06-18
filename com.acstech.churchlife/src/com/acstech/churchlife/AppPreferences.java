@@ -10,7 +10,7 @@ import android.provider.Settings;
 
 
 public class AppPreferences {
-	
+
     /**
      * This value SHOULD ALWAYS be changed to match your package.
      */
@@ -26,7 +26,7 @@ public class AppPreferences {
      public AppPreferences(Context context)
      {    	 
          this.appSharedPrefs = context.getSharedPreferences(APP_SHARED_PREFS, Activity.MODE_PRIVATE);    	
-         this.prefsEditor = appSharedPrefs.edit();
+         this.prefsEditor = appSharedPrefs.edit();         
      }
    
      // Auth1 - ENCRYPTED
@@ -52,10 +52,24 @@ public class AppPreferences {
      public void setAuth3(String text) throws AppException {
     	 setEncryptedValue("auth3", text);
      }
+
+     // Developer Mode
+     public Boolean getDeveloperMode() throws AppException {
+    	 return appSharedPrefs.getBoolean("developermode", false);         
+     }
+     public void setDeveloperMode(Boolean mode) throws AppException {
+       	 prefsEditor.putBoolean("developermode", mode);
+    	 prefsEditor.commit();
+    	 
+    	 // when developer mode is turned off, set the url back to default
+    	 if (mode == false) {
+    		 setWebServiceUrl(config.SERVICE_URL_VALUE);
+    	 }
+     }
      
      // Web Service URI (base)
-     public String getWebServiceUrl() {
-    	 return appSharedPrefs.getString("serviceurl", "https://api.accessacs.com");
+     public String getWebServiceUrl() {    	
+    	 return appSharedPrefs.getString("serviceurl", config.SERVICE_URL_VALUE);
      }
      
      public void setWebServiceUrl(String url) {

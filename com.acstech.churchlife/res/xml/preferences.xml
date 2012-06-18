@@ -25,7 +25,15 @@
         	android:summary="This allows you to enter the service URL."
             android:defaultValue="https://api.accessacs.com"
             android:title="Service URL"
-            android:key="serviceurl" android:name="serviceurl"/>		                                                                                
+            android:key="serviceurl" 
+            android:name="serviceurl"/>
+    	
+    	<CheckBoxPreference 
+    	    android:key="developermode" 
+    	    android:title="Developer Mode" 
+    	    android:defaultValue="false"
+    	    android:name="developermode"/>
+    			                                                                                
     </PreferenceCategory>
      
 </PreferenceScreen>

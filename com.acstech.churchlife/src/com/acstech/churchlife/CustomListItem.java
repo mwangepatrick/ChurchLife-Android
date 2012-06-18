@@ -9,6 +9,9 @@ public class CustomListItem {
 	
 	private String _valueLine2 = "";
 	private Boolean _valueLine2Visible = false;
+
+	private String _valueLine3 = "";
+	private Boolean _valueLine3Visible = false;
 	
 	private String _actionTag = "";
 	private Drawable _actionImage = null;
@@ -41,14 +44,34 @@ public class CustomListItem {
 		return _valueLine2;
 	}
 
-	// Constructor
+	//-----------------------
+	//--  Line3  --
+	//-----------------------
+	public Boolean getValueLine3Visible() {
+		return _valueLine3Visible;
+	}
+	
+	public String getValueLine3() {
+		return _valueLine3;
+	}
+	
+	// Constructor (s)	
 	public CustomListItem(String title, String line1, String line2, String actionTag, Drawable actionImage) {
+		this(title, line1, line2, null, actionTag, actionImage);
+	}
+		
+	public CustomListItem(String title, String line1, String line2, String line3, String actionTag, Drawable actionImage) {
 		_title = title;
 		_valueLine1 = line1;				
 
 		if (line2 != null) {
 			_valueLine2Visible = (line2.length() > 0);
 			_valueLine2 = line2;
+		}
+
+		if (line3 != null) {
+			_valueLine3Visible = (line3.length() > 0);
+			_valueLine3 = line3;
 		}
 		
 		_actionTag = actionTag;

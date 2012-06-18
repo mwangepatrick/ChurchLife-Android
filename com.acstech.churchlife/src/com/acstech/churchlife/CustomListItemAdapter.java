@@ -51,6 +51,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 		 TextView titleTextView;
 		 TextView valueLine1TextView;
 		 TextView valueLine2TextView;
+		 TextView valueLine3TextView;
 		 ImageView actionImageView;	  	 
 	}
 
@@ -72,6 +73,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.valueLine1TextView = (TextView) convertView.findViewById(R.id.valueLine1TextView);			
 			 holder.valueLine2TextView = (TextView) convertView.findViewById(R.id.valueLine2TextView);				 			
+			 holder.valueLine3TextView = (TextView) convertView.findViewById(R.id.valueLine3TextView);
 			 holder.actionImageView = (ImageView) convertView.findViewById(R.id.actionImageView);			
 			 
 			 convertView.setTag(holder);
@@ -90,7 +92,15 @@ public class CustomListItemAdapter extends BaseAdapter {
 		else {
 			holder.valueLine2TextView.setVisibility(View.VISIBLE);
 		}
-		 
+		
+		// if we aren't displaying Line3...remove it.				
+		if (currentItem.getValueLine3Visible() == false) {
+			holder.valueLine3TextView.setVisibility(View.GONE);
+		}
+		else {
+			holder.valueLine3TextView.setVisibility(View.VISIBLE);
+		}
+				
 		Drawable image = currentItem.getActionImage();
 		if (image != null) {
 			 holder.actionImageView.setVisibility(View.VISIBLE);
@@ -103,7 +113,8 @@ public class CustomListItemAdapter extends BaseAdapter {
 		 			
 		holder.titleTextView.setText(currentItem.getTitle());		
 		holder.valueLine1TextView.setText(currentItem.getValueLine1());			
-		holder.valueLine2TextView.setText(currentItem.getValueLine2());	
+		holder.valueLine2TextView.setText(currentItem.getValueLine2());
+		holder.valueLine3TextView.setText(currentItem.getValueLine3());
 							
 		return convertView;	
 	}

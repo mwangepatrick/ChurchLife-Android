@@ -30,6 +30,9 @@
 	<string name="Login.Validation.InvalidLogin">"Invalid login.  Please try again."</string>
 	<string name="Login.ProgressDialog">"Signing In. Please wait..."</string>
 	<string name="Login.SiteSelectTitle">"Select a Site"</string>
+	
+	<string name="Login.DeveloperLogin">#developer</string>
+	<string name="Login.DeveloperLoginMessage">This application has been place in \'developer\' mode.</string>
 
 	<string name="Preferences.Title">Preferences</string>
 
