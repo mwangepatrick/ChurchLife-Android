@@ -1,56 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
   android:background="@drawable/splash">
-   
-	<View
-       	android:layout_width="fill_parent"
-       	android:layout_height="fill_parent"     
-       	android:layout_weight="3">
-    </View>
- 		  		  		
- 	<LinearLayout
-  		xmlns:android="http://schemas.android.com/apk/res/android"
-  		android:orientation="vertical"
-  		android:layout_width="fill_parent"
-  		android:layout_height="fill_parent" 
-  		android:layout_weight="3">
- 		 
-	 	<TextView 
-			android:text="for"		
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:gravity="center"
-			android:textStyle="bold">
-		</TextView>  
-	
-		<TextView 
-			android:text="My Orgname Here"
-			android:id="@+id/txtOrganizationName" 
-			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"			
-			android:textSize="20dip"
-			android:gravity="center"
-			android:textStyle="bold"
-			android:textColor="@android:color/black"
-			android:padding="5dip">
-		</TextView>	
-		
-		<TextView 
-			android:text="2011.##"
-			android:id="@+id/txtVersion" 
-			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent"			
-			android:textSize="15dip"
-			android:textColor="@android:color/black"
-			android:padding="5dip"
-			android:gravity="bottom|right">
-		</TextView>	
-		
-	</LinearLayout>	
-		    
-</LinearLayout>
+   		  		  	 	
+ 	<TextView 
+ 	    android:id="@+id/txtFor"
+		android:text="for"		
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"
+		android:layout_centerVertical="true"		
+		android:gravity="center"
+		android:textStyle="bold">
+	</TextView>
 
+ 	<TextView
+	    android:id="@+id/txtOrganizationName"
+	    android:text="My Orgname Here"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/txtVersion"
+	    android:gravity="center"		     	  
+	    android:textColor="@android:color/black"   
+	    android:textSize="20dip"
+	    android:textStyle="bold"
+	    android:paddingBottom="180dp">
+	</TextView>
+	
+ 	<TextView 
+		android:text="2011.##"
+		android:id="@+id/txtVersion" 
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"			
+		android:textSize="15dip"
+		android:textColor="@android:color/black"
+		android:gravity="right"			
+		android:layout_alignParentBottom="true">
+	</TextView>
+	
+</RelativeLayout>
