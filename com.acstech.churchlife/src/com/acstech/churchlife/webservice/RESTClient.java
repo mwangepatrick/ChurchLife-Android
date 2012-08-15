@@ -5,10 +5,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import org.apache.http.HttpClientConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.ProtocolVersion;
+import org.apache.http.auth.MalformedChallengeException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -21,6 +24,7 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
@@ -33,6 +37,7 @@ import org.apache.http.util.EntityUtils;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
+import android.net.http.AndroidHttpClient;
 import android.util.Base64;
 
 public class RESTClient {
@@ -45,7 +50,8 @@ public class RESTClient {
 		
 		private ArrayList <NameValuePair> params;
 		private ArrayList <NameValuePair> headers;
-		 
+		private String postEntity;
+		
 		private String url;		 
 		private int responseCode;
 		private String message;	 
@@ -80,7 +86,12 @@ public class RESTClient {
 	    {
 	        headers.add(new BasicNameValuePair(name, value));
 	    }
-	 
+
+	    public void AddPostEntity(String entity)
+	    {
+	    	postEntity = entity;
+	    }
+	    
 	    public void Execute(RequestMethod method) throws AppException
 	    {
 	    	try
@@ -131,6 +142,12 @@ public class RESTClient {
 		                    request.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
 		                }
 		 
+		                if (postEntity != null && postEntity.length() > 0) {
+		                	StringEntity entity = new StringEntity(postEntity, HTTP.UTF_8);
+		                	entity.setContentType("application/json");			                
+		                	request.setEntity(new StringEntity(postEntity));	
+		                }
+		                		                
 		                executeRequest(request, url);
 		                break;
 		            }
@@ -150,11 +167,13 @@ public class RESTClient {
 	    private void executeRequest(HttpUriRequest request, String url) throws AppException
 	    {
 	    	HttpClient client = new DefaultHttpClient();			/* 2.3.3 */	   
-	    	//DefaultHttpClient client = createHttpClient();			/* 2.2 */	    		 
+	    	//DefaultHttpClient client = createHttpClient();			/* 2.2 */	
+	    	
 	        HttpResponse httpResponse;
 	 
 	        try {
 	           
+	        	
 	        	httpResponse = client.execute(request);  
 	        	
 	            responseCode = httpResponse.getStatusLine().getStatusCode();
@@ -173,14 +192,26 @@ public class RESTClient {
 	            }
 	 
 	        } catch (ClientProtocolException e)  {
-	            client.getConnectionManager().shutdown();
-	            
-	            throw AppException.AppExceptionFactory(e,
-						   ExceptionInfo.TYPE.NOCONNECTION,
-						   ExceptionInfo.SEVERITY.CRITICAL, 
-						   "100",           												    
-						   "RESTClient.executeRequest",
-						   e.getMessage()); 
+	        	client.getConnectionManager().shutdown();
+	        		        	
+	        	if (e.getCause() instanceof MalformedChallengeException) {
+	        		// invalid credentials (username/password/sitenumber)
+	        		throw AppException.AppExceptionFactory(e,
+							   ExceptionInfo.TYPE.UNAUTHORIZED,
+							   ExceptionInfo.SEVERITY.CRITICAL, 
+							   "100",           												    
+							   "RESTClient.executeRequest",
+							   e.getCause().getMessage());
+	        	}
+	        	else
+	        	{	        		           
+		            throw AppException.AppExceptionFactory(e,
+							   ExceptionInfo.TYPE.NOCONNECTION,
+							   ExceptionInfo.SEVERITY.CRITICAL, 
+							   "100",           												    
+							   "RESTClient.executeRequest",
+							   e.getMessage()); 
+	        	}
 	        } 
 	        catch (IOException e) {
 	            client.getConnectionManager().shutdown();

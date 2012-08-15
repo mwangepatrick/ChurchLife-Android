@@ -6,14 +6,12 @@
 	<LinearLayout android:layout_width="match_parent"
 				  android:layout_height="wrap_content"
 				  android:background="@color/MediumGrey"
-				  android:id="@+id/topLinearLayout"
-				  android:padding="10sp">
+				  android:id="@+id/topLinearLayout">
 				  			    
 	    <ImageView android:id="@+id/individualImageView" 
-	    		   android:src="@drawable/no_person_photo"	    		  
-	    		   android:layout_alignParentTop="true" 
-	    		   android:layout_alignParentLeft="true"	    		   	    		 
-	    		   android:layout_margin="5dip"
+	    		   android:src="@drawable/no_person_photo"
+	    		   android:contentDescription=""	    	    		   	    		
+	    		   android:layout_margin="5dp"
 	    		   android:layout_height="70sp"
 	    		   android:layout_width="70sp" 
 	    		   android:scaleType="centerCrop">
@@ -27,8 +25,7 @@
 				android:textStyle="bold"
 				android:textSize="17sp"
 				android:layout_marginLeft="5dip"
-				android:textColor="@android:color/white"
-				android:layout_toRightOf="@+id/individualImageView">
+				android:textColor="@android:color/white">
 		</TextView>
 		   	
 	</LinearLayout>

@@ -39,6 +39,11 @@ public class ExceptionHelper {
 		    	final ChurchLifeDialog dialog = new ChurchLifeDialog(context);
 		    	dialog.show();
 		    }
+		    else if(ae.getErrorType() == ExceptionInfo.TYPE.UNAUTHORIZED) {
+		    	
+		    	String msg = String.format("Your request could not be authorized.  The error is: %s", ae.extractErrorDescription());	
+		    	ShowAlert(context, msg);	
+		    }		    
 		    else if(ae.getErrorType() == ExceptionInfo.TYPE.UNEXPECTED) {
 
 		    	String msg = String.format("An unexpected error has occurred.  The error is: %s", ae.extractErrorDescription());		    	

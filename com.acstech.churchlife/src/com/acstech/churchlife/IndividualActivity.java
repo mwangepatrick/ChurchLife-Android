@@ -36,6 +36,7 @@ import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.SEVERITY;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.TYPE;
+import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.webservice.IndividualAddress;
 import com.acstech.churchlife.webservice.IndividualEmail;
 import com.acstech.churchlife.webservice.IndividualFamilyMember;
@@ -193,6 +194,8 @@ public class IndividualActivity extends OptionsActivity {
      */
     private void bindData() throws AppException {
     	
+    	GlobalState gs = GlobalState.getInstance(); 
+    	
     	// image - use family picture if individual picture is empty
     	String imageUrl = _wsIndividual.getPictureUrl();
     	if (imageUrl.trim().length() == 0) {
@@ -278,6 +281,18 @@ public class IndividualActivity extends OptionsActivity {
 											 getResources().getDrawable(R.drawable.user)));			
 		}
 					
+		// Comments - add to listitems a comments button IF the user has permissions
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS)) {
+										
+			titleString = getResources().getString(R.string.Individual_CommentAction);		
+			
+			//zzz if we use a completely new intent we need to pass individual name in addition to individual id
+			listItems.add(new CustomListItem(titleString,
+					 "", "", 											
+					 "comments:" + Integer.toString(_wsIndividual.getIndvId()),
+					 null));				
+		}
+		
 		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems));		
 		
 		// store off the last x touch (in percent of the total width) so that we know what to do 
@@ -407,8 +422,11 @@ public class IndividualActivity extends OptionsActivity {
     		mapAddress(argument);
     		
     	}else if (command.equals("individual")) {
-    		loadIndividual(argument);    		
-    	}
+    		loadIndividual(argument);  
+    		
+		}else if (command.equals("comments")) {
+			loadComments(); 	
+		}
     	//else do nothing...command is not known
     }
     
@@ -468,7 +486,7 @@ public class IndividualActivity extends OptionsActivity {
 		}	
 	}
     
-    
+
 	public void loadIndividual(String individualId) {					
 		//load the individual
 		IndividualActivityLoader loader = new IndividualActivityLoader(this);
@@ -599,6 +617,41 @@ public class IndividualActivity extends OptionsActivity {
         }	
     }
 
+	public void loadComments() {	
+		
+		try
+		{
+			/*
+			//load the individual
+			IndividualActivityLoader loader = new IndividualActivityLoader(this);
+			loader.setOnCompleteCallback(onIndividualMemberLoaded);
+			loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId));
+			*/
+			
+			int id = _wsIndividual.getIndvId();
+			String name = nameTextView.getText().toString();    	
+			
+			Intent intent = new Intent();
+		 	intent.setClass(this, CommentSummaryListActivity.class); 		        	 	
+		 	intent.putExtra("id", id);
+		 	intent.putExtra("name", name);
+		 	startActivity(intent);
+			
+		} catch (Exception e) {
+	        
+			ExceptionHelper.notifyNonUsers(e);
+     	
+	     	AppException ae = AppException.AppExceptionFactory(
+	     			TYPE.APPLICATION, 
+	     			SEVERITY.MODERATE, 
+	     			"100", 
+	     			"IndividualActivity.loadComments",
+	     			"Unable to load comments.");
+	     	
+	     	ExceptionHelper.notifyUsers(ae, this);
+		}	
+	}
+	
     
     // menu - add to contacts menu option 
 	@Override

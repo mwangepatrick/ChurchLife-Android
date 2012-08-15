@@ -2,8 +2,8 @@ package com.acstech.churchlife;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.webservice.LoginResponse;
-import com.acstech.churchlife.webservice.WebServiceHandler;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.R;
 
 import android.app.Activity;
@@ -83,22 +83,20 @@ public class SplashActivity extends Activity {
         String auth3 = prefs.getAuth3();
            	            
         if (auth1.length() > 0 && auth2.length() > 0){
-            	
-         	WebServiceHandler wh = new WebServiceHandler(prefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);    		            		
-           	LoginResponse response = wh.login(auth1, auth2, auth3);            	
-           	result = (response.getStatusCode() == 0);
+            	         	
+           	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
            	
-           	if (result == true) {
+           	CoreAcsUser user = apiCaller.user(auth1, auth2, auth3);
+           	           	         	  
+           	if (user != null) {
         		// set global application variables	    				
-				GlobalState gs = GlobalState.getInstance(); 
-				
-				gs.setSiteName(response.getSiteName());
-				gs.setSiteNumber(response.getSiteNumber());
-				gs.setUserName(response.getUserName());
-				gs.setPassword(auth2);
+				GlobalState gs = GlobalState.getInstance(); 			
+				gs.setUser(user);
+				gs.setPassword(auth2);		
+				result = true;
          	}           	
         }         	
        	return result;
     }   
-    
+   
 }

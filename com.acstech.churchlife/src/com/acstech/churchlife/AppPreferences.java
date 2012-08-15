@@ -52,7 +52,7 @@ public class AppPreferences {
      public void setAuth3(String text) throws AppException {
     	 setEncryptedValue("auth3", text);
      }
-
+     
      // Developer Mode
      public Boolean getDeveloperMode() throws AppException {
     	 return appSharedPrefs.getBoolean("developermode", false);         
@@ -95,9 +95,6 @@ public class AppPreferences {
      public void setApplicationState(String text) throws AppException {
     	 setEncryptedValue("applicationstate", text);       
      }
-     
-     
-     
      
           
      // Helper methods for encrypted keys

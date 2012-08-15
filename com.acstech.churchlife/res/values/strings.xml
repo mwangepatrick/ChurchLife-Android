@@ -5,13 +5,16 @@
     <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
     <string name="Dialog.NoConnectionLine2">Please check your connection and try again.</string>
           
-    <string name="Dialog.Ok">Ok</string>
+    <string name="Dialog.Ok">OK</string>
     <string name="Dialog.Retry">Retry</string>
     <string name="Dialog.Close">Close</string>
     <string name="Dialog.Exit">Exit</string>
     <string name="Dialog.Yes">Yes</string>
     <string name="Dialog.No">No</string>
     
+    <string name="Save">Save</string>
+    <string name="Cancel">Cancel</string>
+      
     <string name="TabPeople">People</string>
     <string name="TabCalendar">Calendar</string>    
     <string name="TabMyInfo">My Church</string>
@@ -28,7 +31,7 @@
 	<string name="Login.Validation.UserName">Enter a Username.</string>
 	<string name="Login.Validation.Password">Enter a password.</string>
 	<string name="Login.Validation.InvalidLogin">"Invalid login.  Please try again."</string>
-	<string name="Login.ProgressDialog">"Signing In. Please wait..."</string>
+	<string name="Login.ProgressDialog">"Signing In. Please wait."</string>
 	<string name="Login.SiteSelectTitle">"Select a Site"</string>
 	
 	<string name="Login.DeveloperLogin">#developer</string>
@@ -38,33 +41,45 @@
 
  	<string name="IndividualList.Search">Search</string>   
 	<string name="IndividualList.Validation.Search">Enter search text.</string>
-	<string name="IndividualList.ProgressDialog">"Searching people. Please wait..."</string>
+	<string name="IndividualList.ProgressDialog">"Searching people. Please wait."</string>
 	<string name="IndividualList.More">More Results</string>
 	<string name="IndividualList.NoResults">Sorry, no people found with that name.</string>
 
-
-	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait..."</string>
+	<string name="Individual.ProgressDialog">"Retrieving %s. Please wait."</string>
 	<string name="Individual.PhoneAction">"Call %s"</string>
 	<string name="Individual.EmailAction">"Email %s"</string>
 	<string name="Individual.AddressAction">"View %s address"</string>
 	<string name="Individual_FamilyMemberAction">View family member</string>	
 	<string name="Individual.PhoneNumberDial">Call This Number</string>
-	<string name="Individual.PhoneNumberText">Send Text Message</string>	
+	<string name="Individual.PhoneNumberText">Send Text Message</string>		
+	<string name="Individual.CommentAction">View Comments</string>
 	
 	<string name="Individual.ContactCreateConfirm">Add this person to your Contacts?</string>
 	<string name="Individual.ContactCreateMenu">Add to Contacts</string>	
 	<string name="Individual.ContactCreated">This person has been successfully added to your Contacts.</string>
 	<string name="Individual.ContactCreateError">There was an error creating your contact.  Your contact could not be created.</string>
-	
-
-	<string name="EventList.NoResults">Sorry, no events exist.</string>
-	<string name="EventList.ProgressDialog">"Loading events. Please wait..."</string>
+		
+	<string name="EventList.NoResults">Sorry, no events found.</string>
+	<string name="EventList.ProgressDialog">"Loading events. Please wait."</string>
 	<string name="EventList.More">More Results</string>
 
-	<string name="Event.ProgressDialog">"Retrieving %s. Please wait..."</string>
+	<string name="Event.ProgressDialog">"Retrieving %s. Please wait."</string>
 	<string name="Event.Location">Location</string>
 	<string name="Event.Description">Description</string>
 
+	<string name="CommentSummaryList.ProgressDialog">"Loading comments. Please wait."</string>
+	<string name="CommentSummaryList.NoResults">Sorry, no comments found.</string>
+	
+	<string name="CommentList.ProgressDialog">"Retrieving '%s' comments. Please wait."</string>
+	
+	<string name="Comment.Comment">Comment</string>
+	<string name="Comment.CommentType">Type</string>
+	<string name="Comment.Family">Add to Family Members</string>
+	
+	<string name="Comment.AddMenu">New Comment</string>
+	<string name="Comment.ProgressDialog">Loading Comment Types.  Please wait.</string>
+
+	
 	<string name="MyInfo.VersionPrefix">version</string>
 
 

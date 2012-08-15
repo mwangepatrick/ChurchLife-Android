@@ -93,6 +93,7 @@ public class WebServiceHandler {
     	
     	try {
     	    client.Execute(RequestMethod.POST);
+    	    
 			wsObject= new LoginResponse(client.	getResponse());								
     	}
     	catch (AppException e)	{

@@ -1,10 +1,14 @@
 package com.acstech.churchlife;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.webservice.LoginResponse;
-import com.acstech.churchlife.webservice.WebServiceHandler;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.R;
 
 import android.app.AlertDialog;
@@ -39,7 +43,7 @@ public class LoginActivity extends OptionsActivity {
 
 	AppPreferences _appPrefs;  				
 	GestureDetector _gestureDetector;
-	LoginResponse _wsLogin;					// results of the login web service call
+	List<CoreAcsUser> _wsLogin;				// results of the login web service call (can be a list of 1 for a sitenumber login)
 	
 	// ViewFlipper, Views, and buttons
 	ViewFlipper vf;
@@ -139,19 +143,18 @@ public class LoginActivity extends OptionsActivity {
     protected void onPrepareDialog(int id, Dialog dialog) {
     	try
     	{
-	    	if (id == DIALOG_CHURCH_LIST) {
-	    			    	
+	    	if (id == DIALOG_CHURCH_LIST) {	    		
 	    		final String formatString = "%s\n   %s";    
-	        	final String[] items = new String[_wsLogin.getLength()];
+	        	final String[] items = new String[_wsLogin.size()];
 	        		
 	        	// Build a list of select items from the class level login response object
 	        	for (int i=0;i< items.length;i++){  
-	        		items[i] = String.format(formatString,  _wsLogin.getSiteName(i), _wsLogin.getUserName(i));               			
+	        		items[i] = String.format(formatString, _wsLogin.get(i).SiteName, _wsLogin.get(i).UserName);               			
 	        	}         	               
 	    		
 	            ListAdapter itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items);	
 	            AlertDialog ad = (AlertDialog) dialog;
-	            ad.getListView().setAdapter(itemsAdapter);		    	
+	            ad.getListView().setAdapter(itemsAdapter);	           
 	    	}
     	}
     	catch (Exception e) {
@@ -187,16 +190,20 @@ public class LoginActivity extends OptionsActivity {
 		        b.setTitle(R.string.Login_SiteSelectTitle);           
 		        b.setItems(items, new DialogInterface.OnClickListener() {
 		        	public void onClick(DialogInterface dialog, int which) {		              
-		        		try {
-			            	// Get the login item based on the which (index) selected and navigate
-			            	//  forward with the info from that site number. (The text displayed
-			            	//  does not contain site number so we lookup by index.)
-		        			String siteName = _wsLogin.getSiteName(which);
-			            	String siteNumber = _wsLogin.getSiteNumber(which);	            		
-			            	String userName = _wsLogin.getUserName(which);
-			            		
-			            	navigateForward(siteName, siteNumber, userName);			    
-		            	}
+		        		try {		        					        			
+			            	// Get the login item based on the which (index) selected 
+		        			// Do web service login to get user rights
+		        			Integer siteNumber = _wsLogin.get(which).SiteNumber;	            		
+			            	String userName = _wsLogin.get(which).UserName;
+			            			        			
+			            	// Do site-specific web service call so a user's rights are returned
+			            	vf.setDisplayedChild(1);								//  zzz revisit
+			            	txtUserName.setText(userName);
+			            	txtPassword.setText(txtEmailPassword.getText());	
+			            	txtSiteNumber.setText(Integer.toString(siteNumber));
+			            	
+			            	doLoginWithProgressWindow();
+			            }
 		            	catch (Exception e) {
 		                		ExceptionHelper.notifyUsers(e, LoginActivity.this);
 		                  		ExceptionHelper.notifyNonUsers(e);
@@ -287,7 +294,7 @@ public class LoginActivity extends OptionsActivity {
 	    	if (txtEmail.getText().toString().equals(devLogin)) {     		    		    	
 	    		_appPrefs.setDeveloperMode(true);
 	    		
-	    		// clear username input and indicate to user
+	    		// clear user name input and indicate to user
 	    		txtEmail.setText("");	    		
 	    		String msg = (String)this.getResources().getText(R.string.Login_DeveloperLoginMessage);
 	    		Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_LONG).show();
@@ -357,8 +364,8 @@ public class LoginActivity extends OptionsActivity {
 	    	showDialog(DIALOG_PROGRESS);
 	    	
 	    	// This handler is called once the login attempt is complete.  It looks at the class level
-	    	//  web service return object (loginresponse) to determine success/failure.  If successful,
-	    	//  the login response will have 1 or more sites in it.
+	    	//  web service return object.  If successful, the web service response object will have 1 
+	    	//  or more logins (with sites) in it.
 	    	final Handler handler = new Handler() {
 	    		public void handleMessage(Message msg) {
 	    		  
@@ -372,13 +379,20 @@ public class LoginActivity extends OptionsActivity {
 		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "doLoginWithProgressWindow.handleMessage");		       					  		       			
 	    				}
 	    				else {
-	    					// set latest login object to the one returned in the message  	    					
-	    					_wsLogin = new LoginResponse(msg.getData().getString("login"));
-	    							
-							if (_wsLogin.getStatusCode() == 0 && _wsLogin.getLength() > 0) {        				
+	    					
+	    					// one or more users returned in message (in arraylist of string)
+	    					//  - map these to the class level list of CoreAcsUser objects
+	    					ArrayList<String> loginsArrayList = msg.getData().getStringArrayList("logins");
+	    						    						
+	    					_wsLogin = new ArrayList<CoreAcsUser>();
+			    	    	for (String userJson : loginsArrayList){
+			    	    		_wsLogin.add(CoreAcsUser.GetCoreAcsUser(userJson));
+			    	    	}
+			    	    	
+							if (_wsLogin.size() > 0) {        				
 								// In most cases, the return value is for a single site    
-								if (_wsLogin.getLength() == 1) {    					   		
-									navigateForward(_wsLogin.getSiteName(), _wsLogin.getSiteNumber(), _wsLogin.getUserName());																
+								if (_wsLogin.size() == 1) {    					   		
+									navigateForward(_wsLogin.get(0));
 								}
 								else {
 									// present a picklist of sites to the user
@@ -391,9 +405,22 @@ public class LoginActivity extends OptionsActivity {
 							}	    					
 	    				}	    				
 	    			}
-	    			catch (Exception e) {				
-	    				ExceptionHelper.notifyUsers(e, LoginActivity.this);
-	    	    		ExceptionHelper.notifyNonUsers(e);	    				
+	    			catch (Exception e) {
+	    				// If unauthorized, show appropriate 'friendly' message for login
+	    				if(e instanceof AppException) {	    				    
+	    				    AppException ae = (AppException) e;
+	    				    if(ae.getErrorType() == ExceptionInfo.TYPE.UNAUTHORIZED) {
+	    				    	Toast.makeText(LoginActivity.this, R.string.Login_Validation_InvalidLogin, Toast.LENGTH_LONG).show();
+	    				    }
+	    				    else  {
+	    				    	ExceptionHelper.notifyUsers(e, LoginActivity.this);
+		    	    			ExceptionHelper.notifyNonUsers(e);
+	    				    }
+	    				}
+	    				else {
+	    					ExceptionHelper.notifyUsers(e, LoginActivity.this);
+	    	    			ExceptionHelper.notifyNonUsers(e);
+	    				}
 	    			}    	    			
 	    		}
 	    	};
@@ -401,16 +428,22 @@ public class LoginActivity extends OptionsActivity {
 	    	Thread searchThread = new Thread() {  
 	    		public void run() {
 	    			try {	    					    			
-	    				LoginResponse loginInfo = doLogin();	    				
-		    	    	
-		    	    	// Return the login object (as string) to the message handler above
+	    				List<CoreAcsUser> logins = doLogin();
+		    	    		    				
+		    	    	// Return the object (as arraylist of strings) to the message handler above
 		    	    	Message msg = handler.obtainMessage();	
 		    	    	msg.what = 0;
 		    	    	
-		    	    	Bundle b = new Bundle();
-	    				b.putString("login", loginInfo.toString());
-	    				msg.setData(b);
-	    				
+		    	    	Bundle b = new Bundle();	
+		    	    	
+		    	    	ArrayList<String> loginsArrayList = new ArrayList<String>();
+		    	    	for (CoreAcsUser user : logins){
+		    	    		loginsArrayList.add(user.toString());
+		    	    	}
+		    	    			    	    	
+		    	    	b.putStringArrayList("logins", loginsArrayList);
+		    	    	
+	    				msg.setData(b);	    				
 	    				handler.sendMessage(msg);	    				
 	    			}
 	    			catch (Exception e) {    				
@@ -427,7 +460,7 @@ public class LoginActivity extends OptionsActivity {
     	}
     }
     
-    
+        
 	/**
 	 * Sends credentials to the authentication service and return the results.
      * Assumes input has been validated
@@ -438,11 +471,25 @@ public class LoginActivity extends OptionsActivity {
 	 * @return the object returned from the webservice call
 	 * @throws AppException 
 	 */    
-    private LoginResponse doLogin() throws AppException
+    private List<CoreAcsUser> doLogin() throws AppException
     {	
-    	LoginResponse login = null;
-		WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);   			
-			
+    	List<CoreAcsUser> userList = new ArrayList<CoreAcsUser>();
+    	
+		//zzz WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);   			
+	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
+	  
+	   	// If sitenumber view is complete..use it, otherwise use email address view
+		String usernameOrEmail = txtUserName.getText().toString();
+		String password = txtPassword.getText().toString();
+		String siteNumber = txtSiteNumber.getText().toString();
+	   	
+		if (usernameOrEmail.length()==0 || password.length() ==0 || siteNumber.length() ==0)
+		{
+			usernameOrEmail = txtEmail.getText().toString();
+			password = txtEmailPassword.getText().toString();			
+		}
+		
+	   	/*
 		// Get (default) form values (from view1)
 		String usernameOrEmail = txtEmail.getText().toString();
 		String password = txtEmailPassword.getText().toString();
@@ -454,18 +501,19 @@ public class LoginActivity extends OptionsActivity {
 			password = txtPassword.getText().toString();
 			siteNumber = txtSiteNumber.getText().toString();    				
 		}
-			
+		*/
+	   	
 		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
-        if (siteNumber.length() > 0){
-        	login = wh.login(usernameOrEmail, password, siteNumber);
+        if (siteNumber.length() > 0){        	
+        	CoreAcsUser user = apiCaller.user(usernameOrEmail, password, siteNumber);        	
+        	if (user != null) { userList.add(user); }        	
         }
         else {
-        	login = wh.login(usernameOrEmail, password);
+        	 userList = apiCaller.users(usernameOrEmail, password);        	
         }  
-        return login;
+        return userList;
     }
     
-  
     
     /**
      * Upon successful login, route the user to the correct activity.  Pass
@@ -476,13 +524,12 @@ public class LoginActivity extends OptionsActivity {
      *   
      *   If the user chose 'Remember Me' their credentials are persisted.
      *   
-     *   FUTURE:  allow user to set a preference for which page they will start on
      *   
      * @param siteNumber
      * @param userName
      * @throws AppException 
      */
-    private void navigateForward(String siteName, String siteNumber, String userName) throws AppException
+    private void navigateForward(CoreAcsUser loggedInUser) throws AppException
     {    	    	
     	// Get control values from the form
     	Boolean remember = chkRemember.isChecked();
@@ -494,18 +541,16 @@ public class LoginActivity extends OptionsActivity {
     	
     	// If the 'remember me' checkbox was checked, save user preferences 
 		if (remember){			
-			_appPrefs.setAuth1(userName);	
+			_appPrefs.setAuth1(loggedInUser.UserName);	
 			_appPrefs.setAuth2(password);
-			_appPrefs.setAuth3(siteNumber);
-			_appPrefs.setOrganizationName(siteName); 
+			_appPrefs.setAuth3(String.valueOf(loggedInUser.SiteNumber));	
+			_appPrefs.setOrganizationName(loggedInUser.SiteName); 
     	} 
 		
 		// Save login credentials to global state as they are needed for EVERY web service call
 		//  (keep in mind that these need to be in state regardless of the 'remember me' setting)
-		GlobalState gs = GlobalState.getInstance(); 
-		gs.setSiteName(siteName);
-		gs.setSiteNumber(siteNumber);
-		gs.setUserName(userName);
+		GlobalState gs = GlobalState.getInstance();
+		gs.setUser(loggedInUser);
 		gs.setPassword(password);
 					
     	//start IndividualListActivity
