@@ -110,7 +110,10 @@ public class CommentActivity extends OptionsActivity  {
 	    }
 	    
 	    private void bindData() throws AppException {
-	    	headerTextView.setText(_individualName);	    		    	    	
+	    	GlobalState gs = GlobalState.getInstance();
+	    	
+	    	headerTextView.setText(_individualName);	
+	    	commentText.setText("-" + gs.getUserName());
 	    	loadCommentTypes();  						//fill spinner (drop down)	   	    		    	    
 	    }
 	    
@@ -144,13 +147,14 @@ public class CommentActivity extends OptionsActivity  {
 		        	if (_loader.success())	{
 		        		
 		        		ArrayAdapter<CoreCommentType> adapter = new ArrayAdapter<CoreCommentType>(CommentActivity.this, android.R.layout.simple_spinner_item, _loader.getList()); 		        				        	
+		        		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		        		commentTypeSpinner.setAdapter(adapter);	
 		        		
 		        		// if comment type was passed in, select it
 		        		if (_commentTypeId != 0) {			    	    		
 		    	    		int position = _loader.getItemPosition(_commentTypeId);
 		    	    		commentTypeSpinner.setSelection(position-1, true);
-		    	    	}		        		
+		    	    	}		    	    			        	
 		        	}
 		        	else {
 		        		throw _loader.getException();

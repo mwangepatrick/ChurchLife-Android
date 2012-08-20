@@ -53,6 +53,7 @@
 	        android:id="@+id/commentTypeSpinner"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:prompt="@string/Comment.ChooseType"
 	        android:layout_alignParentRight="true">
 	    </Spinner>	
 	    

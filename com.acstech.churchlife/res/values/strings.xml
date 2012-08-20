@@ -78,7 +78,7 @@
 	
 	<string name="Comment.AddMenu">New Comment</string>
 	<string name="Comment.ProgressDialog">Loading Comment Types.  Please wait.</string>
-
+	<string name="Comment.ChooseType">Choose a Type</string>
 	
 	<string name="MyInfo.VersionPrefix">version</string>
 
