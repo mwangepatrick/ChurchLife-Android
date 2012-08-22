@@ -438,7 +438,7 @@ public class LoginActivity extends OptionsActivity {
 		    	    	
 		    	    	ArrayList<String> loginsArrayList = new ArrayList<String>();
 		    	    	for (CoreAcsUser user : logins){
-		    	    		loginsArrayList.add(user.toString());
+		    	    		loginsArrayList.add(user.toJsonString());
 		    	    	}
 		    	    			    	    	
 		    	    	b.putStringArrayList("logins", loginsArrayList);

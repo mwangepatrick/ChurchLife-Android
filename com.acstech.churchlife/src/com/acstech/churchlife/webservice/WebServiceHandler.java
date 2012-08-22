@@ -10,6 +10,11 @@ import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
 
+
+//zzz deprecating....still some use - remove after testing
+
+
+
 /**
  * This class is a wrapper to the acstechnologies RESTful webservices.  
  * 

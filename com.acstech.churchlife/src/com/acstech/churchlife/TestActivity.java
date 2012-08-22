@@ -108,10 +108,12 @@ public class TestActivity extends Activity {
 		  
 	        ArrayList<EventListItem> itemList = new ArrayList<EventListItem>();
 	      
-			for (int i = 0; i < 5; i++) {				
+			for (int i = 0; i < 5; i++) {
+				/*
 				itemList.add(new EventListItem(Integer.toString(i),
 												"Test Event", 
-												new Date()));	  
+												new Date()));
+												*/	  
 			}
 			
 			EventListItemAdapter eventsAdapter = new EventListItemAdapter(TestActivity.this, itemList);
@@ -130,9 +132,10 @@ public class TestActivity extends Activity {
 	        ArrayList<EventListItem> itemList2 = new ArrayList<EventListItem>();
 	       
 			for (int i = 0; i < 5; i++) {				
-				itemList2.add(new EventListItem(Integer.toString(i),
+				/*itemList2.add(new EventListItem(Integer.toString(i),
 												"Blah Event", 
-												new Date()));	  
+												new Date()));
+												*/	  
 			}
 			
 			EventListItemAdapter eventsAdapter2 = new EventListItemAdapter(TestActivity.this, itemList2);
@@ -172,14 +175,14 @@ public class TestActivity extends Activity {
 	        events.add(createEventItem("a", "My First Event", "9:00", "Aug 21"));
 	        events.add(createEventItem("b", "Event Numero Dos", "12:00", "Aug 25"));
 	        events.add(createEventItem("c", "Yet Again Event", "4:00", "Aug 30"));	  	        
-	        adapter.addSection("August 2011", new SimpleAdapter(this, events, R.layout.listitem_event, new String[] { EVENT_ITEM_ID, EVENT_ITEM_TITLE, EVENT_ITEM_TIME,EVENT_ITEM_DATE  }, new int[] { R.id.idView, R.id.titleTextView, R.id.timeTextView, R.id.dateTextView }));
+	        adapter.addSection("August 2011", new SimpleAdapter(this, events, R.layout.listitem_event, new String[] { EVENT_ITEM_ID, EVENT_ITEM_TITLE, EVENT_ITEM_TIME  }, new int[] { R.id.idView, R.id.titleTextView, R.id.timeTextView }));
 	        
 
 	        List<Map<String,String>> events2 = new LinkedList<Map<String,String>>();	        
 	        events2.add(createEventItem("d", "My Meeting", "9:00", "Dec 21"));
 	        events2.add(createEventItem("e", "Meetings of the Minds", "12:00", "Dec 25"));
 	        events2.add(createEventItem("f", "Battle of Cowpens", "10:00", "Dec 31"));	  	        
-	        adapter.addSection("December 2011", new SimpleAdapter(this, events2, R.layout.listitem_event, new String[] { EVENT_ITEM_ID, EVENT_ITEM_TITLE, EVENT_ITEM_TIME,EVENT_ITEM_DATE  }, new int[] { R.id.idView, R.id.titleTextView, R.id.timeTextView, R.id.dateTextView }));
+	        adapter.addSection("December 2011", new SimpleAdapter(this, events2, R.layout.listitem_event, new String[] { EVENT_ITEM_ID, EVENT_ITEM_TITLE, EVENT_ITEM_TIME  }, new int[] { R.id.idView, R.id.titleTextView, R.id.timeTextView }));
 	        
 	        
 	        

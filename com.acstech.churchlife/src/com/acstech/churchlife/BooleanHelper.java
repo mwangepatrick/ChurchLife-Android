@@ -33,4 +33,14 @@ public class BooleanHelper {
 			}
 		}
 		
+		public static int ParseBoolean(boolean value)
+		{
+			if (value == true) {
+				return 1;
+			}
+			else {
+				return 0;
+			} 			
+		}
+		
 }

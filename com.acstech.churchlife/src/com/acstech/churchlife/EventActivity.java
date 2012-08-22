@@ -11,12 +11,12 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.webservice.EventResponse;
+import com.acstech.churchlife.webservice.CoreEventDetail;
 import com.acstech.churchlife.R;
 
 public class EventActivity extends OptionsActivity {
 
-	EventResponse _wsEvent;					// results of the web service call
+	CoreEventDetail _event;					// passed in event detail (from web service call)
 	Date _dateSelected;						// passed in date selected (used in recurring events)
 	
 	AppPreferences _appPrefs;  	
@@ -49,9 +49,8 @@ public class EventActivity extends OptionsActivity {
 							 "EventActivity.onCreate",
 							 "No event data was passed to the Event activity.");
 	             }
-	             else {
-	            	 _wsEvent = new EventResponse(extraBundle.getString("event"));
-	            	 
+	             else {	            	 
+	            	 _event = CoreEventDetail.GetCoreEventDetail(extraBundle.getString("event"));            	 
 	            	 SimpleDateFormat sdf = new SimpleDateFormat(EventListItem.EVENT_FULLDATE_FORMAT);	            	 
 	            	 _dateSelected = sdf.parse(extraBundle.getString("dateselected"));
 	            	 
@@ -87,33 +86,28 @@ public class EventActivity extends OptionsActivity {
 	    private void bindData() throws AppException {
 	    		    	    		    	
 	    	SimpleDateFormat displayTime = new SimpleDateFormat(EventListItem.EVENT_TIME_FORMAT);
-	    	String start = displayTime.format(_wsEvent.getStartDate());
-	    	String stop = displayTime.format(_wsEvent.getStopDate());
+	    	String start = displayTime.format(_event.StartDate);
+	    	String stop = displayTime.format(_event.StopDate);
 	    		    	
 	    	// passed in selected date - get the month and day portion of the passed in date	    	
 	    	monthNameTextView.setText(new SimpleDateFormat("MMM").format(_dateSelected));	    	
 	    	monthDayTextView.setText(new SimpleDateFormat("dd").format(_dateSelected));
 	    	
-			titleTextView.setText(_wsEvent.getEventName());			
+			titleTextView.setText(_event.EventName);			
 			timeRangeTextView.setText(String.format("%s - %s", start, stop));
 			
 			// listview of details
 			ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem> ();
 			
 			// location
-			itemList.add(new DefaultListItem("0", _wsEvent.getLocation(), getResources().getString(R.string.Event_Location)));
+			itemList.add(new DefaultListItem("0", _event.Location, getResources().getString(R.string.Event_Location)));
 			
 			// description
-			DefaultListItem description = new DefaultListItem("1", _wsEvent.getDescription(), getResources().getString(R.string.Event_Description));
+			DefaultListItem description = new DefaultListItem("1", _event.Description, getResources().getString(R.string.Event_Description));
 			description.setContainsHtml(true);
 			itemList.add(description);
 			
-			detailsListview.setAdapter(new DefaultListItemAdapter(this, itemList));
-			
-			
-			//detailsListview
-			
-			
+			detailsListview.setAdapter(new DefaultListItemAdapter(this, itemList));				
 	    }
 	    
 }

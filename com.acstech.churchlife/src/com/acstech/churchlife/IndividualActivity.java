@@ -621,13 +621,6 @@ public class IndividualActivity extends OptionsActivity {
 		
 		try
 		{
-			/*
-			//load the individual
-			IndividualActivityLoader loader = new IndividualActivityLoader(this);
-			loader.setOnCompleteCallback(onIndividualMemberLoaded);
-			loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId));
-			*/
-			
 			int id = _wsIndividual.getIndvId();
 			String name = nameTextView.getText().toString();    	
 			

@@ -3,6 +3,8 @@ package com.acstech.churchlife;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.acstech.churchlife.webservice.CoreEvent;
+
 public class EventListItem {
 
     final static String EVENT_ITEM_ID = "id";  
@@ -12,12 +14,13 @@ public class EventListItem {
     
 	static final String EVENT_FULLDATE_FORMAT = "yyyyMMddHHmmssZ";
 	static final String EVENT_MONTHYEAR_FORMAT = "MMMM yyyy";	
-	static final String EVENT_DAYNAMEMONTHDAY_FORMAT = "EEE MMM d";
+	static final String EVENT_DAYNAMEMONTHDAY_FORMAT = "EEE MMM d";	
 	static final String EVENT_TIME_FORMAT = "h:mm a";
 	
 	private String _id = "";
 	private String _title = "";
 	private Date _eventDate;
+	private String _location = "";
 	
 	// Unique id
 	public String getId() {
@@ -26,6 +29,10 @@ public class EventListItem {
 	
 	public String getTitle() {
 		return _title;		
+	}
+	
+	public String getLocation() {
+		return _location;
 	}
 	
 	// symptom of using this item as the 'more results' item.  Remove IF statement when we use
@@ -51,12 +58,13 @@ public class EventListItem {
 			return  "";
 		}
 	}
-	
+		
 	// symptom of using this item as the 'more results' item.  Remove IF statement when we use
-	//  a different view item for the 'More Results' item
-	public String getMonthYearText() {
+		//  a different view item for the 'More Results' item
+	public String getHeaderText() {
 		if (_eventDate != null) {
-			SimpleDateFormat displayTime = new SimpleDateFormat(EVENT_MONTHYEAR_FORMAT);
+			String EVENT_HEADER_FORMAT = "EEEE,  MMMM d yyyy";
+			SimpleDateFormat displayTime = new SimpleDateFormat(EVENT_HEADER_FORMAT);
 			return displayTime.format(_eventDate);
 		}
 		else {
@@ -68,10 +76,30 @@ public class EventListItem {
 		return _eventDate;
 	}
 	
+	/*
+	//zzz CTOR - remove after testing (when othe is replaced) zzz
 	public EventListItem(String id, String title, Date eventDate) {
 		_id = id;
 		_title = title;
 		_eventDate = eventDate;
 	}
+	*/
+	
+	//CTOR
+	public EventListItem(String title)
+	{
+		_title = title;
+	}
+	
+	//CTOR
+	public EventListItem(CoreEvent event) {
+		
+		_id = event.EventId;
+		_title = event.EventName;
+		_eventDate = event.StartDate;	
+		_location = event.Location;
+	}
+	
+	
 	
 }

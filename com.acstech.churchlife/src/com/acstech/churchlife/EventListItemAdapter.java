@@ -50,7 +50,7 @@ public class EventListItemAdapter extends BaseAdapter {
 		String id = "";
 		TextView titleTextView;
 		TextView timeTextView;
-		TextView dateTextView;
+		TextView locationTextView;
 	}
 
 	
@@ -61,15 +61,7 @@ public class EventListItemAdapter extends BaseAdapter {
 		
 		ListViewHolder holder = null;
 		EventListItem currentItem = _items.get(position);			
-		
-//		if(currentItem.getTitle().startsWith("-")){		
-//			LayoutInflater inflater = LayoutInflater.from(_context);
-//			View divider = inflater.inflate(R.layout.listitem_header, null);
-//		    return divider;
-//		}
-//		else {
-			
-			
+					
 		if (convertView == null) {
 			
 			 LayoutInflater inflater = LayoutInflater.from(_context);
@@ -78,24 +70,19 @@ public class EventListItemAdapter extends BaseAdapter {
 			 holder = new ListViewHolder();
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.timeTextView = (TextView) convertView.findViewById(R.id.timeTextView);
-			 holder.dateTextView = (TextView) convertView.findViewById(R.id.dateTextView);				 				 				 				
-			 			 						
+			 holder.locationTextView = (TextView)convertView.findViewById(R.id.locationTextView);
+			 
 			 convertView.setTag(holder);
 		}
 		else {
 			 holder = (ListViewHolder) convertView.getTag();
 		}
-		
-		//zzz add header if different
+
 		holder.id = currentItem.getId();
 		holder.titleTextView.setText(currentItem.getTitle());			
 		holder.timeTextView.setText(currentItem.getTimeText());			
-		holder.dateTextView.setText(currentItem.getDateText());
-		
-		
-		return convertView;	
-		//}
-		
+		holder.locationTextView.setText(currentItem.getLocation());	
+		return convertView;				
 	}
 
 }

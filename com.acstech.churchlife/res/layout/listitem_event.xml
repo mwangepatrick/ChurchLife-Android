@@ -4,7 +4,7 @@
    				android:layout_height="fill_parent" 
    				xmlns:android="http://schemas.android.com/apk/res/android"
    				android:padding="4dip">
-   				
+   				        	
 	<TextView    				
 			android:id="@+id/idView" 
 			android:text="1"
@@ -12,34 +12,35 @@
 			android:layout_height="wrap_content"			
 			android:visibility="gone">
 	</TextView>
-	   				
+	   			
+	<TextView
+	    android:id="@+id/timeTextView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/locationTextView"
+	    android:gravity="bottom"
+	    android:paddingRight="5dp"
+	    android:text="value for time" >
+	</TextView>
+			
 	<TextView 		
 			android:id="@+id/titleTextView" 
 			android:text="Title"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"				
-			android:textSize="19sp"			
-			android:textColor="@android:color/white">
-	</TextView>
-	
-	<TextView 		
-			android:id="@+id/timeTextView" 
-			android:text="value for time"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"						
-			android:layout_below="@+id/titleTextView">
-	</TextView>
-	
-	<TextView 		
-			android:id="@+id/dateTextView" 
-			android:text="value for date"
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content"			
-			android:layout_alignBaseline="@+id/timeTextView"
-			android:layout_toRightOf="@+id/timeTextView"
-			android:layout_alignParentRight="true"
-			android:gravity="right">
+			android:textSize="17sp"			
+			android:textColor="@android:color/white"
+			android:layout_toRightOf="@+id/timeTextView">
 	</TextView>
 		
+	<TextView 		
+			android:id="@+id/locationTextView" 
+			android:text="Sanctuary"
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/titleTextView"
+			android:layout_toRightOf="@+id/timeTextView">
+	</TextView>
+	
 </RelativeLayout>
 	

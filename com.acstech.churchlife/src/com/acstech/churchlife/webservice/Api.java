@@ -1,5 +1,7 @@
 package com.acstech.churchlife.webservice;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpStatus;
@@ -140,6 +142,120 @@ public class Api {
 		return list;
 	}
 
+	
+	public void commentAdd(String username, String password, String siteNumber, CoreCommentChangeRequest comment)  throws AppException {
+		
+		RESTClient client = new RESTClient(_baseUrl + "/comments/postcommentchangerequest");
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	
+    	client.AddHeader("sitenumber", siteNumber);
+    	    	
+    	try	{
+    		
+    	    client.AddPostEntity(comment.toJsonString());
+            
+            client.Execute(RequestMethod.POST);    	    		
+    		
+    		if (client.getResponseCode() != HttpStatus.SC_OK) {
+    			 throw AppException.AppExceptionFactory(
+            			 ExceptionInfo.TYPE.APPLICATION,
+						 ExceptionInfo.SEVERITY.CRITICAL, 
+						 "100",           												    
+						 "Api.commentAdd",
+						 "This comment change request could not be saved.  Please try again.");
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.commentAdd");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("commenttype", comment.CommentType);
+    		throw e;
+    	}		
+	}
+
+	
+	/************************************************************/
+	/*					 	Events 								*/
+	/************************************************************/
+	public CorePagedResult<List<CoreEvent>> events(String username, String password, String siteNumber, Date startDate, Date stopDate, int pageIndex) throws AppException {
+
+		isOnlineCheck();
+		
+		CorePagedResult<List<CoreEvent>> events = null;
+    	RESTClient client = new RESTClient(_baseUrl + "/events");
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	client.AddHeader("sitenumber", siteNumber);
+    	
+    	SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
+
+    	client.AddParam("startDate", dateformater.format(startDate));
+    	client.AddParam("stopDate", dateformater.format(stopDate));
+        client.AddParam("pageIndex", Integer.toString(pageIndex));
+                
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			events = CoreEvent.GetCoreEventListPagedResult(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.events");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		throw e;
+    	}
+		return events;
+	}
+
+	public CoreEventDetail event(String username, String password, String siteNumber, String eventId) throws AppException {
+
+		isOnlineCheck();
+		
+		CoreEventDetail event = null;
+    	RESTClient client = new RESTClient(_baseUrl + "/events/GetDetail");
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	client.AddHeader("sitenumber", siteNumber);
+    	    
+    	client.AddParam("id", eventId);
+    	
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			event = CoreEventDetail.GetCoreEventDetail(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.event");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("eventId", eventId);
+    		throw e;
+    	}
+		return event;
+		
+	}
+	
+	/************************************************************/
+	/*					 	Users 								*/
+	/************************************************************/
 	
 	/** 
 	 *  Used to validate/authenticate with the acstechnologies web service layer.

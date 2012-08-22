@@ -10,17 +10,13 @@ import org.json.JSONObject;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
-public class CoreCommentType {
+public class CoreCommentType extends CoreObject{
+	
 	  public int CommentTypeID;
       public String CommentTypeDesc;     
       public String CommentColor;
       
-      private String _sourceJson;
-      public String toJsonString()
-  	  {
-    	  return _sourceJson;		
-  	  }
-      
+      @Override
       public String toString()
   	  {
     	  return CommentTypeDesc;		

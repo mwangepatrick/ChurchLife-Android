@@ -2,6 +2,8 @@ package com.acstech.churchlife.webservice;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 
+//zzz deprecated - remove after testing
+
 
 /**
  * 

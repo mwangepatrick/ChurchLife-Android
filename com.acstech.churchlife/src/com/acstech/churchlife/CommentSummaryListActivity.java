@@ -172,7 +172,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	        	
 	        	try
 	        	{
-	        		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
+	        		
 	        		
 		        	if (_loader.success())	{
 		        		
@@ -180,7 +180,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 		        		
 		        		//If only 1 type, go directly to the comment type (detail) page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()));
+		        			startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), true);		        			
 		        		}
 		        		else {
 				     		// set items to list
@@ -194,7 +194,11 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	        	catch (Throwable e) {
 	        		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
 	        		ExceptionHelper.notifyNonUsers(e); 	        	
-				} 	        		        
+				} 	        	
+	        	finally
+	        	{
+	        		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
+	        	}
 	        }
 	    };    
 	    	    	  	  
@@ -207,7 +211,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	       	 		loadListWithProgressDialog(true);  // how to tell back/next?
 	       	 	}
 	       	 	else {	 
-	       	 		startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()));    		 		       	 	
+	       	 		startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), false);    		 		       	 	
 	       	 	}       	 	       	 	
 	    	}
 	        catch (Exception e) {
@@ -224,13 +228,17 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	     * @param individualName
 	     * @param commentTypeId
 	     */
-	    private void startCommentListActivity(int individualId, String individualName, int commentTypeId) {
+	    private void startCommentListActivity(int individualId, String individualName, int commentTypeId, boolean closeThisActivity) {
 	    	Intent intent = new Intent();
    		 	intent.setClass(this, CommentListActivity.class); 		        	 	
    		 	intent.putExtra("id", _individualId);
    		 	intent.putExtra("name", _individualName);
    		 	intent.putExtra("commenttypeid", commentTypeId);
    		 	startActivity(intent);	  
+   		 	
+   		 	if (closeThisActivity) {
+   		 		finish();
+   		 	}
 	    }
 	    
 }

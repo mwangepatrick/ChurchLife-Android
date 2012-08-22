@@ -14,7 +14,7 @@ import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
 
-public class CoreAcsUser implements ICoreObject {
+public class CoreAcsUser extends CoreObject {
 	 
 	  public static String PERMISSION_GRANTED = "A";
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
@@ -40,12 +40,7 @@ public class CoreAcsUser implements ICoreObject {
     	  }    	      	  
     	  return result;    	      	 
       }
-      
-      private String _sourceJson;
-      public String toString()
-  	  {
-    	  return _sourceJson;		
-  	  }
+     
       
       // Factory Method - parse json
       //  NOTE:  This object is used as the return value for different calls.  Some of those

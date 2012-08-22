@@ -12,7 +12,7 @@ import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
-public class CoreCommentSummary implements ICoreObject {
+public class CoreCommentSummary extends CoreObject {
 
     public int CommentTypeID;
     public String CommentType;
@@ -20,12 +20,7 @@ public class CoreCommentSummary implements ICoreObject {
     public int CommentCount;
     public String CommentColor;
     
-    private String _sourceJson;
-    public String toString()
-	  {
-  	  return _sourceJson;		
-	  }
-    
+   
     // Factory Method - parse json
     public static CoreCommentSummary GetCoreCommentSummary(String json) throws AppException
     {    	

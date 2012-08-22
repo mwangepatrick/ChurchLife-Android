@@ -2,6 +2,7 @@ package com.acstech.churchlife;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,13 +16,16 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreCommentChangeRequest;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
 
 public class CommentActivity extends OptionsActivity  {
 
 	static final int DIALOG_PROGRESS = 1;			
-	
+	static final int DIALOG_SAVE = 2;
+
 	int _individualId;										// passed via intent
 	String _individualName;									// passed via intent
 	int _commentTypeId = 0;									// passed via intent
@@ -67,7 +71,8 @@ public class CommentActivity extends OptionsActivity  {
 	            // button click event handlers
 	            btnSave.setOnClickListener(new OnClickListener() {		
 	             	public void onClick(View v) {	        		             	
-	             		saveComment();	             		        
+	             		saveComment();	
+	             		loadComments();	//redirect back to comment summary
 	             	}		
 	     		}); 
 
@@ -90,7 +95,14 @@ public class CommentActivity extends OptionsActivity  {
 	        	_progressD.setMessage(getString(R.string.Comment_ProgressDialog));        	
 	        	_progressD.setIndeterminate(true);
 	        	_progressD.setCancelable(false);
-	    		return _progressD;	  
+	    		return _progressD;	
+	    	case DIALOG_SAVE:
+	        	_progressD = new ProgressDialog(CommentActivity.this);	        	
+	        	_progressD.setMessage(getString(R.string.Comment_SaveDialog));        	
+	        	_progressD.setIndeterminate(true);
+	        	_progressD.setCancelable(false);
+	    		return _progressD;
+	    		
 	        default:
 	            return null;
 	        }
@@ -167,23 +179,48 @@ public class CommentActivity extends OptionsActivity  {
 	        }
 	    };
 	    
-	    //TODO
+	  
 	    private void saveComment() {
 	    	try {
 	    		
+	    		// validate input zzz TODO
+	    		
+	    		// progress dialog
+	    		showDialog(DIALOG_SAVE);
+	    		
 	    		CoreCommentType ct = (CoreCommentType)commentTypeSpinner.getSelectedItem();
 	    		
-	    		String comment = commentText.getText().toString();
+	    		CoreCommentChangeRequest req = new CoreCommentChangeRequest();
+	    		req.IndvID = _individualId;
+	    		req.Comment = commentText.getText().toString();
+	    		req.CommentType = ct.CommentTypeDesc;				// this should be type ID	    		
+	    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
 	    		
+	    		GlobalState gs = GlobalState.getInstance(); 
+				
+	    	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
+	    	   	
+	    	   	apiCaller.commentAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
 	    		
-	    		
-	    		
+	    	   	removeDialog(DIALOG_PROGRESS);
 	    	}
 	        catch (Exception e) {
+	        	
+	        	removeDialog(DIALOG_PROGRESS);
+	        	
 	        	// does NOT raise errors.  called by an event
 				ExceptionHelper.notifyUsers(e, CommentActivity.this);
 		    	ExceptionHelper.notifyNonUsers(e)  ; 	
 	        }
 	    }
 	
+	    private void loadComments() {
+	    	Intent intent = new Intent();
+		 	intent.setClass(this, CommentSummaryListActivity.class); 		        	 	
+		 	intent.putExtra("id", _individualId);
+		 	intent.putExtra("name", _individualName);
+		 	startActivity(intent);
+		 	
+		 	this.finish();
+	    }
 }

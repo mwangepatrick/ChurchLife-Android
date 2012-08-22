@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
+//zzz deprecating....still some use - remove after testing
 
 /**
  * This object is returned from calls inside the WebServiceHandler.  It is also

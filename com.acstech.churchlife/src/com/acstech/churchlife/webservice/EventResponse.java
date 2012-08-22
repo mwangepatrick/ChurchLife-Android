@@ -4,6 +4,8 @@ import java.util.Date;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 
+//zzz deprecated - remove after testing
+
 /**
  * 
  * @author softwarearchitect
