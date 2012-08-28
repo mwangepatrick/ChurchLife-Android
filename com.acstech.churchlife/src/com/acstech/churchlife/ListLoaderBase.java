@@ -55,6 +55,15 @@ public abstract class ListLoaderBase<T> {
 		_previousResultsMessage = value;
 	}
 		
+	public void clear()
+	{
+		ArrayList<T> list = getList();		
+		if (list != null) {
+			list.clear();
+		}		
+		_pageIndex = -1;
+	}
+	
 	public boolean success() {
 		return (_exception == null);		
 	}

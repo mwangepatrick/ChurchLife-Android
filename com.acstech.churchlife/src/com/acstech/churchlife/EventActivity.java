@@ -107,7 +107,7 @@ public class EventActivity extends OptionsActivity {
 			description.setContainsHtml(true);
 			itemList.add(description);
 			
-			detailsListview.setAdapter(new DefaultListItemAdapter(this, itemList));				
+			detailsListview.setAdapter(new DefaultListItemAdapter(this, itemList, R.layout.listitem_withtitle));				
 	    }
 	    
 }

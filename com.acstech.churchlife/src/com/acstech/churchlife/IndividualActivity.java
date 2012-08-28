@@ -37,18 +37,18 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.SEVERITY;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.TYPE;
 import com.acstech.churchlife.webservice.CoreAcsUser;
-import com.acstech.churchlife.webservice.IndividualAddress;
-import com.acstech.churchlife.webservice.IndividualEmail;
-import com.acstech.churchlife.webservice.IndividualFamilyMember;
-import com.acstech.churchlife.webservice.IndividualPhone;
-import com.acstech.churchlife.webservice.IndividualResponse;
-import com.acstech.churchlife.R;
+import com.acstech.churchlife.webservice.CoreIndividual;
+import com.acstech.churchlife.webservice.CoreIndividualAddress;
+import com.acstech.churchlife.webservice.CoreIndividualDetail;
+import com.acstech.churchlife.webservice.CoreIndividualEmail;
+import com.acstech.churchlife.webservice.CoreIndividualPhone;
+
 
 /**
  * This activity displays individual information for the passed in individual and allows the user
  *   to interact with that data (call phone, email, add to contacts, etc.) 
  * 
- * NOTE:  The bundle passed to this activity MUST contain a IndividualResponse object (as a string)
+ * NOTE:  The bundle passed to this activity MUST contain a CoreIndividualDetail object (as a string)
  * 
  * @author softwarearchitect
  *
@@ -60,7 +60,7 @@ public class IndividualActivity extends OptionsActivity {
     private static final int DIALOG_PHONE_SELECT = 200;
     private static final int DIALOG_ADD_CONTACT = 300;
     
-	IndividualResponse _wsIndividual;					// results of the web service call
+	CoreIndividualDetail _individual;	
 	AppPreferences _appPrefs;  	
 	
 	ImageView individualImageView;						// form controls
@@ -91,8 +91,8 @@ public class IndividualActivity extends OptionsActivity {
 							 "IndividualActivity.onCreate",
 							 "No individual data was passed to the Individual activity.");
 	             }
-	             else {
-	            	 _wsIndividual = new IndividualResponse(extraBundle.getString("individual"));
+	             else {	            	
+	            	 _individual = CoreIndividualDetail.GetCoreIndividualDetail(extraBundle.getString("individual"));
 	            	 bindData();
 	             }	        
 	             	            	             
@@ -197,25 +197,16 @@ public class IndividualActivity extends OptionsActivity {
     	GlobalState gs = GlobalState.getInstance(); 
     	
     	// image - use family picture if individual picture is empty
-    	String imageUrl = _wsIndividual.getPictureUrl();
+    	String imageUrl = _individual.PictureUrl;
     	if (imageUrl.trim().length() == 0) {
-    		imageUrl = _wsIndividual.getFamilyPictureUrl();
+    		imageUrl = _individual.FamilyPictureUrl;
     	}    		
     	Drawable image = ImageOperations(imageUrl);
     	if (image != null) {
     		individualImageView.setImageDrawable(image);	    	        
     	}
     	
-    	// Name	- build it out of the available parts
-    	String name = "";
-    	if ( _wsIndividual.getTitle().length() > 0 ) 		{ name =  _wsIndividual.getTitle() 						+ " ";	}
-    	if ( _wsIndividual.getFirstName().length() > 0 ) 	{ name = name + _wsIndividual.getFirstName()			+ " "; 	}
-    	if ( _wsIndividual.getGoesbyName().length() > 0 ) 	{ name = name + "(" + _wsIndividual.getGoesbyName() 	+ ") "; }    	
-    	if ( _wsIndividual.getMiddleName().length() > 0 ) 	{ name = name + _wsIndividual.getMiddleName() 			+ " "; 	}
-    	if ( _wsIndividual.getLastName().length() > 0 ) 	{ name = name + _wsIndividual.getLastName() 			+ " "; 	}
-    	if ( _wsIndividual.getSuffix().length() > 0 ) 		{ name = name + _wsIndividual.getSuffix() 				+ " "; 	}
-    	    	       	
-		nameTextView.setText(name);
+		nameTextView.setText(_individual.getEntireName());
 
 		// Build a list of all individual details (one list) including phone numbers,
 		//  email addresses, addresses, and family members.  Use the custom list adapter
@@ -226,70 +217,60 @@ public class IndividualActivity extends OptionsActivity {
 		ArrayList<CustomListItem> listItems = new ArrayList<CustomListItem>();
 				
 		// Phone Numbers - add to listitems
-		String titleString = getResources().getString(R.string.Individual_PhoneAction);		
-		
-		ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
-		for (IndividualPhone phone : phoneList) {
-							
-			// only set the 'text message' icon if the number is text-able
-			// TODO:  what property to check?  doesn't seem to be in the current properties returned
+		String titleString = getResources().getString(R.string.Individual_PhoneAction);
+		for (CoreIndividualPhone phone : _individual.Phones) {
+			
 			String defaultAction = "phone:" + phone.getPhoneNumberToDial();
 						
-			listItems.add(new CustomListItem(String.format(titleString, phone.getPhoneType()),
+			listItems.add(new CustomListItem(String.format(titleString, phone.PhoneType),
 											 phone.getPhoneNumberToDisplay(), "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
 		}
-		
-		
-		// Email addresses - add to listitems
-		titleString = getResources().getString(R.string.Individual_EmailAction);		
 				
-		ArrayList<IndividualEmail> emailList = _wsIndividual.getEmails();
-		for (IndividualEmail email : emailList) {
-			listItems.add(new CustomListItem(String.format(titleString, email.getEmailType()),
-											 email.getEmailAddress(), "",											
-											 "email:" + email.getEmailAddress(),
+		// Email addresses - add to listitems
+		titleString = getResources().getString(R.string.Individual_EmailAction);					
+		for (CoreIndividualEmail email : _individual.Emails) {
+			listItems.add(new CustomListItem(String.format(titleString, email.EmailType),
+											 email.Email, "",											
+											 "email:" + email.Email,
 											 getResources().getDrawable(R.drawable.sym_action_email)));			
 		}
-		
+				
 		// Physical addresses - add to listitems
-		titleString = getResources().getString(R.string.Individual_AddressAction);		
-		
-		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
-		for (IndividualAddress address : addressList) {
+		titleString = getResources().getString(R.string.Individual_AddressAction);				
+		for (CoreIndividualAddress address : _individual.Addresses) {
 			
 			String cityStateZip = "";
-	        if (address.getCity().trim().length() > 0 && address.getState().trim().length() > 0) {
-	        	cityStateZip = String.format("%s, %s  %s", address.getCity().trim(), address.getState().trim(), address.getZipcode().trim());
+	        if (address.City.trim().length() > 0 && address.State.trim().length() > 0) {
+	        	cityStateZip = String.format("%s, %s  %s", address.City.trim(), address.State.trim(), address.Zipcode.trim());
 	        }
 	            			
-			String actionTag = String.format("map:%s %s %s, %s %s", address.getAddress(), address.getAddress2(), address.getCity(), address.getState(), address.getZipcode());
+			String actionTag = String.format("map:%s %s %s, %s %s", address.Address, address.Address2, address.City, address.State, address.Zipcode);
 			
-			listItems.add(new CustomListItem(String.format(titleString, address.getAddressType()),
-											 address.getAddress(), address.getAddress2(), cityStateZip,											
+			listItems.add(new CustomListItem(String.format(titleString, address.AddrType),
+											 address.Address, address.Address2, cityStateZip,											
 											 actionTag,
 											 getResources().getDrawable(R.drawable.ic_menu_compass)));			
 		}
-				
+			
 		// Family members - add to listitems
 		titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
-		
-		ArrayList<IndividualFamilyMember> memberList = _wsIndividual.getFamilyMembers();
-		for (IndividualFamilyMember member : memberList) {
+		for (CoreIndividual member : _individual.FamilyMembers) {
 			listItems.add(new CustomListItem(titleString,
-											 String.format("%s %s", member.getFirstName(), member.getLastName()), "", 											
-											 "individual:" + Integer.toString(member.getIndividualId()),
+											 member.FullName, "", 											
+											 "individual:" + Integer.toString(member.IndvId),
 											 getResources().getDrawable(R.drawable.user)));			
 		}
-					
-		// Comments - add to listitems a comments button IF the user has permissions
+		
+		// Comments - add a 'Comments' button IF the user has permissions
 		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS)) {
 										
 			titleString = getResources().getString(R.string.Individual_CommentAction);		
-			
-			//zzz if we use a completely new intent we need to pass individual name in addition to individual id
+		
+			// comments needs id and name...so it just gets those from the currently
+			//  loaded individual (rather than passing a delimited argument)
 			listItems.add(new CustomListItem(titleString,
 					 "", "", 											
-					 "comments:" + Integer.toString(_wsIndividual.getIndvId()),
+					 "comments:",
 					 null));				
 		}
 		
@@ -311,11 +292,7 @@ public class IndividualActivity extends OptionsActivity {
             	doAction(item.getActionTag());            	
             }
         });  
-		
-		//works
-		//TextView headerText = new TextView(this);
-		//headerText.setText("Email");				
-		//detailsListview.addHeaderView(headerText);			
+					
     }
     
 
@@ -330,8 +307,7 @@ public class IndividualActivity extends OptionsActivity {
     		if (url.length() > 0) {
     			URL imageUrl = new URL(url);
     			InputStream is = (InputStream) imageUrl.getContent();    			
-    			d = Drawable.createFromStream(is, "src");
-    		
+    			d = Drawable.createFromStream(is, "src");    	
     		}
     	   return d;	    	   
     	} 
@@ -372,9 +348,7 @@ public class IndividualActivity extends OptionsActivity {
     		return null;
     	}
     }
-    
-    
-    
+            
     /**
      * actionTag must be in the format "command:data"
      * 
@@ -524,68 +498,61 @@ public class IndividualActivity extends OptionsActivity {
 	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
 	                //.withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)	                
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, _wsIndividual.getFirstName())
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, _wsIndividual.getMiddleName())
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, _wsIndividual.getLastName())	                
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, _wsIndividual.getTitle())
-	                .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, _wsIndividual.getSuffix())	
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME, _individual.FirstName)
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME, _individual.MiddleName)
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, _individual.LastName)	                
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX, _individual.Title)
+	                .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX, _individual.Suffix)	
 	                .build());
 	             
 	        // nickname
 	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
-	                .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, _wsIndividual.getGoesbyName())
+	                .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, _individual.GoesbyName)
 	                .build());
 	        
 	        // Phone number(s)
-        	ArrayList<IndividualPhone> phoneList = _wsIndividual.getPhoneNumbers();
-        	for (IndividualPhone phone : phoneList) {	
-
-        		String phoneNumber =  String.format("(%s)%s", phone.getAreaCode(), phone.getPhoneNumber());        		
+        	for (CoreIndividualPhone phone : _individual.Phones) {	
     	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
     	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
     	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-    	                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phoneNumber)
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phone.PhoneNumber)
     	                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_CUSTOM)
-    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, phone.getPhoneType())
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, phone.PhoneType)
     	                .build());    	                		        	
         	}
 	        	        
 	        // Email address(es)
-        	ArrayList<IndividualEmail> emailList = _wsIndividual.getEmails();
-    		for (IndividualEmail email : emailList) {
-    			
+    		for (CoreIndividualEmail email : _individual.Emails) {    			
     	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
     	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
     	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-    	                .withValue(ContactsContract.CommonDataKinds.Email.DATA, email.getEmailAddress())
+    	                .withValue(ContactsContract.CommonDataKinds.Email.DATA, email.Email)
     	                .withValue(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_CUSTOM)
-    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, email.getEmailType())
+    	                .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, email.EmailType)
     	                .build());    			    			    			
     		}
     		
 	        
     		// Address(es)
-    		ArrayList<IndividualAddress> addressList = _wsIndividual.getAddresses();
-    		for (IndividualAddress address : addressList) {		
-    		
+    		for (CoreIndividualAddress address : _individual.Addresses) {		    		
     	        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
     	                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
     	                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)	                
-    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, address.getAddress())
-    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD, address.getAddress2())
-    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.CITY, address.getCity())
-    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, address.getState())
-    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, address.getZipcode())
-    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, address.getCountry())    			        
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, address.Address)
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD, address.Address2)
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.CITY, address.City)
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, address.State)
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, address.Zipcode)
+    			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, address.Country)    			        
     			        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, ContactsContract.CommonDataKinds.StructuredPostal.TYPE_CUSTOM)
-    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, address.getAddressType())
+    	                .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, address.AddrType)
     	                .build());    			
     		}
     		
 	        // Picture
-	        byte[] pic = ImageOperationsToByte(_wsIndividual.getPictureUrl());
+	        byte[] pic = ImageOperationsToByte(_individual.PictureUrl);
 	        
 	        if (pic != null) {
 		        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -621,7 +588,7 @@ public class IndividualActivity extends OptionsActivity {
 		
 		try
 		{
-			int id = _wsIndividual.getIndvId();
+			int id = _individual.IndvId;
 			String name = nameTextView.getText().toString();    	
 			
 			Intent intent = new Intent();

@@ -1,16 +1,12 @@
 package com.acstech.churchlife;
 
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.webservice.IndividualsResponse;
-import com.acstech.churchlife.webservice.WebServiceHandler;
 import com.acstech.churchlife.R;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -31,15 +26,14 @@ public class IndividualListActivity extends OptionsActivity {
 	
 	private ProgressDialog _progressD;
 	private String _progressText;
-	
-	ArrayAdapter<DefaultListItem> _itemArrayAdapter;
-	IndividualsResponse _wsIndividuals;		// results of the web service call
-	
-	AppPreferences _appPrefs;  	
+		
+	IndividualListLoader _loader;
+	AppPreferences _appPrefs;
 	
 	EditText txtSearch;
 	Button btnSearch;
 	ListView lv1;
+
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,11 +51,10 @@ public class IndividualListActivity extends OptionsActivity {
         	 //  begins to enter different search text
         	 TextWatcher tw = new TextWatcher() {
         		 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-        		 public void onTextChanged(CharSequence s, int start, int before, int count) { 
-        			 _itemArrayAdapter = null;
-        			 if (lv1.getAdapter() != null ) {
-        				 ((ArrayAdapter<DefaultListItem>)lv1.getAdapter()).clear();        				
-        			 }
+        		 public void onTextChanged(CharSequence s, int start, int before, int count) {         			
+        			 if (lv1.getAdapter() != null ) {        				 
+        				 lv1.setAdapter(null);
+        			 }        			
         		 }
         		 public void afterTextChanged(Editable arg0) {}        		 
         	 };         		
@@ -71,25 +64,29 @@ public class IndividualListActivity extends OptionsActivity {
         	 // Wire up the search button                     
              btnSearch.setOnClickListener(new OnClickListener() {		
              	public void onClick(View v) {	    					
-						_wsIndividuals = null;				// Button click always starts a new search (clears out any prior search results)						
-						_itemArrayAdapter = null;
-						doSearchWithProgressWindow();
+					// Button click always starts a new search (clears out any prior search results)					
+					if (_loader != null) {
+						_loader.clear();
+					}
+					
+					if (inputIsValid()) {
+						loadListWithProgressDialog(true);
+					}
              	}		
      		 });     
              
              // Wire up list on click - display person detail activity
              lv1.setOnItemClickListener(new OnItemClickListener() {
                  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {                 	 
-                	 DefaultListItem itemSelected = (DefaultListItem)parent.getAdapter().getItem(position);                	                	
-                	 ItemSelected(itemSelected.getId(), itemSelected.getDescription());                	                 	
+                	 DefaultListItem item = (DefaultListItem)parent.getAdapter().getItem(position);                	                	
+                	 ItemSelected(item);                	                 	
                  }
                });             	         	         	         	         	 
         }
     	catch (Exception e) {
     		ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
     		ExceptionHelper.notifyNonUsers(e);
-    	}  
-        
+    	}          
     }
     
     
@@ -151,128 +148,113 @@ public class IndividualListActivity extends OptionsActivity {
     	return (msg.length() == 0);    	    
     }
     
-    
+
     /**
      * Displays a progress dialog and launches a background thread to connect to a web service
      *   to retrieve search results 
      *   
      */
-    private void doSearchWithProgressWindow()
-    {           
-    	if (inputIsValid()) {	    	
-    		    	    		
-	    	showDialog(DIALOG_PROGRESS_INDIVIDUALS);
-	    	
-	    	// This handler is called once the people search is complete.  It looks at the data returned
-	    	//  from the thread (in the Message) to determine success/failure.  If successful, the results are displayed.
-	    	final Handler handler = new Handler() {
-	    		public void handleMessage(Message msg) {
-	    		  
-	    			removeDialog(DIALOG_PROGRESS_INDIVIDUALS);
-	    			
-	    			try {
-		    			if (msg.what == 0) {
-		    				
-		    				// If this is the initial search, create an adapter...otherwise this is the result of
-		    				//  the use selecting a 'More Results' item.  If so, remove that item and load more results.
-		    				if (_itemArrayAdapter == null ) {
-		    					_itemArrayAdapter = new ArrayAdapter<DefaultListItem>(IndividualListActivity.this, R.layout.listitem_default);		    					
-		    					lv1.setAdapter(_itemArrayAdapter);
-		    				}
-		    				else {		    				
-		    					// Remove the 'More Results...' item before loading more.
-		    					DefaultListItem moreItem = _itemArrayAdapter.getItem(_itemArrayAdapter.getCount()-1);
-		    					_itemArrayAdapter.remove(moreItem); 	    						    						    						    						    					
-		    				}
-		    						    						    						    			
-		    				// Check for empty 
-		    				if (_wsIndividuals.getLength() == 0) {		    					
-		    					_itemArrayAdapter.add(new DefaultListItem("", getResources().getString(R.string.IndividualList_NoResults)));		    					
-		    				}
-		    				else {
-				    		    			    		    		    		    	
-		    					// Add all items from the latest web service request to the adapter
-			    				for (int i = 0; i < _wsIndividuals.getLength(); i++) {			    								    								    			
-			    					_itemArrayAdapter.add(new DefaultListItem(Integer.toString(_wsIndividuals.getIndvId(i)), _wsIndividuals.getFirstName(i) + " " + _wsIndividuals.getLastName(i) + " " + _wsIndividuals.getSuffix(i)));
-			    				}
-			    				
-		    				    // If the web service indicates more records...Add the 'More Records' item
-			    				if (_wsIndividuals.getHasMore() == true) {			    					
-			    					_itemArrayAdapter.add(new DefaultListItem("", getResources().getString(R.string.IndividualList_More)));
-			    				}
-			    					    			    		    			  
-		    				}	
-		    				
-		    				// Notify the adapter that the data has been updated/set (so the view will be updated)		    				
-		    				((ArrayAdapter<DefaultListItem>)lv1.getAdapter()).notifyDataSetChanged();
-
-		       	             // Hide the keyboard
-		       	             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		       	             imm.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);
-
-		       			}		    						    		
-		       			else if (msg.what < 0) {
-		       				// If < 0, the exception is in the message bundle.  Throw it
-		       				Bundle b = msg.getData();
-		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "doSearchWithProgressWindow.handleMessage");	    				
-		       			}	    				
-	    			}
-	    			catch (Exception e) {
-	    				ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
-	    	    		ExceptionHelper.notifyNonUsers(e); 				    				
-	    			}    			    			    			    			   				    			    		  
-	    		}
-	    	};
-	    	
-	    	Thread searchThread = new Thread() {  
-	    		public void run() {
-	    			try {
-	    				GlobalState gs = GlobalState.getInstance(); 
-	    				
-		    	    	String searchText = txtSearch.getText().toString();		    	    	    	    		        
-		        				        	
-		    	    	// If we have search results, and the call to this method is 
-		    	    	//  for 'more', we pick back up where we left off.
-		    	    	int startingRecordId = 0; 							// initialize	  	    	    	
-		    	    	if (_wsIndividuals != null) {
-		    	    		startingRecordId = _wsIndividuals.getMaxResult();
-		    	    	}
-    	    			    	    			    	    
-		    	    	WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
-		    	    	_wsIndividuals = wh.getIndividuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), searchText, startingRecordId, 0);
-		    	    			    	    	
-		    	    	handler.sendEmptyMessage(0);
-	    			}
-	    			catch (Exception e) {    				
-	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
-	    				
-	    				Message msg = handler.obtainMessage();
-	    				msg.what = -1;
-	    				msg.setData(ExceptionHelper.getBundleForException(e));	
-	    				handler.sendMessage(msg);    				
-	    			}    			       	    	    	    	
-	    		 }
-	    	};
-	    	searchThread.start();    
+    private void loadListWithProgressDialog(boolean nextResult)
+    {           	    
+    	showDialog(DIALOG_PROGRESS_INDIVIDUALS);
+    	
+    	try
+    	{	
+    		if (_loader == null) {    			
+    			_loader = new IndividualListLoader(txtSearch.getText().toString());	
+    			_loader.setNoResultsMessage(getResources().getString(R.string.IndividualList_NoResults));
+    			_loader.setNextResultsMessage(getResources().getString(R.string.IndividualList_More));	       		
+    		}
+    		else
+    		{
+    			_loader.setSearchText(txtSearch.getText().toString());
+    		}
+    		
+    		// see onListLoaded below for the next steps (after load is done)
+    		if (nextResult) {
+    			_loader.LoadNext(onListLoaded);
+    		}
+    		else {
+    			_loader.LoadPrevious(onListLoaded);
+    		}
+	        
+    		// Hide the keyboard
+	        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+	        imm.hideSoftInputFromWindow(txtSearch.getWindowToken(), 0);	            
     	}
+    	catch (Exception e) {
+			ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
+    		ExceptionHelper.notifyNonUsers(e); 				    				
+		}      	
     }
-        
-    // Occurs when a user selects an individual on the listview.    
-    private void ItemSelected(String individualId, String individualName)
+    
+ 
+    // display the results from the loader operation
+    final Runnable onListLoaded = new Runnable() {
+        public void run() {
+        	
+        	try
+        	{	        		        	
+	        	if (_loader.success())	{	        			        			        
+	        		/*
+	        		//If only 1 individual, go directly to the detail page
+	        		DefaultListItem item =(DefaultListItem)_loader.getList().get(0);
+	        			  
+	        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
+	        			//startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), true);		        			
+	        		}
+	        		else {
+			     		// set items to list
+		        		// ... see below
+		        	}
+	        		*/
+	        		
+		     		// set items to list
+    				// save index and top position (preserve scroll location)
+    				int index = lv1.getFirstVisiblePosition();
+    				View v = lv1.getChildAt(0);
+    				int top = (v == null) ? 0 : v.getTop();
+    				
+    				lv1.setAdapter(new DefaultListItemAdapter(IndividualListActivity.this, _loader.getList(), R.layout.listitem_default));	
+    				
+	        		lv1.setSelectionFromTop(index, top);   // restore scroll position  	    			
+	        	}
+	        	else {
+	        		throw _loader.getException();
+	        	}
+        	}
+        	catch (Throwable e) {
+        		ExceptionHelper.notifyUsers(e, IndividualListActivity.this);
+        		ExceptionHelper.notifyNonUsers(e); 	        	
+			} 	        	
+        	finally
+        	{
+        		removeDialog(DIALOG_PROGRESS_INDIVIDUALS);
+        	}
+        }
+    };    
+
+    
+    /**
+     * Occurs when a user selects an event on the listview.
+     * 
+     * @param itemSelected
+     */
+    private void ItemSelected(DefaultListItem item)
     {    	    
     	try {
     		// First, see if this is an 'individual' that was selected or a 'more records' item.
-    		//  if more...load the next 50 records.
-       	 	if (individualId == "") {         	 		
-       	 		doSearchWithProgressWindow();
+    		//  if 'more records'...load the next set of records.
+    		if (item.getId().equals("")) {    			
+    			loadListWithProgressDialog(true);
        	 	}
        	 	else {
-       	 		// display the individual
-       	 		String name = individualName;
+       	 		// Show the selected individuals detail
+       	 		String name = item.getTitle().trim();
        	 		String dialogText = String.format(getString(R.string.Individual_ProgressDialog), name); 
  
        	 		IndividualActivityLoader loader = new IndividualActivityLoader(this, dialogText);
-       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(individualId));       	 						
+       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(item.getId()));            	 		
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -281,6 +263,5 @@ public class IndividualListActivity extends OptionsActivity {
 	    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
 		}  
     }
-    
     	    
 }    

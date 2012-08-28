@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreIndividualDetail;
 import com.acstech.churchlife.webservice.IndividualResponse;
 import com.acstech.churchlife.webservice.WebServiceHandler;
 
@@ -61,8 +63,7 @@ public class IndividualActivityLoader  {
 	           	 			           	 			           	 
 	           	 		if (postRun != null) {
 	           	 			postRun.run();	
-	           	 		}
-	           	 		
+	           	 		}	           	 	
 	       			}
 	       			else if (msg.what < 0) {	       				
 	       				// If < 0, the exception is in the message bundle.  Throw it
@@ -84,15 +85,20 @@ public class IndividualActivityLoader  {
     				
 	    			AppPreferences appPrefs =  new AppPreferences(_context.getApplicationContext());
 	    			
-	    			WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
-	    	    	IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
+	    			//zzz
+	    			//WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
+	    	    	//IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
 	    	    	
+	    	     	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
+	    		   	
+	    		   	CoreIndividualDetail individual = apiCaller.individual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
+	    		   	 
 	    	    	// Return the response object (as string) to the message handler above
 	    	    	Message msg = handler.obtainMessage();	
 	    	    	msg.what = 0;
 	    	    	
 	    	    	Bundle b = new Bundle();
-    				b.putString("individual", i.toString());
+    				b.putString("individual", individual.toJsonString());
     				msg.setData(b);
     						    	    		    	    			    	  
 	    	    	handler.sendMessage(msg);

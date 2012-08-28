@@ -254,6 +254,79 @@ public class Api {
 	}
 	
 	/************************************************************/
+	/*					 	Individuals							*/
+	/************************************************************/
+	
+	public CorePagedResult<List<CoreIndividual>> individuals(String username, String password, String siteNumber, String searchText, int pageIndex) throws AppException {
+
+		isOnlineCheck();
+		
+		CorePagedResult<List<CoreIndividual>> individuals = null;
+    	RESTClient client = new RESTClient(_baseUrl + "/individuals");
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	client.AddHeader("sitenumber", siteNumber);
+    	
+    	client.AddParam("searchField", searchText);
+        client.AddParam("pageIndex", Integer.toString(pageIndex));
+                
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			individuals = CoreIndividual.GetCoreIndividualPagedResult(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.individuals");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("searchtext", searchText);
+    		throw e;
+    	}
+		return individuals;
+	}
+	
+
+	public CoreIndividualDetail individual(String username, String password, String siteNumber, int indvId) throws AppException {
+
+		isOnlineCheck();
+		
+		CoreIndividualDetail individual = null;
+    	RESTClient client = new RESTClient(_baseUrl + "/individuals/GetDetail");
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	client.AddHeader("sitenumber", siteNumber);
+    	
+    	client.AddParam("id", Integer.toString(indvId));
+    	
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			individual = CoreIndividualDetail.GetCoreIndividualDetail(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.individuals");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("indvid", indvId);
+    		throw e;
+    	}
+		return individual;
+	}
+	
+		
+	/************************************************************/
 	/*					 	Users 								*/
 	/************************************************************/
 	

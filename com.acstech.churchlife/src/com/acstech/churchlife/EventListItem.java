@@ -76,14 +76,6 @@ public class EventListItem {
 		return _eventDate;
 	}
 	
-	/*
-	//zzz CTOR - remove after testing (when othe is replaced) zzz
-	public EventListItem(String id, String title, Date eventDate) {
-		_id = id;
-		_title = title;
-		_eventDate = eventDate;
-	}
-	*/
 	
 	//CTOR
 	public EventListItem(String title)

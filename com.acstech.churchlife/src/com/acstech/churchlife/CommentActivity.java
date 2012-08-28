@@ -2,7 +2,6 @@ package com.acstech.churchlife;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
@@ -70,9 +70,11 @@ public class CommentActivity extends OptionsActivity  {
 	             
 	            // button click event handlers
 	            btnSave.setOnClickListener(new OnClickListener() {		
-	             	public void onClick(View v) {	        		             	
-	             		saveComment();	
-	             		loadComments();	//redirect back to comment summary
+	             	public void onClick(View v) {	     
+	             		if (inputIsValid()) {
+	             			saveComment();	
+	             			finish();	             			
+	             		}
 	             	}		
 	     		}); 
 
@@ -179,14 +181,37 @@ public class CommentActivity extends OptionsActivity  {
 	        }
 	    };
 	    
+	    /**
+	     * Ensures all form fields have valid input.  
+	     * 
+	     * Should be called on button click before processing.   Displays a message 
+	     *   to the user indicating which field is invalid.  This procedure stops 
+	     *   checking for invalid fields once the first invalid field is encountered.
+	     *   
+	     * @return true if input fields are valid, otherwise false
+	     */
+	    private Boolean inputIsValid()
+	    {    	
+	    	String msg = "";
+	    	
+    		if (commentText.getText().length() == 0) {   
+    			msg = (String)this.getResources().getText(R.string.Comment_Validation);     		
+    		}
+    		
+	    	// If a validation message exists, show it
+	    	if (msg.length() > 0) {
+	    		Toast.makeText(CommentActivity.this, msg, Toast.LENGTH_LONG).show(); 
+	    	}
+	    	
+	    	// If a validation message exists, the input is invalid
+	    	return (msg.length() == 0);    	    
+	    }
+	    
 	  
+	    // Input should have already been validated at this point!
 	    private void saveComment() {
-	    	try {
-	    		
-	    		// validate input zzz TODO
-	    		
-	    		// progress dialog
-	    		showDialog(DIALOG_SAVE);
+	    	try {	    		
+	    		showDialog(DIALOG_SAVE);   			// progress dialog
 	    		
 	    		CoreCommentType ct = (CoreCommentType)commentTypeSpinner.getSelectedItem();
 	    		
@@ -203,6 +228,8 @@ public class CommentActivity extends OptionsActivity  {
 	    	   	apiCaller.commentAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
 	    		
 	    	   	removeDialog(DIALOG_PROGRESS);
+	    	   	
+	    	   	Toast.makeText(CommentActivity.this, getString(R.string.Comment_Saved), Toast.LENGTH_LONG).show();	    	   	
 	    	}
 	        catch (Exception e) {
 	        	
@@ -213,14 +240,5 @@ public class CommentActivity extends OptionsActivity  {
 		    	ExceptionHelper.notifyNonUsers(e)  ; 	
 	        }
 	    }
-	
-	    private void loadComments() {
-	    	Intent intent = new Intent();
-		 	intent.setClass(this, CommentSummaryListActivity.class); 		        	 	
-		 	intent.putExtra("id", _individualId);
-		 	intent.putExtra("name", _individualName);
-		 	startActivity(intent);
-		 	
-		 	this.finish();
-	    }
+
 }

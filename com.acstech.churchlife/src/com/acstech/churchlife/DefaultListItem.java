@@ -19,11 +19,15 @@ public class DefaultListItem {
 		return _title;
 	}
 	
-	public Boolean getContainsHtml() {
+	public boolean getContainsHtml() {
 		return _containsHtml;
 	}
 	public void setContainsHtml(Boolean value) {
 		_containsHtml = value;
+	}
+	
+	public Boolean isTitleOnlyItem() {
+		return (_id =="");
 	}
 	
 	@Override
@@ -31,6 +35,10 @@ public class DefaultListItem {
 		return _description;
 	}
 	
+	public DefaultListItem(String title)
+	{
+		_title = title;
+	}
 	
 	public DefaultListItem(String id, String description) {
 		_id = id;
@@ -42,6 +50,5 @@ public class DefaultListItem {
 		_description = description;
 		_title = title;
 	}
-	
-	
+		
 }

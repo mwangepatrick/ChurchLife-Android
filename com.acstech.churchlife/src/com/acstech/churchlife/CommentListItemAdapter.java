@@ -72,7 +72,7 @@ public class CommentListItemAdapter extends BaseAdapter {
 			 if (currentItem.isTitleOnlyItem())
 			 {
 				 convertView = inflater.inflate(R.layout.listitem_default, null);	 
-				 holder.commentTextView = (TextView) convertView.findViewById(R.id.listitem_value);				 				
+				 holder.commentTextView = (TextView) convertView.findViewById(R.id.titleTextView);				 				
 			 }
 			 else
 			 {

@@ -171,9 +171,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	        public void run() {
 	        	
 	        	try
-	        	{
-	        		
-	        		
+	        	{	        		        	
 		        	if (_loader.success())	{
 		        		
 		        		CommentSummaryListItem item =(CommentSummaryListItem)_loader.getList().get(0);

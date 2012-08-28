@@ -225,8 +225,7 @@ public class EventListActivity extends OptionsActivity {
     	try {
     		// First, see if this is an 'event' that was selected or a 'more records' item.
     		//  if 'more records'...load the next set of records.
-    		if (itemSelected.getId().equals("")) {
-    			
+    		if (itemSelected.getId().equals("")) {    			
     			loadListWithProgressDialog(true);
        	 	}
        	 	else {

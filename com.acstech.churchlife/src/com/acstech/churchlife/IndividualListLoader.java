@@ -1,24 +1,26 @@
 package com.acstech.churchlife;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.webservice.Api;
-import com.acstech.churchlife.webservice.CoreEvent;
+import com.acstech.churchlife.webservice.CoreIndividual;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
-public class EventListLoader extends ListLoaderBase<EventListItem>{
+public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 
-	private Date _start;
-	private Date _stop;
+	private String _searchText;
 	
-	private CorePagedResult<List<CoreEvent>> _webServiceResults;		// results from webservice call	
-	private ArrayList<EventListItem> _itemList;							// item list for list adapter binds to	
+	private CorePagedResult<List<CoreIndividual>> _webServiceResults;		// results from webservice call	
+	private ArrayList<DefaultListItem> _itemList;							// item list for list adapter binds to	
 	
-	public ArrayList<EventListItem> getList(){
+	public ArrayList<DefaultListItem> getList(){
 		return _itemList;
+	}
+	
+	public void setSearchText(String value) {
+		_searchText = value;
 	}
 	
 	/**
@@ -30,7 +32,7 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 							
 	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
 	   	
-	   	_webServiceResults = apiCaller.events(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _start, _stop, _pageIndex);
+	   	 _webServiceResults = apiCaller.individuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _searchText, _pageIndex);	   		   
 	}
 	
 	/**
@@ -41,16 +43,16 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 	protected void buildItemList() {
 					
 		if (_itemList == null ) {
-			_itemList = new ArrayList<EventListItem>();
+			_itemList = new ArrayList<DefaultListItem>();
 		}
 		
 		// check for empty
 		if (_webServiceResults.Page.size() == 0) {    					    		
-			_itemList.add(new EventListItem(getNoResultsMessage()));	    				
+			_itemList.add(new DefaultListItem(getNoResultsMessage()));	    				
 		}	    			
 		else {
 		
-			EventListItem moreItem = new EventListItem(getNextResultsMessage());
+			DefaultListItem moreItem = new DefaultListItem(getNextResultsMessage());
 			
 			//zzz be nice to have base functionality help with this
 			
@@ -62,8 +64,8 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 			}
 			
 			// Add all items from the latest web service request to the adapter 
-			for (CoreEvent item : _webServiceResults.Page) {
-				_itemList.add(new EventListItem(item));
+			for (CoreIndividual item : _webServiceResults.Page) {				
+				_itemList.add(new DefaultListItem(Integer.toString(item.IndvId), "", item.FullName));
 			}
 			
   	    	// If the web service indicates more records...Add the 'More Records' item
@@ -74,11 +76,7 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 				
 	}
 	
-	public EventListLoader(Date start, Date stop){
-		_start = start;
-		_stop = stop;
-		
-		
-		
+	public IndividualListLoader(String searchText){
+		_searchText = searchText;
 	}
 }

@@ -74,7 +74,7 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 			 if (currentItem.isTitleOnlyItem())
 			 {
 				 convertView = inflater.inflate(R.layout.listitem_default, null);	 
-				 holder.titleTextView = (TextView) convertView.findViewById(R.id.listitem_value);				 				
+				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);				 				
 			 }
 			 else
 			 {

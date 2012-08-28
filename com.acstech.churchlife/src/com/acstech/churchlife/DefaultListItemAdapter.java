@@ -22,6 +22,7 @@ import android.widget.TextView;
  */
 public class DefaultListItemAdapter extends BaseAdapter {
 	
+	private int _layoutResourceId = R.layout.listitem_default;
 	private ArrayList<DefaultListItem> _items;
 	private Context _context;
 
@@ -30,6 +31,13 @@ public class DefaultListItemAdapter extends BaseAdapter {
 		_context = context;
 		_items = items;				
 	}
+
+	public DefaultListItemAdapter(Context context, ArrayList<DefaultListItem> items, int layoutResourceId) {			
+		_context = context;
+		_items = items;	
+		_layoutResourceId = layoutResourceId;
+	}
+	
 	
 	public Context getContext()			{  return _context;				}
 	public int getCount()				{  return _items.size();	 	}
@@ -71,8 +79,9 @@ public class DefaultListItemAdapter extends BaseAdapter {
 		if (convertView == null) {
 			
 			 LayoutInflater inflater = LayoutInflater.from(_context);
-			 convertView = inflater.inflate(R.layout.listitem_withtitle, null); 
-			 						 
+			 //convertView = inflater.inflate(R.layout.listitem_withtitle, null); zzz remove			 	
+			 convertView = inflater.inflate(_layoutResourceId, null);
+			 
 			 holder = new ListViewHolder();
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
@@ -98,5 +107,4 @@ public class DefaultListItemAdapter extends BaseAdapter {
 		
 		return convertView;				
 	}
-
 }
