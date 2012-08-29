@@ -1,5 +1,7 @@
 package com.acstech.churchlife;
 
+import java.util.List;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreCommentType;
 
 public class CommentListActivity extends OptionsActivity {
 
@@ -27,7 +31,8 @@ public class CommentListActivity extends OptionsActivity {
 	int _individualId;										// passed via intent
 	String _individualName;									// passed via intent
 	int _commentTypeId;										// passed via intent
-
+	boolean _canAddComments = false;
+	
 	CommentListLoader _loader;
 	CommentListItemAdapter _itemArrayAdapter;
 	
@@ -59,7 +64,8 @@ public class CommentListActivity extends OptionsActivity {
 	            	 _individualName = extraBundle.getString("name");
 	            	 _commentTypeId = extraBundle.getInt("commenttypeid");
 	            	 
-	            	 headerTextView.setText(_individualName);	            	 
+	            	 headerTextView.setText(_individualName);
+	            	 
 	            	 loadListWithProgressDialog(true);	        	 
 	             }	       
 	        }
@@ -91,6 +97,16 @@ public class CommentListActivity extends OptionsActivity {
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
+	    private void setCanAddComments() throws AppException {
+	    	
+	    	GlobalState gs = GlobalState.getInstance(); 
+	    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+			
+		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+	    	_canAddComments = (results.size() > 0);		   	
+	    }
+	    
 	    /**
 	     * Displays a progress dialog and launches a background thread to connect to a web service
 	     *   to retrieve search results 
@@ -102,8 +118,10 @@ public class CommentListActivity extends OptionsActivity {
 	    	
 	    	try
 	    	{	
+	    		// first time...
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentListLoader(this, _individualId, _commentTypeId);	    			
+	    			_loader = new CommentListLoader(this, _individualId, _commentTypeId);
+	    			 setCanAddComments();	 	            
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)
@@ -164,9 +182,12 @@ public class CommentListActivity extends OptionsActivity {
 	    
 	    @Override
 		public boolean onCreateOptionsMenu(Menu menu) {
-	    	super.onCreateOptionsMenu(menu);	    	
-			MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu);
-			item.setIcon(R.drawable.ic_menu_add);
+	    	super.onCreateOptionsMenu(menu);
+	    	
+	    	if(_canAddComments) {
+	    		MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu);
+				item.setIcon(R.drawable.ic_menu_add);
+	    	}
 	    	return true;
 	    }
 	    

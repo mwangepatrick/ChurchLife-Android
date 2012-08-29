@@ -1,5 +1,7 @@
 package com.acstech.churchlife;
 
+import java.util.List;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreCommentType;
 
 public class CommentSummaryListActivity extends OptionsActivity {
 
@@ -28,6 +32,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	
 	int _individualId;											// passed via intent
 	String _individualName;										// passed via intent
+	boolean _canAddComments = false;
 	
 	CommentSummaryListLoader _loader;	
 	CommentSummaryListItemAdapter _itemArrayAdapter;
@@ -60,7 +65,8 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	            	 _individualName = extraBundle.getString("name");
 	            	 
 	            	 headerTextView.setText(_individualName);
-	            	 loadListWithProgressDialog(true);	            	 
+	        
+	            	 loadListWithProgressDialog(true);
 	             }		             
 	        	 
 	             // Wire up list on click - display comment type activity
@@ -72,6 +78,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	             });	             	        	         	
 	        }
 	    	catch (Exception e) {
+	    		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
 	    		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
 	    		ExceptionHelper.notifyNonUsers(e);
 	    	}  	        
@@ -103,8 +110,11 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	    @Override
 		public boolean onCreateOptionsMenu(Menu menu) {
 	    	super.onCreateOptionsMenu(menu);
-			MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
-			item.setIcon(R.drawable.ic_menu_add);
+	    	
+	    	if (_canAddComments) { 
+	    		MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
+				item.setIcon(R.drawable.ic_menu_add);
+	    	}
 	    	return true;
 	    }
 	    
@@ -134,6 +144,17 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
+	    private void setCanAddComments() throws AppException {
+	    	
+	    	GlobalState gs = GlobalState.getInstance(); 
+	    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+			
+		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+	    	_canAddComments = (results.size() > 0);		   	
+	    }
+	    
+	    
 	    /**
 	     * Displays a progress dialog and launches a background thread to connect to a web service
 	     *   to retrieve search results 
@@ -145,8 +166,10 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	    	
 	    	try
 	    	{	
+	    		// if first time....
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentSummaryListLoader(this, _individualId);	  	    			
+	    			_loader = new CommentSummaryListLoader(this, _individualId);
+	    			setCanAddComments();
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)
