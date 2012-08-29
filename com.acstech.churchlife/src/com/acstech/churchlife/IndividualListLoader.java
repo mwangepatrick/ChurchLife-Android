@@ -3,8 +3,9 @@ package com.acstech.churchlife;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreIndividual;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
@@ -26,13 +27,9 @@ public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 	/**
 	 * calls API and gets json data in return and parses it into an object
 	 */
-	protected void getWebserviceResults() throws AppException { 
-		
-		GlobalState gs = GlobalState.getInstance(); 
-							
-	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-	   	
-	   	 _webServiceResults = apiCaller.individuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _searchText, _pageIndex);	   		   
+	protected void getWebserviceResults() throws AppException { 		
+		GlobalState gs = GlobalState.getInstance(); 		
+	   	 _webServiceResults = getWebServiceCaller().individuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _searchText, _pageIndex);	   		   
 	}
 	
 	/**
@@ -76,7 +73,11 @@ public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 				
 	}
 	
-	public IndividualListLoader(String searchText){
+	public IndividualListLoader(Context context, String searchText){
+		super(context);
 		_searchText = searchText;
+
+		super.setNextResultsMessage(R.string.IndividualList_NoResults);
+		super.setNoResultsMessage(R.string.IndividualList_NoResults);
 	}
 }

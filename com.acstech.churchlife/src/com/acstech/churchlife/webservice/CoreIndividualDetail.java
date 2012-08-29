@@ -120,6 +120,4 @@ public class CoreIndividualDetail extends CoreObject  {
   	  	return individual;		
     }
 
-    
-    
 }

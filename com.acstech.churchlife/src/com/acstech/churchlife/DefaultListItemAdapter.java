@@ -78,8 +78,7 @@ public class DefaultListItemAdapter extends BaseAdapter {
 			
 		if (convertView == null) {
 			
-			 LayoutInflater inflater = LayoutInflater.from(_context);
-			 //convertView = inflater.inflate(R.layout.listitem_withtitle, null); zzz remove			 	
+			 LayoutInflater inflater = LayoutInflater.from(_context);		 	
 			 convertView = inflater.inflate(_layoutResourceId, null);
 			 
 			 holder = new ListViewHolder();

@@ -75,16 +75,16 @@ public class SplashActivity extends Activity {
     private Boolean autoLoginIn() throws AppException
     {
     	Boolean result = false;        	        	
-       	AppPreferences prefs = new AppPreferences(getApplicationContext());  //Initialize 
-        		 
+    	AppPreferences prefs = new AppPreferences(getApplicationContext());  //Initialize             
+        	 
        	// get values from preferences and attempt a login
        	String auth1 = prefs.getAuth1();  
         String auth2 = prefs.getAuth2();
         String auth3 = prefs.getAuth3();
            	            
         if (auth1.length() > 0 && auth2.length() > 0){
-            	         	
-           	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
+        
+        	Api apiCaller = new Api(prefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
            	
            	CoreAcsUser user = apiCaller.user(auth1, auth2, auth3);
            	           	         	  

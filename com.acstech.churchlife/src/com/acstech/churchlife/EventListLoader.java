@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.content.Context;
+
 import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreEvent;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
@@ -25,12 +26,8 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 	 * calls API and gets json data in return and parses it into an object
 	 */
 	protected void getWebserviceResults() throws AppException { 
-		
-		GlobalState gs = GlobalState.getInstance(); 
-							
-	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-	   	
-	   	_webServiceResults = apiCaller.events(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _start, _stop, _pageIndex);
+		GlobalState gs = GlobalState.getInstance(); 		 
+	   	_webServiceResults = super.getWebServiceCaller().events(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _start, _stop, _pageIndex);
 	}
 	
 	/**
@@ -74,11 +71,12 @@ public class EventListLoader extends ListLoaderBase<EventListItem>{
 				
 	}
 	
-	public EventListLoader(Date start, Date stop){
+	public EventListLoader(Context context, Date start, Date stop){
+		super(context);
 		_start = start;
 		_stop = stop;
 		
-		
-		
+		super.setNoResultsMessage(R.string.EventList_NoResults);
+		super.setNextResultsMessage(R.string.EventList_More);
 	}
 }

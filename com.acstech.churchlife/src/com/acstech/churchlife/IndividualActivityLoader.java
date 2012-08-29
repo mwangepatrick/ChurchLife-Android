@@ -10,8 +10,6 @@ import android.os.Message;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreIndividualDetail;
-import com.acstech.churchlife.webservice.IndividualResponse;
-import com.acstech.churchlife.webservice.WebServiceHandler;
 
 /**
  * Loads an individual with 'wait' window.  Starts an IndividualActivity after
@@ -83,13 +81,9 @@ public class IndividualActivityLoader  {
     			try {
     				GlobalState gs = GlobalState.getInstance(); 
     				
-	    			AppPreferences appPrefs =  new AppPreferences(_context.getApplicationContext());
+	    			AppPreferences appPrefs = new AppPreferences(_context.getApplicationContext());
 	    			
-	    			//zzz
-	    			//WebServiceHandler wh = new WebServiceHandler(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
-	    	    	//IndividualResponse i = wh.getIndividual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
-	    	    	
-	    	     	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
+	    	     	Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
 	    		   	
 	    		   	CoreIndividualDetail individual = apiCaller.individual(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), individualId);
 	    		   	 

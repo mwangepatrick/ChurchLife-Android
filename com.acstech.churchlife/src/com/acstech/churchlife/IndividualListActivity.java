@@ -161,9 +161,7 @@ public class IndividualListActivity extends OptionsActivity {
     	try
     	{	
     		if (_loader == null) {    			
-    			_loader = new IndividualListLoader(txtSearch.getText().toString());	
-    			_loader.setNoResultsMessage(getResources().getString(R.string.IndividualList_NoResults));
-    			_loader.setNextResultsMessage(getResources().getString(R.string.IndividualList_More));	       		
+    			_loader = new IndividualListLoader(this, txtSearch.getText().toString());	       		
     		}
     		else
     		{

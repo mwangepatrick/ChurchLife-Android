@@ -56,7 +56,7 @@ public class Preferences extends PreferenceActivity {
         			
         			// keep the logic for setting url in AppPreferences class
         			AppPreferences prefs = new AppPreferences(getApplicationContext());
-        			prefs.setWebServiceUrl(config.SERVICE_URL_VALUE);        			
+        			prefs.setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);        			
         		}
         	}        	
             return true;

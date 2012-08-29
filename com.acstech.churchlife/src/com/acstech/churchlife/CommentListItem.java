@@ -4,13 +4,11 @@ import java.text.SimpleDateFormat;
 
 import com.acstech.churchlife.webservice.CoreComment;
 
-
 public class CommentListItem {
 	
 	private String _id = "";
 	private String _color = "";		
-	//private String _title = "";
-	private String _commentType = "";		// may not need if we don't include in list
+	private String _commentType = "";		
 	private String _commentDate	 = "";
 	private String _commentBody = "";	
 	
@@ -38,13 +36,6 @@ public class CommentListItem {
 	public Boolean isTitleOnlyItem() {
 		return (_id =="-1");
 	}
-	
-	/*
-	@Override
-	public String toString() {
-		return _description;
-	}
-	*/
 	
 	
 	public CommentListItem(CoreComment comment) {

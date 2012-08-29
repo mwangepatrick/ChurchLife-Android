@@ -63,13 +63,20 @@ public class AppPreferences {
     	 
     	 // when developer mode is turned off, set the url back to default
     	 if (mode == false) {
-    		 setWebServiceUrl(config.SERVICE_URL_VALUE);
+    		 setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);
     	 }
      }
      
      // Web Service URI (base)
      public String getWebServiceUrl() {    	
-    	 return appSharedPrefs.getString("serviceurl", config.SERVICE_URL_VALUE);
+    	 
+    	 String result = appSharedPrefs.getString("serviceurl", "");
+    	
+    	 // Handle upgrade from previous version...if old url, replace with new service url    	 
+    	 if (result.equals("") || result.equals(config.SERVICE_URL_VALUE)) {
+    		 setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);
+    	 }
+    	 return appSharedPrefs.getString("serviceurl", config.CORE_SERVICE_URL_VALUE);
      }
      
      public void setWebServiceUrl(String url) {

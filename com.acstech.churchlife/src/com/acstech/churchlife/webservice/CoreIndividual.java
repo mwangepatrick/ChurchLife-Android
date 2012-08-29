@@ -1,7 +1,6 @@
 package com.acstech.churchlife.webservice;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -16,19 +15,10 @@ public class CoreIndividual extends CoreObject {
 	public int IndvId;
 	public int FamId;
 	public String FamilyPosition;
-
-	/*
-    public String LastName;         // added by /oldversion in core api - see IndividualService.individuals 
-    public String FirstName;        // added by /oldversion in core api - see IndividualService.individuals
-    public String MiddleName;       // added by /oldversion in core api - see IndividualService.individuals
-    public String GoesbyName;       // added by /oldversion in core api - see IndividualService.individuals
-    public String Suffix;           // added by /oldversion in core api - see IndividualService.individuals
-    public String Title;            // added by /oldversion in core api - see IndividualService.individuals
-	*/
-	
 	public String FriendlyName;
 	public String FullName;
 	public String PictureUrl;
+	
 	
 	 public static CoreIndividual GetCoreIndividual(String json) throws AppException
      {    	 
@@ -98,7 +88,5 @@ public class CoreIndividual extends CoreObject {
  		}	
    	  	return results;
    	 }
-	
-	
-	
+
 }

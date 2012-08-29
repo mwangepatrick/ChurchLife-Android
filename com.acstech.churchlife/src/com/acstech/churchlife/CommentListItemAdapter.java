@@ -90,7 +90,6 @@ public class CommentListItemAdapter extends BaseAdapter {
 		//----------------------------------------------------
 		// set control values to this item's property values
 		//----------------------------------------------------
-				
 		if (currentItem.isTitleOnlyItem() == false)
 		{				
 			holder.id = currentItem.getId();
@@ -107,24 +106,4 @@ public class CommentListItemAdapter extends BaseAdapter {
 		return convertView;				
 	}
 
-	/*
-	public static Bitmap getBackground (int bgcolor)
-	{
-	try
-	    {
-	        Bitmap.Config config = Bitmap.Config.ARGB_8888; 	// Bitmap.Config.ARGB_8888 Bitmap.Config.ARGB_4444 to be used as these two config constant supports transparency
-	        Bitmap bitmap = Bitmap.createBitmap(2, 2, config); 	// create a Bitmap
-	 
-	        Canvas canvas =  new Canvas(bitmap); 				// load the Bitmap to the Canvas
-	        canvas.drawColor(bgcolor); 							// set the color
-	 
-	        return bitmap;
-	    }
-	    catch (Exception e)
-	    {
-	        return null;
-	    }
-	}
-	*/
-	
 }

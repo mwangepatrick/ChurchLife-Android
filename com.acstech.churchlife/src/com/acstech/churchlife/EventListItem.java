@@ -90,8 +90,5 @@ public class EventListItem {
 		_title = event.EventName;
 		_eventDate = event.StartDate;	
 		_location = event.Location;
-	}
-	
-	
-	
+	}		
 }

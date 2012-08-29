@@ -9,8 +9,7 @@
 				  android:id="@+id/topLinearLayout">
 				  			    
 	    <ImageView android:id="@+id/individualImageView" 
-	    		   android:src="@drawable/no_person_photo"
-	    		   android:contentDescription=""	    	    		   	    		
+	    		   android:src="@drawable/no_person_photo"	    		    	    		   	    
 	    		   android:layout_margin="5dp"
 	    		   android:layout_height="70sp"
 	    		   android:layout_width="70sp" 

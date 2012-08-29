@@ -474,10 +474,9 @@ public class LoginActivity extends OptionsActivity {
     private List<CoreAcsUser> doLogin() throws AppException
     {	
     	List<CoreAcsUser> userList = new ArrayList<CoreAcsUser>();
-    	
-		//zzz WebServiceHandler wh = new WebServiceHandler(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);   			
-	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-	  
+    	 		
+    	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+    		   	
 	   	// If sitenumber view is complete..use it, otherwise use email address view
 		String usernameOrEmail = txtUserName.getText().toString();
 		String password = txtPassword.getText().toString();
@@ -488,20 +487,6 @@ public class LoginActivity extends OptionsActivity {
 			usernameOrEmail = txtEmail.getText().toString();
 			password = txtEmailPassword.getText().toString();			
 		}
-		
-	   	/*
-		// Get (default) form values (from view1)
-		String usernameOrEmail = txtEmail.getText().toString();
-		String password = txtEmailPassword.getText().toString();
-		String siteNumber = "";
-		    			
-		// Reset values from form if view2 is selected
-		if (vf.getCurrentView() == view2) {
-			usernameOrEmail = txtUserName.getText().toString();
-			password = txtPassword.getText().toString();
-			siteNumber = txtSiteNumber.getText().toString();    				
-		}
-		*/
 	   	
 		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
         if (siteNumber.length() > 0){        	

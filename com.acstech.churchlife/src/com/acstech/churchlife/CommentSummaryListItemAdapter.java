@@ -118,5 +118,4 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 		return convertView;				
 	}
 
-	
 }

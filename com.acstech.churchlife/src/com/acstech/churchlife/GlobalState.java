@@ -93,21 +93,13 @@ public class GlobalState extends Application
 	private void setSavedState() throws AppException
 	{		
 		String state = "";		
-		/*
-		if (_siteName.length() > 0 || _siteNumber.length() > 0 ||
-			_userName.length() > 0 || _password.length() > 0 || _user != null) {
-		*/
-
-		//if (_user != null || _password.length() > 0) {
-			
 		String userJson = "";
 		if (_user != null) {
 			userJson = _user.toString();			
 		}
 		
 		state = String.format("%s|%s", userJson, _password);
-		//}		
-
+	
 		AppPreferences prefs = new AppPreferences(getApplicationContext()); 
 		prefs.setApplicationState(state);		
 	}

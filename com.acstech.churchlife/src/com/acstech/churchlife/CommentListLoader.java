@@ -3,8 +3,9 @@ package com.acstech.churchlife;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreComment;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
@@ -24,12 +25,8 @@ public class CommentListLoader extends ListLoaderBase<CommentListItem>{
 	 * calls API and gets json data in return and parses it into an object
 	 */
 	protected void getWebserviceResults() throws AppException { 
-		
 		GlobalState gs = GlobalState.getInstance(); 
-							
-	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-	   	
-	   	_webServiceResults = apiCaller.comments(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _individualId, _commentTypeId, _pageIndex);
+	   	_webServiceResults = super.getWebServiceCaller().comments(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _individualId, _commentTypeId, _pageIndex);
 	}
 	
 	/**
@@ -59,13 +56,16 @@ public class CommentListLoader extends ListLoaderBase<CommentListItem>{
 				_itemList.add(new CommentListItem(getNextResultsMessage()));			    								    				
 			}			    					
 		}
-				
+			
 	}
 	
-	public CommentListLoader(int individualId, int commentTypeId){
+	public CommentListLoader(Context context, int individualId, int commentTypeId){
+		super(context);
 		_individualId = individualId;
-		_commentTypeId = commentTypeId;		
+		_commentTypeId = commentTypeId;			
+		
+		super.setNextResultsMessage(R.string.CommentSummaryList_NoResults);
+		super.setNoResultsMessage(R.string.CommentSummaryList_NoResults);
 	}
 	
-
 }

@@ -103,10 +103,7 @@ public class CommentListActivity extends OptionsActivity {
 	    	try
 	    	{	
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentListLoader(_individualId, _commentTypeId);	    			
-	    			_loader.setNoResultsMessage(getResources().getString(R.string.CommentSummaryList_NoResults));
-	    			_loader.setNextResultsMessage(getResources().getString(R.string.IndividualList_More));
-	    			//_loader.setPreviousResultsMessage(getResources().getString(R.string.IndividualList_Previous));	       		
+	    			_loader = new CommentListLoader(this, _individualId, _commentTypeId);	    			
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)

@@ -31,6 +31,12 @@ public class Api {
 	String _baseUrl = null;
 	String _applicationId = "";					// app-specific key that gets sent with every request	
 	ConnectivityManager _connectivityManager;	// not required (can be null)
+
+	
+	/************************************************************/
+	/*					 	Comments							*/
+	/************************************************************/
+	
 	
 	/**
 	 * 
@@ -355,11 +361,7 @@ public class Api {
     	    	
     	try	{
     		client.Execute(RequestMethod.GET);    	
-    		
-    		//zzz 
-    		// need to test with other responses to make sure 
-    		//  non OK responses get reported correctly
-    		
+
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
     			u = CoreAcsUser.GetCoreAcsUser(client.getResponse());
     		}
@@ -404,10 +406,6 @@ public class Api {
             client.AddPostEntity(json.toString());
                 		
     		client.Execute(RequestMethod.POST);    	
-    		
-    		//zzz 
-    		// need to test with other responses to make sure 
-    		//  non OK responses get reported correctly
     		
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			    			
     			users = CoreAcsUser.GetCoreAcsUserList(client.getResponse());    			

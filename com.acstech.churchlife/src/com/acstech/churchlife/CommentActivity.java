@@ -142,7 +142,7 @@ public class CommentActivity extends OptionsActivity  {
 	    	
 	    	try
 	    	{	
-	    		_loader = new CommentTypeListLoader();	    				    		
+	    		_loader = new CommentTypeListLoader(this);	    				    		
 	    		_loader.Load(0, onListLoaded);	    		
 	    	}
 	    	catch (Exception e) {
@@ -222,9 +222,10 @@ public class CommentActivity extends OptionsActivity  {
 	    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
 	    		
 	    		GlobalState gs = GlobalState.getInstance(); 
-				
-	    	   	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-	    	   	
+	    		AppPreferences appPrefs = new AppPreferences(this.getApplicationContext());
+	    		
+	    		Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+	    		
 	    	   	apiCaller.commentAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
 	    		
 	    	   	removeDialog(DIALOG_PROGRESS);

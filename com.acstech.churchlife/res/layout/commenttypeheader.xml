@@ -10,9 +10,8 @@
 		    android:layout_height="8dp"
 		    android:layout_alignParentLeft="true"	      
 		    android:scaleType="fitXY"
-		    android:background="@color/Mustard"
-		    android:layout_below="@+id/headerTextView"/>
-				
+		    android:background="@color/Mustard"/>
+        				
 		<TextView 		
 			android:id="@+id/titleTextView" 
 			android:text="Title"

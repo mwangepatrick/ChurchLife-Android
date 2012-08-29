@@ -68,7 +68,8 @@ public class CoreAcsUser extends CoreObject {
 	    	  JSONObject rights = jo.optJSONObject("Rights");
 	    	  
 	    	  if (rights != null) {		    	  
-		    	  Iterator iter = rights.keys();
+	      	    @SuppressWarnings("rawtypes")
+				Iterator iter = rights.keys();
 		    	  while(iter.hasNext()){
 		    	        String key = (String)iter.next();
 		    	        String value = rights.getString(key);

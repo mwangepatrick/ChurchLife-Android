@@ -116,10 +116,7 @@ public class EventListActivity extends OptionsActivity {
 		        cal.roll(Calendar.YEAR, 1);
 		        Date stop = cal.getTime();
 		        
-    			_loader = new EventListLoader(start, stop);	
-    			_loader.setNoResultsMessage(getResources().getString(R.string.EventList_NoResults));
-    			_loader.setNextResultsMessage(getResources().getString(R.string.EventList_More));
-    			//_loader.setPreviousResultsMessage(getResources().getString(R.string.IndividualList_Previous));	       		
+    			_loader = new EventListLoader(this, start, stop);	    				       	
     		}
     		
     		// see onListLoaded below for the next steps (after load is done)
@@ -289,11 +286,10 @@ public class EventListActivity extends OptionsActivity {
     	Thread searchThread = new Thread() {  
     		public void run() {
     			try {    				    				
-    				GlobalState gs = GlobalState.getInstance(); 
+    				GlobalState gs = GlobalState.getInstance(); 		
+    			 	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
 
-    			 	Api apiCaller = new Api("https://secure.accessacs.com/api_accessacs", config.APPLICATION_ID_VALUE);
-    			   	
-    			   	CoreEventDetail event = apiCaller.event(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getId());
+    			 	CoreEventDetail event = apiCaller.event(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getId());
 
 	    	    	// Return the response object (as string) to the message handler above
 	    	    	Message msg = handler.obtainMessage();		
