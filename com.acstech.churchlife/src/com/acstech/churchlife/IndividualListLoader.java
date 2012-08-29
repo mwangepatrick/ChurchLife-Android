@@ -77,7 +77,7 @@ public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 		super(context);
 		_searchText = searchText;
 
-		super.setNextResultsMessage(R.string.IndividualList_NoResults);
+		super.setNextResultsMessage(R.string.IndividualList_More);
 		super.setNoResultsMessage(R.string.IndividualList_NoResults);
 	}
 }
