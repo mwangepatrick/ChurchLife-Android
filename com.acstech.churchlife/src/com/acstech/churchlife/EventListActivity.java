@@ -8,6 +8,9 @@ import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreEventDetail;
 import com.acstech.churchlife.R;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -30,7 +33,7 @@ public class EventListActivity extends OptionsActivity {
 
 	EventListLoader _loader;
 	AppPreferences _appPrefs;  		
-	ListView lv1;
+	PullToRefreshListView _pullToRefreshView;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,16 +46,25 @@ public class EventListActivity extends OptionsActivity {
         	setContentView(R.layout.eventlist);
         	  
         	bindControls();						// Set state variables to their form controls         
-         
-        	loadListWithProgressDialog(true);
-        	
+
             // Wire up list on click - display event detail activity
-            lv1.setOnItemClickListener(new OnItemClickListener() {
+            _pullToRefreshView.getRefreshableView().setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {  
                 	EventListItem item = (EventListItem)parent.getAdapter().getItem(position);                 	                
                 	ItemSelected(item);               	                 	
                 }
-              });         	
+              });
+            
+            // Wire up pull to refresh 
+        	_pullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
+                @Override
+                public void onRefresh(PullToRefreshBase<ListView> refreshView) {                  
+                	loadListWithProgressDialog(true, false);
+                }
+            });
+        	
+        	// would be GREAT to be able to manually tell the control to fire a refresh       
+        	loadListWithProgressDialog(true, true);                                              
         }           
         catch (Exception e) {
         	ExceptionHelper.notifyUsers(e, EventListActivity.this);
@@ -89,18 +101,20 @@ public class EventListActivity extends OptionsActivity {
      *  Links state variables to their respective form controls
      */
     private void bindControls(){
-    	lv1 = (ListView)this.findViewById(R.id.ListView01);
+    	_pullToRefreshView = (PullToRefreshListView) findViewById(R.id.pull_to_refresh_listview);
     }
     
-        
+    
     /**
      * Displays a progress dialog and launches a background thread to connect to a web service
      *   to retrieve search results 
      *   
      */
-    private void loadListWithProgressDialog(boolean nextResult)
+    private void loadListWithProgressDialog(boolean nextResult, boolean showDialog)
     {           	    
-    	showDialog(DIALOG_PROGRESS_EVENTS);
+    	if (showDialog) {
+    		showDialog(DIALOG_PROGRESS_EVENTS);
+    	}
     	
     	try
     	{	
@@ -142,7 +156,9 @@ public class EventListActivity extends OptionsActivity {
         		removeDialog(DIALOG_PROGRESS_EVENTS);
         		
 	        	if (_loader.success())	{	        	 
-		     						     		
+	        		
+	        		ListView lv1 = _pullToRefreshView.getRefreshableView();			
+	        			        		
 		     		// set items to list
     				// save index and top position (preserve scroll location)
     				int index = lv1.getFirstVisiblePosition();
@@ -152,7 +168,9 @@ public class EventListActivity extends OptionsActivity {
     				lv1.setAdapter(getSeparatedListAdapter(_loader.getList())); 
 
     				// restore scroll position
-    				lv1.setSelectionFromTop(index, top);    				
+    				lv1.setSelectionFromTop(index, top);
+    				
+    				_pullToRefreshView.onRefreshComplete();    				
 	          	}
 	        	else {
 	        		throw _loader.getException();
@@ -177,7 +195,7 @@ public class EventListActivity extends OptionsActivity {
 		SeparatedListAdapter separatedAdapter = new SeparatedListAdapter(this);  
 		
 		String moreItems = getResources().getString(R.string.EventList_More);		
-		String lastHeader = "";
+		String lastHeader = "initial";							//can't be "" as the header for a 'No Results Found is empty string'
 		ArrayList<EventListItem> itemsForCurrentHeader = null;
 		
 		for (EventListItem event : allItems) {
@@ -223,7 +241,7 @@ public class EventListActivity extends OptionsActivity {
     		// First, see if this is an 'event' that was selected or a 'more records' item.
     		//  if 'more records'...load the next set of records.
     		if (itemSelected.getId().equals("")) {    			
-    			loadListWithProgressDialog(true);
+    			loadListWithProgressDialog(true, true);
        	 	}
        	 	else {
        	 		// Show the selected event detail

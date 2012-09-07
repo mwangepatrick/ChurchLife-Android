@@ -63,7 +63,7 @@ public class EventListItem {
 		//  a different view item for the 'More Results' item
 	public String getHeaderText() {
 		if (_eventDate != null) {
-			String EVENT_HEADER_FORMAT = "EEEE,  MMMM d yyyy";
+			String EVENT_HEADER_FORMAT = "EEEE,  MMMM d, yyyy";
 			SimpleDateFormat displayTime = new SimpleDateFormat(EVENT_HEADER_FORMAT);
 			return displayTime.format(_eventDate);
 		}
