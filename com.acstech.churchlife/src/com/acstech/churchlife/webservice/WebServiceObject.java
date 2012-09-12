@@ -348,82 +348,6 @@ public class WebServiceObject {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-//	// can return null if the data is an array
-//	public JSONObject getData() throws AppException{
-//		
-//		try {
-//			if (dataIsArray()) {
-//				return null;	
-//			}
-//			else{
-//				return _mainObject.getJSONObject("Data");	
-//			}
-//		} catch (JSONException e) {
-//			throw AppException.AppExceptionFactory(e,
-//					   ExceptionInfo.TYPE.UNEXPECTED,
-//					   ExceptionInfo.SEVERITY.CRITICAL, 
-//					   "100",           												    
-//					   "WebServiceObject.getData",
-//					   "Error attempting to retrieve the JSON object from the web service response."); 
-//		}
-//		
-//	}
-//	
-//	
-//	// Do NOT use the public getStringValue here - infinite loop
-//	public Boolean dataIsArray() throws AppException{
-//		try {
-//			//zzz update to use getRecordsData and check that (may be a child of the main Data node)
-//			return (isJSONArray(WebServiceObject.getJsonValue("Data", _mainObject)));		
-//		} catch (AppException e) {
-//			ExceptionInfo ei = e.addInfo();
-//			ei.setContextId("WebServiceObject.dataIsArray");
-//			ei.setSeverity(ExceptionInfo.SEVERITY.CRITICAL);
-//			ei.setErrorDescription("Error determining if the data was a JSON array.");					
-//			throw e; 
-//		}	
-//	}
-	
-	//zzz remove after testing
-//	//zzz update to use getRecordsData
-//	public int getLength() throws AppException{ 
-//		if (dataIsArray()== false){
-//			return 1;
-//		}	
-//		else {
-//			return (getDataArray().length());
-//		}		
-//	}
-	
-
-	
-	// can return null if the data is an object
-//	public JSONArray getDataArray() throws AppException {
-//		try {
-//			if (dataIsArray()) {
-//				return _mainObject.getJSONArray("Data");
-//			}
-//			else{
-//				return null;		
-//			}
-//		} catch (JSONException e) {
-//			throw AppException.AppExceptionFactory(e,
-//					   ExceptionInfo.TYPE.UNEXPECTED,
-//					   ExceptionInfo.SEVERITY.CRITICAL, 
-//					   "100",           												    
-//					   "WebServiceObject.getDataArray",
-//					   "Error attempting to retrieve the JSON array from the web service response."); 
-//		}
-//	}	
-	
 	public String toString()
 	{
 		return _mainObject.toString();		
@@ -453,9 +377,7 @@ public class WebServiceObject {
 		    throw AppException.AppExceptionFactory(e, i); 
 		}			
 	}
-	
-	
-	
+		
 	//http://stackoverflow.com/questions/6118708/determine-whether-json-is-a-jsonobject-or-jsonarray
 	//  currently NOT being used
 	public static Boolean isJSONArray(String jsonString){

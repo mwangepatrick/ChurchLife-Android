@@ -13,7 +13,8 @@ import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
 public class CoreEvent extends CoreObject {	
-		
+	
+    public String CalendarId;		// guid
     public String Description;
     public String EventDateId; 	// guid
     public String EventId;		// guid
@@ -42,6 +43,7 @@ public class CoreEvent extends CoreObject {
   	  	{
   	  		JSONObject jo = new JSONObject(json);
   		  
+  	  		event.CalendarId = jo.getString("CalendarId");
   	  		event.Description = jo.optString("Description");  		  
   	  		event.EventDateId = jo.getString("EventDateId");
   	  		event.EventId = jo.getString("EventId");  		  

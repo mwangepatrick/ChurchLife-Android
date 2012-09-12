@@ -218,6 +218,7 @@ public class CommentActivity extends OptionsActivity  {
 	    		CoreCommentChangeRequest req = new CoreCommentChangeRequest();
 	    		req.IndvID = _individualId;
 	    		req.Comment = commentText.getText().toString();
+	    		req.CommentTypeId = ct.CommentTypeID;
 	    		req.CommentType = ct.CommentTypeDesc;				// this should be type ID	    		
 	    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
 	    		

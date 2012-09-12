@@ -307,7 +307,7 @@ public class EventListActivity extends OptionsActivity {
     				GlobalState gs = GlobalState.getInstance(); 		
     			 	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
 
-    			 	CoreEventDetail event = apiCaller.event(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getId());
+    			 	CoreEventDetail event = apiCaller.event(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), eventSelected.getCalendarId(), eventSelected.getId());
 
 	    	    	// Return the response object (as string) to the message handler above
 	    	    	Message msg = handler.obtainMessage();		

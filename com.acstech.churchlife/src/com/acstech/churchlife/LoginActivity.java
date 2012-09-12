@@ -197,7 +197,7 @@ public class LoginActivity extends OptionsActivity {
 			            	String userName = _wsLogin.get(which).UserName;
 			            			        			
 			            	// Do site-specific web service call so a user's rights are returned
-			            	vf.setDisplayedChild(1);								//  zzz revisit
+			            	vf.setDisplayedChild(1);								
 			            	txtUserName.setText(userName);
 			            	txtPassword.setText(txtEmailPassword.getText());	
 			            	txtSiteNumber.setText(Integer.toString(siteNumber));

@@ -9,11 +9,11 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 public class CoreCommentChangeRequest extends CoreObject {
 
     public int IndvID;
-    public String CommentType;      //this HAS to be wrong...should be int CommentTypeID 
+    public int CommentTypeId;
+    public String CommentType;      //zzz is this used? 
     public String Comment;
     public int FamilyComment;
-    
-    
+        
     @Override
     public JSONObject toJsonObject() throws AppException
     {
@@ -23,6 +23,7 @@ public class CoreCommentChangeRequest extends CoreObject {
 	  	  	jo = new JSONObject();
 	  	  	jo.put("IndvID", IndvID);
 	  	  	jo.put("CommentType", CommentType);
+	  	  	jo.put("CommentTypeId", CommentTypeId);
 	  	  	jo.put("Comment", Comment);
 	  	  	jo.put("FamilyComment", FamilyComment);	  	  	
     	}
@@ -49,6 +50,7 @@ public class CoreCommentChangeRequest extends CoreObject {
   	  {
   		  JSONObject jo = new JSONObject(json);
   		  comment.IndvID = jo.getInt("IndvID");
+  		  comment.CommentTypeId = jo.getInt("CommentTypeId");
   		  comment.CommentType = jo.getString("CommentType");
   		  comment.Comment = jo.getString("Comment");  
   		  comment.FamilyComment = jo.getInt("FamilyComment");  	    

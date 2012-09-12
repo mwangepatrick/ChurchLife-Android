@@ -18,6 +18,7 @@ public class EventListItem {
 	static final String EVENT_TIME_FORMAT = "h:mm a";
 	
 	private String _id = "";
+	private String _calendarId = "";
 	private String _title = "";
 	private Date _eventDate;
 	private String _location = "";
@@ -25,6 +26,10 @@ public class EventListItem {
 	// Unique id
 	public String getId() {
 		return _id;		
+	}
+	
+	public String getCalendarId() {
+		return _calendarId;
 	}
 	
 	public String getTitle() {
@@ -87,6 +92,7 @@ public class EventListItem {
 	public EventListItem(CoreEvent event) {
 		
 		_id = event.EventId;
+		_calendarId = event.CalendarId;
 		_title = event.EventName;
 		_eventDate = event.StartDate;	
 		_location = event.Location;

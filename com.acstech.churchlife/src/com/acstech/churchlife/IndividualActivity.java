@@ -256,7 +256,7 @@ public class IndividualActivity extends OptionsActivity {
 		titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
 		for (CoreIndividual member : _individual.FamilyMembers) {
 			listItems.add(new CustomListItem(titleString,
-											 member.FullName, "", 											
+											 member.getDisplayNameForList(), "", 											
 											 "individual:" + Integer.toString(member.IndvId),
 											 getResources().getDrawable(R.drawable.user)));			
 		}

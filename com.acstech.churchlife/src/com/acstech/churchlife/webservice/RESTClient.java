@@ -17,6 +17,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerPNames;
@@ -45,7 +46,8 @@ public class RESTClient {
 		public enum RequestMethod
 		{
 		GET,
-		POST
+		POST,
+		PUT
 		}
 		
 		private ArrayList <NameValuePair> params;
@@ -128,6 +130,28 @@ public class RESTClient {
 		                executeRequest(request, url);
 		                break;
 		            }
+		            case PUT:
+		            	HttpPut putRequest = new HttpPut(url);
+		       		 
+		                //add headers
+		                for(NameValuePair h : headers)
+		                {
+		                    putRequest.addHeader(h.getName(), h.getValue());
+		                }
+		 
+		                if(!params.isEmpty()){
+		                    putRequest.setEntity(new UrlEncodedFormEntity(params, HTTP.UTF_8));
+		                }
+		 
+		                if (postEntity != null && postEntity.length() > 0) {
+		                	StringEntity entity = new StringEntity(postEntity, HTTP.UTF_8);
+		                	entity.setContentType("application/json");			                
+		                	putRequest.setEntity(new StringEntity(postEntity));	
+		                }
+		                		                
+		                executeRequest(putRequest, url);
+		                break;
+		                
 		            case POST:
 		            {
 		                HttpPost request = new HttpPost(url);

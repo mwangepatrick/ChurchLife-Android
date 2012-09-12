@@ -54,15 +54,13 @@ public class Api {
 		isOnlineCheck();
 		
 		CorePagedResult<List<CoreCommentSummary>> comments = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/comments");
-    	
+    	RESTClient client = new RESTClient(String.format("%s/%s/individuals/%s/comments", _baseUrl, siteNumber, individualId));
+    			
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
     	
-    	client.AddParam("id", Integer.toString(individualId));
-        client.AddParam("pageIndex", Integer.toString(pageIndex));
+    	client.AddParam("pageIndex", Integer.toString(pageIndex));
          
     	try	{
     		client.Execute(RequestMethod.GET);    	
@@ -87,16 +85,13 @@ public class Api {
 		isOnlineCheck();
 		
 		CorePagedResult<List<CoreComment>> comments = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/comments/getComments");
+    	RESTClient client = new RESTClient(String.format("%s/%s/individuals/%s/comments/%s", _baseUrl, siteNumber, individualId, commentTypeId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
-    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
-    	client.AddParam("id", Integer.toString(individualId));
-    	client.AddParam("commenttypeid", Integer.toString(commentTypeId));
-        client.AddParam("pageIndex", Integer.toString(pageIndex));
+    	client.AddParam("pageIndex", Integer.toString(pageIndex));
         
     	try	{
     		client.Execute(RequestMethod.GET);    	
@@ -123,13 +118,11 @@ public class Api {
 		isOnlineCheck();
 		
 		List<CoreCommentType> list = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/comments/getAvailableCommentTypes");
+    	RESTClient client = new RESTClient(String.format("%s/%s/types/comments", _baseUrl, siteNumber));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
-    	
-    	client.AddHeader("sitenumber", siteNumber);
     	    	
     	try	{
     		client.Execute(RequestMethod.GET);    	
@@ -150,14 +143,14 @@ public class Api {
 
 	
 	public void commentAdd(String username, String password, String siteNumber, CoreCommentChangeRequest comment)  throws AppException {
-		
-		RESTClient client = new RESTClient(_baseUrl + "/comments/postcommentchangerequest");
-    	
+				
+		RESTClient client = new RESTClient(String.format("%s/%s/individuals/%s/comments/%s", _baseUrl, siteNumber, comment.IndvID, comment.CommentTypeId));
+    			
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	
-    	client.AddHeader("sitenumber", siteNumber);
+    	client.AddHeader("Content-Type", "application/x-www-form-urlencoded");    	
     	    	
     	try	{
     		
@@ -180,7 +173,7 @@ public class Api {
     		info.setContextId("Api.commentAdd");
     		info.getParameters().put("sitenumber", siteNumber);
     		info.getParameters().put("username", username);
-    		info.getParameters().put("commenttype", comment.CommentType);
+    		info.getParameters().put("commenttypeid", comment.CommentTypeId);
     		throw e;
     	}		
 	}
@@ -194,12 +187,11 @@ public class Api {
 		isOnlineCheck();
 		
 		CorePagedResult<List<CoreEvent>> events = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/events");
-    	
+    	RESTClient client = new RESTClient(String.format("%s/%s/events", _baseUrl, siteNumber));
+    	    	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
     	
     	SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -225,20 +217,17 @@ public class Api {
 		return events;
 	}
 
-	public CoreEventDetail event(String username, String password, String siteNumber, String eventId) throws AppException {
+	public CoreEventDetail event(String username, String password, String siteNumber, String calendarId, String eventId) throws AppException {
 
 		isOnlineCheck();
 		
 		CoreEventDetail event = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/events/GetDetail");
+    	RESTClient client = new RESTClient(String.format("%s/%s/calendars/%s/events/%s", _baseUrl, siteNumber, calendarId, eventId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
-    	    
-    	client.AddParam("id", eventId);
-    	
+    	       
     	try	{
     		client.Execute(RequestMethod.GET);    	
     		
@@ -267,15 +256,14 @@ public class Api {
 
 		isOnlineCheck();
 		
-		CorePagedResult<List<CoreIndividual>> individuals = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/individuals");
-    	
+		CorePagedResult<List<CoreIndividual>> individuals = null;    	
+    	RESTClient client = new RESTClient(String.format("%s/%s/individuals", _baseUrl, siteNumber));
+    	    	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
-    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	    
     	
-    	client.AddParam("searchField", searchText);
+    	client.AddParam("q", searchText);
         client.AddParam("pageIndex", Integer.toString(pageIndex));
                 
     	try	{
@@ -303,15 +291,12 @@ public class Api {
 		isOnlineCheck();
 		
 		CoreIndividualDetail individual = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/individuals/GetDetail");
+    	RESTClient client = new RESTClient(String.format("%s/%s/individuals/%s", _baseUrl, siteNumber, indvId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
-    	client.AddHeader("sitenumber", siteNumber);
-    	
-    	client.AddParam("id", Integer.toString(indvId));
-    	
+    
     	try	{
     		client.Execute(RequestMethod.GET);    	
     		
@@ -351,13 +336,11 @@ public class Api {
 		isOnlineCheck();
 		
 		CoreAcsUser u = null;
-    	RESTClient client = new RESTClient(_baseUrl + "/accounts/getusersecurity");
+    	RESTClient client = new RESTClient(String.format("%s/%s/account", _baseUrl, siteNumber));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
-    	
-    	client.AddHeader("sitenumber", siteNumber);
     	    	
     	try	{
     		client.Execute(RequestMethod.GET);    	
@@ -394,7 +377,7 @@ public class Api {
 				
 		List<CoreAcsUser> users = null;
 		RESTClient client = new RESTClient(_baseUrl + "/accounts/findbyemail");
-    	
+		
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
     	    
     	try	{
@@ -405,7 +388,7 @@ public class Api {
             
             client.AddPostEntity(json.toString());
                 		
-    		client.Execute(RequestMethod.POST);    	
+    		client.Execute(RequestMethod.PUT);    	
     		
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			    			
     			users = CoreAcsUser.GetCoreAcsUserList(client.getResponse());    			

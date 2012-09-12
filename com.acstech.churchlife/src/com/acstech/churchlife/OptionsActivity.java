@@ -1,6 +1,5 @@
 package com.acstech.churchlife;
 
-import com.acstech.churchlife.R;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 
 import android.app.Activity;
@@ -51,24 +50,22 @@ public class OptionsActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle item selection
-	    switch (item.getItemId()) {
-	    
-	    case R.id.settings:
-	    	Intent settingsIntent = new Intent(getBaseContext(), Preferences.class);
+		
+	    if (item.getItemId() == R.id.settings) {
+			Intent settingsIntent = new Intent(getBaseContext(), Preferences.class);
 			startActivity(settingsIntent);
-	        return true;
-	        
-	    case R.id.signout:	    	
-	    	this.finish();
-	    	Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);			
-	    	loginIntent.putExtra("logout", true);	
+			return true;
+			
+		} else if (item.getItemId() == R.id.signout) {
+			this.finish();
+			Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);
+			loginIntent.putExtra("logout", true);
 			startActivity(loginIntent);
-	        return true;
-	        	        
-	    default:
-	        return super.onOptionsItemSelected(item);
-	    }
+			return true;
+			
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 }

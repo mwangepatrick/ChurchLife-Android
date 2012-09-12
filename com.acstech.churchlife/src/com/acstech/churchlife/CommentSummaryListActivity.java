@@ -23,12 +23,10 @@ import com.acstech.churchlife.webservice.CoreCommentType;
 public class CommentSummaryListActivity extends OptionsActivity {
 
 	static final int DIALOG_PROGRESS_COMMENTSUMMARY = 0;		// all comment types (summary)
-	static final int DIALOG_PROGRESS_COMMENTTYPE = 1;			// comments for a given type  //zzz
 	
 	private static final int ADD_COMMENT = 100;
 	
 	private ProgressDialog _progressD;
-	private String _progressText;
 	
 	int _individualId;											// passed via intent
 	String _individualName;										// passed via intent
@@ -86,18 +84,10 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	 
 	    protected Dialog onCreateDialog(int id) {
 	        switch(id) {
-	        case DIALOG_PROGRESS_COMMENTTYPE:
 	        case DIALOG_PROGRESS_COMMENTSUMMARY:
 	        	_progressD = new ProgressDialog(CommentSummaryListActivity.this);
 	        	
-	        	String msg = "";
-	        	if (id == DIALOG_PROGRESS_COMMENTSUMMARY) {
-	        		msg = getString(R.string.CommentSummaryList_ProgressDialog);	
-	        	}
-	        	else {
-	        		msg = String.format(getString(R.string.CommentList_ProgressDialog), _progressText);     //zzz   		
-	        	}
-	        	
+	        	String msg = getString(R.string.CommentSummaryList_ProgressDialog);	        		        
 	        	_progressD.setMessage(msg);        	
 	        	_progressD.setIndeterminate(true);
 	        	_progressD.setCancelable(false);

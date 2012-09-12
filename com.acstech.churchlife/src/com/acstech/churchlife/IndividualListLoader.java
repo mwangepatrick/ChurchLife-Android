@@ -62,7 +62,7 @@ public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreIndividual item : _webServiceResults.Page) {				
-				_itemList.add(new DefaultListItem(Integer.toString(item.IndvId), "", item.FullName));
+				_itemList.add(new DefaultListItem(Integer.toString(item.IndvId), "", item.getDisplayNameForList()));
 			}
 			
   	    	// If the web service indicates more records...Add the 'More Records' item

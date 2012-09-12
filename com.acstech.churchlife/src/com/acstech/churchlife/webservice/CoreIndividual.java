@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.acstech.churchlife.StringHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
@@ -14,12 +15,26 @@ public class CoreIndividual extends CoreObject {
 
 	public int IndvId;
 	public int FamId;
-	public String FamilyPosition;
-	public String FriendlyName;
-	public String FullName;
+	public String FamilyPosition;	
+	public String Title;
+    public String FirstName;
+    public String LastName;               
+    public String MiddleName;
+    public String GoesbyName; 
+    public String Suffix;    
 	public String PictureUrl;
-	
-	
+		
+    public String getDisplayNameForList()
+    {
+    	String name = "";
+        if (StringHelper.NullOrEmpty(FirstName) != "")   { name = FirstName; }
+        if (StringHelper.NullOrEmpty(LastName) != "")    { name = name + " " + LastName; }
+        if (StringHelper.NullOrEmpty(Suffix) != "")      { name = name + ", " + Suffix; }
+        if (StringHelper.NullOrEmpty(GoesbyName) != "")  { name = name + " (" + GoesbyName + ")"; }
+          
+        return name;        
+    }
+    
 	 public static CoreIndividual GetCoreIndividual(String json) throws AppException
      {    	 
 		CoreIndividual indv = new CoreIndividual();
@@ -31,9 +46,13 @@ public class CoreIndividual extends CoreObject {
 	
    	  		indv.IndvId = jo.getInt("IndvId");
    	  		indv.FamId = jo.getInt("FamId");
-   	  		indv.FamilyPosition = jo.getString("FamilyPosition");
-   	  		indv.FriendlyName = jo.getString("FriendlyName");
-   	 		indv.FullName = jo.getString("FullName");
+   	  		indv.FamilyPosition = jo.getString("FamilyPosition");   	  		
+   	  		indv.Title = jo.optString("Title");
+   	  		indv.FirstName = jo.getString("FirstName");
+   	  		indv.LastName = jo.getString("LastName");
+   	  		indv.MiddleName = jo.optString("MiddleName");
+   	  		indv.GoesbyName = jo.optString("GoesbyName");
+   	  		indv.Suffix = jo.optString("Suffix");
    			indv.PictureUrl = jo.optString("PictureUrl");   		
    		}
    	  	catch (JSONException e) {
