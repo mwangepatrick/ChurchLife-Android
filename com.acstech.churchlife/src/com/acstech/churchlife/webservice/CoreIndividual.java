@@ -20,7 +20,7 @@ public class CoreIndividual extends CoreObject {
     public String FirstName;
     public String LastName;               
     public String MiddleName;
-    public String GoesbyName; 
+    public String GoesByName; 
     public String Suffix;    
 	public String PictureUrl;
 		
@@ -30,7 +30,7 @@ public class CoreIndividual extends CoreObject {
         if (StringHelper.NullOrEmpty(FirstName) != "")   { name = FirstName; }
         if (StringHelper.NullOrEmpty(LastName) != "")    { name = name + " " + LastName; }
         if (StringHelper.NullOrEmpty(Suffix) != "")      { name = name + ", " + Suffix; }
-        if (StringHelper.NullOrEmpty(GoesbyName) != "")  { name = name + " (" + GoesbyName + ")"; }
+        if (StringHelper.NullOrEmpty(GoesByName) != "")  { name = name + " (" + GoesByName + ")"; }
           
         return name;        
     }
@@ -51,7 +51,7 @@ public class CoreIndividual extends CoreObject {
    	  		indv.FirstName = jo.getString("FirstName");
    	  		indv.LastName = jo.getString("LastName");
    	  		indv.MiddleName = jo.optString("MiddleName");
-   	  		indv.GoesbyName = jo.optString("GoesbyName");
+   	  		indv.GoesByName = jo.optString("GoesByName");   	  	
    	  		indv.Suffix = jo.optString("Suffix");
    			indv.PictureUrl = jo.optString("PictureUrl");   		
    		}
