@@ -58,7 +58,8 @@ public class EventListActivity extends OptionsActivity {
             // Wire up pull to refresh 
         	_pullToRefreshView.setOnRefreshListener(new OnRefreshListener<ListView>() {
                 @Override
-                public void onRefresh(PullToRefreshBase<ListView> refreshView) {                  
+                public void onRefresh(PullToRefreshBase<ListView> refreshView) {  
+                	_loader = null; //ensure a new search and not a 'More Items' operation
                 	loadListWithProgressDialog(true, false);
                 }
             });
