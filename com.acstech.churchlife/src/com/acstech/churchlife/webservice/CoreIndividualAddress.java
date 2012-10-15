@@ -46,7 +46,7 @@ public class CoreIndividualAddress extends CoreObject {
 	  		address.StatementAddress = jo.getBoolean("StatementAddress");
 	  		address.Country = jo.getString("Country");
 	  		address.Company =  StringHelper.NullOrEmpty(jo.getString("Company"));
-	  		address.Address = jo.getString("Address");
+	  		address.Address = StringHelper.NullOrEmpty(jo.getString("Address"));
 	  		address.Address2 =  StringHelper.NullOrEmpty(jo.getString("Address2"));
 	  		address.City = jo.getString("City");
 	  		address.State = jo.getString("State");
