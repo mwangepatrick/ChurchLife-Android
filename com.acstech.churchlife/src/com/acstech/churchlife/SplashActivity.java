@@ -52,7 +52,7 @@ public class SplashActivity extends Activity {
             	
            	if (e == null) {			// no error
            		if (result == true)  	// if successful login, change the activity to which to navigate	        					
-    				nextIntent = new Intent(SplashActivity.this, MainActivity.class); 
+    				nextIntent = new Intent(SplashActivity.this, IndividualListActivity.class); 
            	}
            	else {           		
            		ExceptionHelper.notifyNonUsers(e);

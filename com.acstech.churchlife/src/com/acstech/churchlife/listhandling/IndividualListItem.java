@@ -1,8 +1,8 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import android.graphics.drawable.Drawable;
 
-public class CustomListItem {
+public class IndividualListItem {
 
 	private String _title = "";
 	private String _valueLine1 = "";
@@ -56,11 +56,11 @@ public class CustomListItem {
 	}
 	
 	// Constructor (s)	
-	public CustomListItem(String title, String line1, String line2, String actionTag, Drawable actionImage) {
+	public IndividualListItem(String title, String line1, String line2, String actionTag, Drawable actionImage) {
 		this(title, line1, line2, null, actionTag, actionImage);
 	}
 		
-	public CustomListItem(String title, String line1, String line2, String line3, String actionTag, Drawable actionImage) {
+	public IndividualListItem(String title, String line1, String line2, String line3, String actionTag, Drawable actionImage) {
 		_title = title;
 		_valueLine1 = line1;				
 

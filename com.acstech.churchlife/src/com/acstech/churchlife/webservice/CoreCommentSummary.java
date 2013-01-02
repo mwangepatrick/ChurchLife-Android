@@ -1,8 +1,10 @@
 package com.acstech.churchlife.webservice;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +22,11 @@ public class CoreCommentSummary extends CoreObject {
     public int CommentCount;
     public String CommentColor;
     
+    public String getDescription() {
+    	String DATE_FORMAT = "MM/dd/yyyy";		
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+		return String.format("%s Notes: updated %s", CommentCount, sdf.format(LastCommentDate));		
+    }
    
     // Factory Method - parse json
     public static CoreCommentSummary GetCoreCommentSummary(String json) throws AppException

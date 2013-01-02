@@ -1,4 +1,4 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.text.SimpleDateFormat;
 

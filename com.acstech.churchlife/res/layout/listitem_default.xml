@@ -4,21 +4,13 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-  
+
 	<TextView
 		android:id="@+id/titleTextView" 
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:padding="10dp"
 	    android:textSize="16sp">
-	</TextView>
-		
-	<!--  This textview exists just to be compatible with DefaultListItem class.  This item is NOT displayed -->
-	<TextView 
-		android:id="@+id/descriptionTextView" 			
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content" 
-		android:visibility="gone">	
 	</TextView>
 		
 </LinearLayout>

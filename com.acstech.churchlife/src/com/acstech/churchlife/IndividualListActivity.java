@@ -1,6 +1,9 @@
 package com.acstech.churchlife;
 
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.listhandling.DefaultListItem;
+import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
+import com.acstech.churchlife.listhandling.IndividualListLoader;
 import com.acstech.churchlife.R;
 
 import android.app.Dialog;
@@ -19,7 +22,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class IndividualListActivity extends OptionsActivity {
+public class IndividualListActivity extends ChurchlifeBaseActivity {
 	
 	static final int DIALOG_PROGRESS_INDIVIDUALS = 0;
 	static final int DIALOG_PROGRESS_INDIVIDUAL = 1;
@@ -37,12 +40,14 @@ public class IndividualListActivity extends OptionsActivity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	    	
         super.onCreate(savedInstanceState);
         
         try
         {        	
         	 _appPrefs = new AppPreferences(getApplicationContext());
-        	 
+
+        	 setTitle(R.string.Menu_People);    
         	 setContentView(R.layout.individuallist);
         	         	 
         	 bindControls();								// Set state variables to their form controls

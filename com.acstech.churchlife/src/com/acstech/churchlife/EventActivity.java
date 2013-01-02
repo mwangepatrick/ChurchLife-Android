@@ -11,6 +11,9 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.DefaultListItem;
+import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
+import com.acstech.churchlife.listhandling.EventListItem;
 import com.acstech.churchlife.webservice.CoreEventDetail;
 import com.acstech.churchlife.R;
 

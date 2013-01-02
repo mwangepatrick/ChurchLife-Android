@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.listhandling.EventListItem;
+import com.acstech.churchlife.listhandling.EventListItemAdapter;
+import com.acstech.churchlife.listhandling.SeparatedListAdapter;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreEventDetail;
 import com.acstech.churchlife.R;
@@ -23,7 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class EventListActivity extends OptionsActivity {
+public class EventListActivity extends ChurchlifeBaseActivity {
 	
 	static final int DIALOG_PROGRESS_EVENTS = 0;
 	static final int DIALOG_PROGRESS_EVENT = 1;
@@ -43,6 +46,7 @@ public class EventListActivity extends OptionsActivity {
         {   
         	_appPrefs = new AppPreferences(getApplicationContext());
         	
+        	setTitle(R.string.Menu_Calendar);
         	setContentView(R.layout.eventlist);
         	  
         	bindControls();						// Set state variables to their form controls         

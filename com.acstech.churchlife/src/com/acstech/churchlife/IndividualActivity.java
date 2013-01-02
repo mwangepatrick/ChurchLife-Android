@@ -36,6 +36,8 @@ import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.SEVERITY;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo.TYPE;
+import com.acstech.churchlife.listhandling.IndividualListItem;
+import com.acstech.churchlife.listhandling.IndividualListItemAdapter;
 import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.webservice.CoreIndividual;
 import com.acstech.churchlife.webservice.CoreIndividualAddress;
@@ -214,7 +216,7 @@ public class IndividualActivity extends OptionsActivity {
 		//  the image button clicks that do the work (call phone, launch map, etc.)  The
 		//  tag of the image button MUST be set by setting the actionTags in the 
 		//  CustomListItem object.
-		ArrayList<CustomListItem> listItems = new ArrayList<CustomListItem>();
+		ArrayList<IndividualListItem> listItems = new ArrayList<IndividualListItem>();
 				
 		// Phone Numbers - add to listitems
 		String titleString = getResources().getString(R.string.Individual_PhoneAction);
@@ -222,14 +224,14 @@ public class IndividualActivity extends OptionsActivity {
 			
 			String defaultAction = "phone:" + phone.getPhoneNumberToDial();
 						
-			listItems.add(new CustomListItem(String.format(titleString, phone.PhoneType),
+			listItems.add(new IndividualListItem(String.format(titleString, phone.PhoneType),
 											 phone.getPhoneNumberToDisplay(), "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
 		}
 				
 		// Email addresses - add to listitems
 		titleString = getResources().getString(R.string.Individual_EmailAction);					
 		for (CoreIndividualEmail email : _individual.Emails) {
-			listItems.add(new CustomListItem(String.format(titleString, email.EmailType),
+			listItems.add(new IndividualListItem(String.format(titleString, email.EmailType),
 											 email.Email, "",											
 											 "email:" + email.Email,
 											 getResources().getDrawable(R.drawable.sym_action_email)));			
@@ -246,7 +248,7 @@ public class IndividualActivity extends OptionsActivity {
 	            			
 			String actionTag = String.format("map:%s %s %s, %s %s", address.Address, address.Address2, address.City, address.State, address.Zipcode);
 			
-			listItems.add(new CustomListItem(String.format(titleString, address.AddrType),
+			listItems.add(new IndividualListItem(String.format(titleString, address.AddrType),
 											 address.Address, address.Address2, cityStateZip,											
 											 actionTag,
 											 getResources().getDrawable(R.drawable.ic_menu_compass)));			
@@ -255,7 +257,7 @@ public class IndividualActivity extends OptionsActivity {
 		// Family members - add to listitems
 		titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
 		for (CoreIndividual member : _individual.FamilyMembers) {
-			listItems.add(new CustomListItem(titleString,
+			listItems.add(new IndividualListItem(titleString,
 											 member.getDisplayNameForList(), "", 											
 											 "individual:" + Integer.toString(member.IndvId),
 											 getResources().getDrawable(R.drawable.user)));			
@@ -268,13 +270,13 @@ public class IndividualActivity extends OptionsActivity {
 		
 			// comments needs id and name...so it just gets those from the currently
 			//  loaded individual (rather than passing a delimited argument)
-			listItems.add(new CustomListItem(titleString,
+			listItems.add(new IndividualListItem(titleString,
 					 "", "", 											
 					 "comments:",
 					 null));				
 		}
 		
-		detailsListview.setAdapter(new CustomListItemAdapter(this, listItems));		
+		detailsListview.setAdapter(new IndividualListItemAdapter(this, listItems));		
 		
 		// store off the last x touch (in percent of the total width) so that we know what to do 
 		//  on a phone entry (call the number of text the number) based on the touch position.
@@ -288,7 +290,7 @@ public class IndividualActivity extends OptionsActivity {
 		
 		detailsListview.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
-            	CustomListItem item = (CustomListItem)parent.getAdapter().getItem(position);
+            	IndividualListItem item = (IndividualListItem)parent.getAdapter().getItem(position);
             	doAction(item.getActionTag());            	
             }
         });  

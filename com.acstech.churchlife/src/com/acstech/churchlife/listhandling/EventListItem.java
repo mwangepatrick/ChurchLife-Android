@@ -1,4 +1,4 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -12,10 +12,12 @@ public class EventListItem {
     final static String EVENT_ITEM_TIME = "time";  
     final static String EVENT_ITEM_DATE = "date"; 
     
-	static final String EVENT_FULLDATE_FORMAT = "yyyyMMddHHmmssZ";
+	public static final String EVENT_FULLDATE_FORMAT = "yyyyMMddHHmmssZ";
+	public static final String EVENT_TIME_FORMAT = "h:mm a";
+	
 	static final String EVENT_MONTHYEAR_FORMAT = "MMMM yyyy";	
 	static final String EVENT_DAYNAMEMONTHDAY_FORMAT = "EEE MMM d";	
-	static final String EVENT_TIME_FORMAT = "h:mm a";
+	
 	
 	private String _id = "";
 	private String _calendarId = "";

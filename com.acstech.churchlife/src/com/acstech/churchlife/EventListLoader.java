@@ -7,6 +7,8 @@ import java.util.List;
 import android.content.Context;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
+import com.acstech.churchlife.listhandling.EventListItem;
+import com.acstech.churchlife.listhandling.ListLoaderBase;
 import com.acstech.churchlife.webservice.CoreEvent;
 import com.acstech.churchlife.webservice.CorePagedResult;
 

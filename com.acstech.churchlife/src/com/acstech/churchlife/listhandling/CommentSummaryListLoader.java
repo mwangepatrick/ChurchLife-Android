@@ -1,22 +1,24 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 
+import com.acstech.churchlife.GlobalState;
+import com.acstech.churchlife.R;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.webservice.CoreCommentSummary;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
-public class CommentSummaryListLoader extends ListLoaderBase<CommentSummaryListItem>{
+public class CommentSummaryListLoader extends ListLoaderBase<ColorCodedListItem>{
 
 	private int _individualId;
 	
 	private CorePagedResult<List<CoreCommentSummary>> _webServiceResults;			// results from webservice call	
-	private ArrayList<CommentSummaryListItem> _itemList;							// item list for list adapter binds to	
+	private ArrayList<ColorCodedListItem> _itemList;							// item list for list adapter binds to	
 	
-	public ArrayList<CommentSummaryListItem> getList(){
+	public ArrayList<ColorCodedListItem> getList(){
 		return _itemList;
 	}
 	
@@ -37,22 +39,22 @@ public class CommentSummaryListLoader extends ListLoaderBase<CommentSummaryListI
 		
 		// Create an CommentSummaryListItem arraylist 
 		if (_itemList == null ) {
-			_itemList = new ArrayList<CommentSummaryListItem>();
+			_itemList = new ArrayList<ColorCodedListItem>();
 		}
 		
 		// check for empty
 		if (_webServiceResults.Page.size() == 0) {    					    		
-			_itemList.add(new CommentSummaryListItem(getNoResultsMessage()));	    				
+			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));	    				
 		}	    			
 		else {		    				
 			// Add all items from the latest web service request to the adapter 
 			for (CoreCommentSummary item : _webServiceResults.Page) {
-				_itemList.add(new CommentSummaryListItem(item));
+				_itemList.add(new ColorCodedListItem(item));
 			}
 			
   	    	// If the web service indicates more records...Add the 'More Records' item
 			if (_webServiceResults.PageIndex < _webServiceResults.PageCount -1) {	    					 	    		
-				_itemList.add(new CommentSummaryListItem(getNextResultsMessage()));			    								    				
+				_itemList.add(new ColorCodedListItem(getNextResultsMessage()));			    								    				
 			}			    					
 		}
 		

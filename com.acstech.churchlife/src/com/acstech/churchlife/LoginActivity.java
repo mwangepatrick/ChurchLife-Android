@@ -4,13 +4,6 @@ package com.acstech.churchlife;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.webservice.Api;
-import com.acstech.churchlife.webservice.CoreAcsUser;
-import com.acstech.churchlife.R;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -35,11 +28,17 @@ import android.widget.ListAdapter;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.acstech.churchlife.exceptionhandling.AppException;
+import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAcsUser;
+
 //FUTURE: 
 //  1.  change to use animations from xml files
 
 
-public class LoginActivity extends OptionsActivity {
+public class LoginActivity extends ChurchlifeBaseActivity {
 
 	AppPreferences _appPrefs;  				
 	GestureDetector _gestureDetector;
@@ -66,6 +65,16 @@ public class LoginActivity extends OptionsActivity {
 	private static final int DIALOG_PROGRESS = 2;	
 	
 	
+	@Override
+	public boolean showTitleBar() {
+		return false;
+	}
+	
+	@Override
+	public boolean showLeftMenu() {
+		return false;
+	}
+		
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -540,7 +549,9 @@ public class LoginActivity extends OptionsActivity {
 					
     	//start IndividualListActivity
 		Intent intent = new Intent();
-		intent.setClass(LoginActivity.this, MainActivity.class); 
+		//intent.setClass(LoginActivity.this, MainActivity.class); 
+		
+		intent.setClass(LoginActivity.this, IndividualListActivity.class);
 		
 		finish();				// ensures the user cannot use the 'back' to this activity
 		

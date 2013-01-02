@@ -9,7 +9,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MyInfoActivity extends OptionsActivity  {
+public class MyInfoActivity extends ChurchlifeBaseActivity  {
 	 	
 	TextView txtName;
 	TextView txtVersion;
@@ -19,6 +19,7 @@ public class MyInfoActivity extends OptionsActivity  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        setTitle(R.string.Menu_MyInfo);
         setContentView(R.layout.myinfo);		
              
         bindControls();

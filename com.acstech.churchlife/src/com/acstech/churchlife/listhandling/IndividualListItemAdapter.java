@@ -1,8 +1,10 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 
 import com.acstech.churchlife.R;
+import com.acstech.churchlife.R.id;
+import com.acstech.churchlife.R.layout;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -20,13 +22,13 @@ import android.widget.TextView;
  * @author softwarearchitect
  *
  */
-public class CustomListItemAdapter extends BaseAdapter {
+public class IndividualListItemAdapter extends BaseAdapter {
 	
-	private ArrayList<CustomListItem> _items;
+	private ArrayList<IndividualListItem> _items;
 	private Context _context;
 
 	// Constructor
-	public CustomListItemAdapter(Context context, ArrayList<CustomListItem> items) { 	
+	public IndividualListItemAdapter(Context context, ArrayList<IndividualListItem> items) { 	
 		_context = context;
 		_items = items;		
 	}
@@ -36,7 +38,7 @@ public class CustomListItemAdapter extends BaseAdapter {
 	public Object getItem(int position) {  return _items.get(position); }
 	public long getItemId(int position) {  return position; 			}
 
-	public void refill(ArrayList<CustomListItem> newItems) {
+	public void refill(ArrayList<IndividualListItem> newItems) {
 		_items = newItems;
 	    notifyDataSetChanged();
 	}
@@ -62,12 +64,12 @@ public class CustomListItemAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		ListViewHolder holder = null;
-		CustomListItem currentItem = _items.get(position);;
+		IndividualListItem currentItem = _items.get(position);;
 	
 		if (convertView == null) {
 			
 			 LayoutInflater inflater = LayoutInflater.from(_context);
-			 convertView = inflater.inflate(R.layout.listitem_custom, null); 
+			 convertView = inflater.inflate(R.layout.listitem_individual, null); 
 			 						 
 			 holder = new ListViewHolder();
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);

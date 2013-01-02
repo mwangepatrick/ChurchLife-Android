@@ -3,6 +3,7 @@ package com.acstech.churchlife.webservice;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
@@ -32,6 +33,85 @@ public class Api {
 	String _applicationId = "";					// app-specific key that gets sent with every request	
 	ConnectivityManager _connectivityManager;	// not required (can be null)
 
+	
+	/************************************************************/
+	/*				 	Assignments (connections)				*/
+	/************************************************************/
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param username
+	 * @param password
+	 * @param siteNumber
+	 * @param pageIndex
+	 * @return
+	 * @throws AppException
+	 */
+	public CorePagedResult<List<CoreAssignmentSummary>> assignmentsummary(String username, String password, String siteNumber, int pageIndex) throws AppException {
+
+		isOnlineCheck();
+		
+		CorePagedResult<List<CoreAssignmentSummary>> assignments = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/assignments", _baseUrl, siteNumber));
+    			
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	
+    	client.AddParam("pageIndex", Integer.toString(pageIndex));
+         
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			assignments = CoreAssignmentSummary.GetCoreAssignmentSummaryPagedResult(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.assignments");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		throw e;
+    	}
+		return assignments;
+	}
+
+	public CorePagedResult<List<CoreAssignment>> assignments(String username, String password, String siteNumber, int assignmentTypeId, int pageIndex) throws AppException {
+
+		isOnlineCheck();
+		
+		CorePagedResult<List<CoreAssignment>> assignments = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/assignments/%s", _baseUrl, siteNumber, assignmentTypeId));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	
+    	client.AddParam("pageIndex", Integer.toString(pageIndex));
+        
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			assignments = CoreAssignment.GetCoreAssignmentPagedResult(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.comments");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("assignmenttype", assignmentTypeId);
+    		throw e;
+    	}
+		return assignments;
+	}
+	
 	
 	/************************************************************/
 	/*					 	Comments							*/
@@ -193,7 +273,7 @@ public class Api {
 		client.AddHeader("Authorization", auth);
     	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
     	
-    	SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd");
+    	SimpleDateFormat dateformater = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
     	client.AddParam("startDate", dateformater.format(startDate));
     	client.AddParam("stopDate", dateformater.format(stopDate));

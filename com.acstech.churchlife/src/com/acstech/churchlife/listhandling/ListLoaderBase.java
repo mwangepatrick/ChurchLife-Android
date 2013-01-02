@@ -1,4 +1,4 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.acstech.churchlife.AppPreferences;
+import com.acstech.churchlife.config;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.webservice.Api;

@@ -2,6 +2,11 @@
 <resources>  
     <string name="app_name">Church Life</string>
 
+    <string name="Menu.People">People</string>    
+    <string name="Menu.Calendar">Calendar</string>
+    <string name="Menu.Connections">Connections</string>        
+    <string name="Menu.MyInfo">My Church</string>
+                
     <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
     <string name="Dialog.NoConnectionLine2">Please check your connection and try again.</string>
           
@@ -83,7 +88,10 @@
 	<string name="Comment.SaveDialog">Submitting Comment for Approval.  Please wait.</string>
 	<string name="Comment.Saved">Comment has been submitted for approval.</string>
 	
+	<string name="AssignmentList.NoResults">Sorry, no assignments found.</string>
+	<string name="AssignmentListSummary.ProgressDialog">"Loading connections. Please wait."</string>
 	
+	<string name="AssignmentList.ProgressDialog">"Retrieving '%s'. Please wait."</string>
 	
 	<string name="MyInfo.VersionPrefix">version</string>
     

@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.CommentListItemAdapter;
+import com.acstech.churchlife.listhandling.CommentListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 

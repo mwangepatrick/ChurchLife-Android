@@ -1,8 +1,11 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 
+import com.acstech.churchlife.ImageHelper;
 import com.acstech.churchlife.R;
+import com.acstech.churchlife.R.id;
+import com.acstech.churchlife.R.layout;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,13 +21,13 @@ import android.widget.TextView;
  * @author softwarearchitect
  *
  */
-public class CommentSummaryListItemAdapter extends BaseAdapter {
+public class ColorCodedListItemAdapter extends BaseAdapter {
 	
-	private ArrayList<CommentSummaryListItem> _items;
+	private ArrayList<ColorCodedListItem> _items;
 	private Context _context;
 
 	// Constructor
-	public CommentSummaryListItemAdapter(Context context, ArrayList<CommentSummaryListItem> items) {			
+	public ColorCodedListItemAdapter(Context context, ArrayList<ColorCodedListItem> items) {			
 		_context = context;
 		_items = items;				
 	}
@@ -34,7 +37,7 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 	public Object getItem(int position) {  return _items.get(position); }
 	public long getItemId(int position) {  return position; 			}
 	
-	public void refill(ArrayList<CommentSummaryListItem> newItems) {
+	public void refill(ArrayList<ColorCodedListItem> newItems) {
 		_items = newItems;
 	    notifyDataSetChanged();
 	}
@@ -50,7 +53,8 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 		String id = "";
 		ImageView colorImageView;		
 		TextView titleTextView;
-		TextView descriptionTextView;		
+		TextView descriptionTextView;	
+		ImageView iconImageView;
 	}
 
 	
@@ -64,7 +68,7 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		ListViewHolder holder = null;
-		CommentSummaryListItem currentItem = _items.get(position);			
+		ColorCodedListItem currentItem = _items.get(position);			
 			
 		if (convertView == null) {
 			
@@ -78,11 +82,12 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 			 }
 			 else
 			 {
-				 convertView = inflater.inflate(R.layout.listitem_commentsummary, null);	 
+				 convertView = inflater.inflate(R.layout.listitem_colorcoded, null);	 
 
 				 holder.colorImageView = (ImageView) convertView.findViewById(R.id.colorImageView);
 				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
-				 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);					 							
+				 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
+				 holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
 			 }
 			 			  			 						 			 	
 			 convertView.setTag(holder);
@@ -107,6 +112,8 @@ public class CommentSummaryListItemAdapter extends BaseAdapter {
 				//holder.colorImageView.setBackgroundColor(Color.GREEN);
 				holder.colorImageView.setImageBitmap(ImageHelper.getBackground("#" + currentItem.getColor()));
 			}
+		
+			holder.iconImageView.setBackgroundResource(currentItem.getIconResourceID());
 		}
 		else
 		{

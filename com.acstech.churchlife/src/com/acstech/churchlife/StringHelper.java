@@ -6,7 +6,10 @@ public class StringHelper {
 	
     public static String NullOrEmpty(String input) {
     	
-    	if (input.equals(NULL)) {
+    	if (input == null) {
+    		return "";
+    	}
+    	else if (input.equals(NULL)) {
     		return "";
     	}
     	else {

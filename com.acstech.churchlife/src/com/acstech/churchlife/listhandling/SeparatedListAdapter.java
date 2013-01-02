@@ -1,9 +1,10 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.acstech.churchlife.R;
+import com.acstech.churchlife.R.layout;
 
 import android.content.Context;
 import android.view.View;

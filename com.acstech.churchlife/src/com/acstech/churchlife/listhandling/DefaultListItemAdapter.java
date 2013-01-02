@@ -1,9 +1,8 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 
 import com.acstech.churchlife.R;
-
 import android.content.Context;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -61,6 +61,7 @@ public class DefaultListItemAdapter extends BaseAdapter {
 		String id = "";
 		TextView titleTextView;
 		TextView descriptionTextView;		
+		ImageView iconImageView;
 	}
 
 	
@@ -84,24 +85,41 @@ public class DefaultListItemAdapter extends BaseAdapter {
 			 holder = new ListViewHolder();
 			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 			 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
-				 						
+			 holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
 			 convertView.setTag(holder);
 		}
 		else {
 			 holder = (ListViewHolder) convertView.getTag();
 		}
-			
-		// set control values to this item's property values		
+
+		//------------------------------------------------------------------------------
+		// Set control values to this item's property values
+		//
+		// Keep in mind that not all layouts implement all of the holder's controls!
+		//  ex.  Some layouts don't have a "description" textview or an icon
+		//------------------------------------------------------------------------------
 		holder.id = currentItem.getId();
-		holder.titleTextView.setText(currentItem.getTitle());
-		
-		if (currentItem.getContainsHtml()) {
-			holder.descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
-			holder.descriptionTextView.setText(Html.fromHtml(currentItem.getDescription()));  // reformat for &amp; &lt; etc.
-			Linkify.addLinks(holder.descriptionTextView, Linkify.ALL);
+			
+		// title
+		if (holder.titleTextView != null) {
+			holder.titleTextView.setText(currentItem.getTitle());
 		}
-		else {
-			holder.descriptionTextView.setText(currentItem.getDescription()); 
+		
+		// description
+		if (holder.descriptionTextView != null)	{
+			if (currentItem.getContainsHtml()) {
+				holder.descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+				holder.descriptionTextView.setText(Html.fromHtml(currentItem.getDescription()));  // reformat for &amp; &lt; etc.
+				Linkify.addLinks(holder.descriptionTextView, Linkify.ALL);
+			}
+			else {
+				holder.descriptionTextView.setText(currentItem.getDescription()); 
+			}
+		}
+		
+		// icon
+		if (holder.iconImageView != null){			
+			holder.iconImageView.setBackgroundResource(currentItem.getIconResourceId());
 		}
 		
 		return convertView;				

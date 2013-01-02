@@ -17,6 +17,9 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.ColorCodedListItem;
+import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
+import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
@@ -33,7 +36,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	boolean _canAddComments = false;
 	
 	CommentSummaryListLoader _loader;	
-	CommentSummaryListItemAdapter _itemArrayAdapter;
+	ColorCodedListItemAdapter _itemArrayAdapter;
 	
 	TextView headerTextView;
 	ListView lv1;
@@ -70,7 +73,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	             // Wire up list on click - display comment type activity
 	             lv1.setOnItemClickListener(new OnItemClickListener() {
 	                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 	                	                 	                	
-	                	 CommentSummaryListItem itemSelected = (CommentSummaryListItem)parent.getAdapter().getItem(position);
+	                	 ColorCodedListItem itemSelected = (ColorCodedListItem)parent.getAdapter().getItem(position);
 	                	 ItemSelected(itemSelected);          	                	 
 	                 }
 	             });	             	        	         	
@@ -184,7 +187,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	        	{	        		        	
 		        	if (_loader.success())	{
 		        		
-		        		CommentSummaryListItem item =(CommentSummaryListItem)_loader.getList().get(0);
+		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
 		        		
 		        		//If only 1 type, go directly to the comment type (detail) page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
@@ -192,7 +195,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 		        		}
 		        		else {
 				     		// set items to list
-			        		lv1.setAdapter(new CommentSummaryListItemAdapter(CommentSummaryListActivity.this, _loader.getList()));
+			        		lv1.setAdapter(new ColorCodedListItemAdapter(CommentSummaryListActivity.this, _loader.getList()));
 		        		}
 		        	}
 		        	else {
@@ -211,7 +214,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	    };    
 	    	    	  	  
 	    // Occurs when a user selects an comment type on the listview.    
-	    private void ItemSelected(CommentSummaryListItem item)
+	    private void ItemSelected(ColorCodedListItem item)
 	    {    	    
 	    	try {
 	    		// Is this a comment type that was selected or a 'more records' item.	    	

@@ -1,11 +1,19 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
+/**
+ * This class is used as a container of information and can be passed to the 
+ * default list adapter for use in one of many listitem layouts such as:
+ *     listitem_default, listitem_withtitle, listitem_withicon, etc...
+ *     
+ * @author softwarearchitect
+ */
 public class DefaultListItem {
 	
 	private String _id = "";
 	private String _description = "";	
-	private String _title = "";					// optional
+	private String _title = "";					
 	private Boolean _containsHtml = false;
+	private int _iconResourceId = 0;
 	
 	public String getId() {
 		return _id;
@@ -25,10 +33,20 @@ public class DefaultListItem {
 	public void setContainsHtml(Boolean value) {
 		_containsHtml = value;
 	}
+
+	public int getIconResourceId() {
+		return _iconResourceId;
+	}
+
+	public void setIconResourceId(int value) {
+		_iconResourceId = value;
+	}
 	
 	public Boolean isTitleOnlyItem() {
 		return (_id =="");
 	}
+	
+
 	
 	@Override
 	public String toString() {
@@ -38,6 +56,11 @@ public class DefaultListItem {
 	public DefaultListItem(String title)
 	{
 		_title = title;
+	}
+	
+	public DefaultListItem(String title, int iconResourceId) {
+		_title = title;
+		_iconResourceId = iconResourceId;
 	}
 	
 	public DefaultListItem(String id, String description) {
@@ -50,5 +73,7 @@ public class DefaultListItem {
 		_description = description;
 		_title = title;
 	}
-		
+	
+	
+	
 }
