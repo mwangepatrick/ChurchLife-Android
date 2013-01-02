@@ -1,0 +1,207 @@
+package com.acstech.churchlife;
+
+import com.acstech.churchlife.exceptionhandling.AppException;
+import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.AssignmentListLoader;
+import com.acstech.churchlife.listhandling.ColorCodedListItem;
+import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
+
+public class AssignmentListActivity extends ChurchlifeBaseActivity {
+
+	static final int DIALOG_PROGRESS = 0;
+	
+	int _assignmentTypeId;
+	String _assignmentType;
+	
+	ProgressDialog _progressD;	
+	AssignmentListLoader _loader;	
+	ColorCodedListItemAdapter _itemArrayAdapter;
+	
+	ListView detailsListview;
+	
+	 @Override
+	 public void onCreate(Bundle savedInstanceState) {
+		 
+		 super.onCreate(savedInstanceState);
+	
+		 try
+		 {
+			//zzz get connection type from bundle setTitle(R.string.Menu_Connections);
+			 setContentView(R.layout.assignmentlist); 
+			 bindControls();
+			 
+        	 // This activity MUST be passed data
+        	 Bundle extraBundle = this.getIntent().getExtras();
+             if (extraBundle == null) {
+            	 throw AppException.AppExceptionFactory(
+            			 ExceptionInfo.TYPE.UNEXPECTED,
+						 ExceptionInfo.SEVERITY.CRITICAL, 
+						 "100",           												    
+						 "AssignmentListActivity.onCreate",
+						 "No assignment type was passed to the Assignment List activity.");
+             }
+             else {	       
+            	 _assignmentTypeId = extraBundle.getInt("assignmenttypeid");
+            	 _assignmentType = extraBundle.getString("assignmenttype");
+            	 
+            	 setTitle(_assignmentType);        
+            	 loadListWithProgressDialog(true);
+             }		             
+            
+			 // assignment click event
+			 detailsListview.setOnItemClickListener(new OnItemClickListener() {
+				 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
+					 ColorCodedListItem itemSelected = (ColorCodedListItem)parent.getAdapter().getItem(position);
+	            	 ItemSelected(itemSelected);           	
+		         }
+			 });
+			
+		}
+	 	catch (Exception e) {
+	 		if(_progressD != null){
+	 			_progressD.cancel();
+	 		}	 		
+	 		ExceptionHelper.notifyUsers(e, AssignmentListActivity.this);
+	 		ExceptionHelper.notifyNonUsers(e);
+	 	}  		
+	 }
+	 
+	  protected Dialog onCreateDialog(int id) {
+	        switch(id) {
+	        case DIALOG_PROGRESS:
+	        	_progressD = new ProgressDialog(AssignmentListActivity.this);
+	        	
+	        	String msg = getString(R.string.AssignmentList_ProgressDialog);	        	
+	        	_progressD.setMessage(String.format(msg, _assignmentType));        	
+	        	_progressD.setIndeterminate(true);
+	        	_progressD.setCancelable(false);
+	    		return _progressD;	  
+	        default:
+	            return null;
+	        }
+	    }
+	  
+	 /**
+     *  Links state variables to their respective form controls
+     */
+	 private void bindControls(){	    			 
+		 detailsListview = (ListView)this.findViewById(R.id.detailsListview);    	
+	 }
+	
+	 /**
+	 * Displays a progress dialog and launches a background thread to connect to a web service
+	 *   to retrieve search results 
+	 *   
+	 */
+	 private void loadListWithProgressDialog(boolean nextResult)
+	    {           
+		 	//zzz change to use fragments to house dialog 
+	    	showDialog(DIALOG_PROGRESS);
+	    	
+	    	try
+	    	{	
+	    		// if first time....
+	    		if (_loader == null) {	    			
+	    			_loader = new AssignmentListLoader(this, _assignmentTypeId);
+	    		}
+	    		
+	    		// see onListLoaded below for the next steps (after load is done)
+	    		if (nextResult) {
+	    			_loader.LoadNext(onListLoaded);
+	    		}
+	    		else {
+	    			_loader.LoadPrevious(onListLoaded);
+	    		}
+	    	}
+	    	catch (Exception e) {
+				ExceptionHelper.notifyUsers(e, AssignmentListActivity.this);
+	    		ExceptionHelper.notifyNonUsers(e); 				    				
+			}  	    	   	    
+	    }
+	        
+	    // display the results from the loader operation
+	    final Runnable onListLoaded = new Runnable() {
+	        public void run() {
+	        	
+	        	try
+	        	{	        		        	
+		        	if (_loader.success())	{
+		        		
+		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
+		        		
+		        		/*commented out for testing
+		        		//If only 1 type, go directly to the detail list page	  
+		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
+		        			startAssignmentActivity(Integer.parseInt(item.getId()), true);      			
+		        		}
+		        		else {
+		        		*/
+				     		// set items to list
+		        			detailsListview.setAdapter(new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList()));
+		        		/*}*/
+		        	}
+		        	else {
+		        		throw _loader.getException();
+		        	}
+	        	}
+	        	catch (Throwable e) {
+	        		ExceptionHelper.notifyUsers(e, AssignmentListActivity.this);
+	        		ExceptionHelper.notifyNonUsers(e); 	        	
+				} 	        	
+	        	finally
+	        	{
+	        		removeDialog(DIALOG_PROGRESS);
+	        	}
+	        }
+	    };    
+	    	    	  	  
+	    // Occurs when a user selects an comment type on the listview.    
+	    private void ItemSelected(ColorCodedListItem item)
+	    {    	    
+	    	try {
+	    		// Is this a comment type that was selected or a 'more records' item.	    	
+	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
+	       	 		loadListWithProgressDialog(true);  
+	       	 	}
+	       	 	else {	 
+	       	 		startAssignmentActivity(Integer.parseInt(item.getId()), false);    		 		       	 	
+	       	 	}       	 	       	 	
+	    	}
+	        catch (Exception e) {
+	        	// must NOT raise errors.  called by an event
+				ExceptionHelper.notifyUsers(e, AssignmentListActivity.this);
+		    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
+			}  
+	    }
+
+	    /**
+	     * Display the assignment screen
+	     * 
+	     * @param assignmentId	    
+	     */
+	    private void startAssignmentActivity(int assignmentId, boolean closeThisActivity) {
+	    	
+	    	Intent intent = new Intent();
+	    	/*
+	    	 * zzz TODO:
+	    	 * 	 	intent.setClass(this, AssignmentActivity.class);
+		 	intent.putExtra("assignmentid", assignmentId);
+		 	startActivity(intent);	  
+		 	*/
+	    	
+		 	if (closeThisActivity) {
+		 		finish();
+		 	}
+		 		    	
+	    }
+	 
+}
