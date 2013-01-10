@@ -6,12 +6,18 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.listhandling.AssignmentListLoader;
 import com.acstech.churchlife.listhandling.ColorCodedListItem;
 import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
+import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter.OnIconClickListener;
+import com.acstech.churchlife.webservice.CoreAssignment;
+
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -58,6 +64,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
              }		             
             
 			 // assignment click event
+             
 			 detailsListview.setOnItemClickListener(new OnItemClickListener() {
 				 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
 					 ColorCodedListItem itemSelected = (ColorCodedListItem)parent.getAdapter().getItem(position);
@@ -138,16 +145,37 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        		
 		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
 		        		
-		        		/*commented out for testing
-		        		//If only 1 type, go directly to the detail list page	  
+		        		/*zzz
+		        		//If only 1, go directly to the detail page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
 		        			startAssignmentActivity(Integer.parseInt(item.getId()), true);      			
 		        		}
 		        		else {
-		        		*/
-				     		// set items to list
-		        			detailsListview.setAdapter(new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList()));
-		        		/*}*/
+		        			// set items to list
+		        			  
+		        			*/
+		        			// Add a 'click' listener to show team members
+		        			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
+		        			lia.setOnIconClickListener(new OnIconClickListener() {
+								@Override
+								public void onIconClick(Object id) {
+									// Show dialog of team members
+									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));
+									    															        	
+						        	// Build a list of team member names
+									String[] items = new String[asm.TeamMembers.size()];
+					        		for (int i=0;i< items.length;i++){  
+						        		items[i] = asm.TeamMembers.get(i).getDisplayNameForList();               			
+						        	}         	               
+						    		
+									ListViewDialog dlg = new ListViewDialog();
+									dlg.setTitle("Team Members");
+									dlg.setItems(items);
+									dlg.show(getSupportFragmentManager(), "");									
+								}		        				
+		        			});		        			
+		        			detailsListview.setAdapter(lia);
+		        		//}
 		        	}
 		        	else {
 		        		throw _loader.getException();

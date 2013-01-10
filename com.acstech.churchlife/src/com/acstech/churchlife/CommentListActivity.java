@@ -22,7 +22,7 @@ import com.acstech.churchlife.listhandling.CommentListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
-public class CommentListActivity extends OptionsActivity {
+public class CommentListActivity extends ChurchlifeBaseActivity {
 
 	static final int DIALOG_PROGRESS_COMMENT = 1;			// comments for a given type
 
@@ -48,7 +48,7 @@ public class CommentListActivity extends OptionsActivity {
 	        try
 	        {      	 
 	        	 setContentView(R.layout.commentlist);
-	        
+	        	 setTitle(R.string.Comments); 
 	        	 bindControls();							// Set state variables to their form controls
 	        	 
 	        	 // This activity MUST be passed the individual id object
@@ -183,18 +183,18 @@ public class CommentListActivity extends OptionsActivity {
 	    };
 	    
 	    @Override
-		public boolean onCreateOptionsMenu(Menu menu) {
+	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
 	    	super.onCreateOptionsMenu(menu);
 	    	
 	    	if(_canAddComments) {
-	    		MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu);
+	    		com.actionbarsherlock.view.MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu);
 				item.setIcon(R.drawable.ic_menu_add);
 	    	}
 	    	return true;
 	    }
 	    
 		@Override
-		public boolean onOptionsItemSelected(MenuItem item) {
+		public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		    // Handle item selection
 		    switch (item.getItemId()) {
 		    

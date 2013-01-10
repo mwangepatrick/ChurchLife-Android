@@ -23,6 +23,22 @@ public class AssignmentListLoader extends ListLoaderBase<ColorCodedListItem>{
 	}
 	
 	/**
+	 * 
+	 * @param id
+	 * @return a single assignment object for the given id
+	 */
+	public CoreAssignment getAssignmentById(int id) {
+		CoreAssignment ret = null;
+		for (CoreAssignment item : _webServiceResults.Page) {			
+			if (item.AssignmentID == id) {
+				ret = item;
+				break;
+			}						
+		}
+		return ret;
+	} 
+	
+	/**
 	 * calls API and gets json data in return and parses it into an object
 	 */
 	protected void getWebserviceResults() throws AppException { 	

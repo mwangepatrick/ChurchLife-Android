@@ -22,7 +22,7 @@ import com.acstech.churchlife.webservice.CoreCommentChangeRequest;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
 
-public class CommentActivity extends OptionsActivity  {
+public class CommentActivity extends ChurchlifeBaseActivity  {
 
 	static final int DIALOG_PROGRESS = 1;			
 	static final int DIALOG_SAVE = 2;
@@ -48,7 +48,7 @@ public class CommentActivity extends OptionsActivity  {
 	        try
 	        { 
 	        	setContentView(R.layout.comment);
-	        	 
+	        	setTitle(R.string.Comments);
 	        	bindControls();							// Set state variables to their form controls	        	 	       
 	        	 
 	        	 // This activity MUST be passed some data about the individual and comment type to add

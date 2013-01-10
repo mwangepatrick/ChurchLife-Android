@@ -26,7 +26,7 @@ public class CoreAssignment extends CoreObject {
     public Date DueDate;
     public boolean Completed;
     public CoreIndividual ContactInformation;
-   //??? public List<> TeamMembers
+    public List<CoreIndividual> TeamMembers;
     
     public String getDescription() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
@@ -35,9 +35,12 @@ public class CoreAssignment extends CoreObject {
     }
     
     public int getIconResourceId() {
-    	//zzz add logic to determine when to show/hide the correct icon  TODO
-  		//if assignment.TeamMembers.length > 1
-      	return R.drawable.user;
+    	if (TeamMembers.size() > 1) {
+  			return R.drawable.ic_team;
+  		}
+  		else {
+  			return 0;
+  		}  		
     }
 
       	
@@ -62,17 +65,16 @@ public class CoreAssignment extends CoreObject {
 	  		JSONObject ci = jo.getJSONObject("ContactInformation");
 	  		obj.ContactInformation = CoreIndividual.GetCoreIndividual(ci.toString());
 	  		
-	  		// Team Members (list) - may be a list of string
-	  		/*zzz
+	  		// Team Members (list of CoreIndividual)	  		
 	  		JSONArray ja = jo.getJSONArray("TeamMembers");	
-	  		obj.TeamMembers = new ArrayList<??>();
+	  		obj.TeamMembers = new ArrayList<CoreIndividual>();
 	  		  
-	  		  for (int i = 0; i < ja.length(); i++) {
-	  			  JSONObject member = ja.getJSONObject(i);  	  			
-	  			obj.TeamMembers.add(??.Get??(member.toString()));  	  			
-	  		  } 
-	  		*/
-	  		  	  	}
+	  		for (int i = 0; i < ja.length(); i++) {
+	  			JSONObject member = ja.getJSONObject(i);  	  			
+	  			obj.TeamMembers.add(CoreIndividual.GetCoreIndividual(member.toString()));  	  			
+	  		 } 
+	  		
+  	  	}
   	  	catch (JSONException e) {
 			
 			ExceptionInfo i = ExceptionInfo.ExceptionInfoFactory(

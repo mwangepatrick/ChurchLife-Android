@@ -72,6 +72,8 @@
 	<string name="Event.Location">Location</string>
 	<string name="Event.Description">Description</string>
 
+	<string name="Comments">Comments</string>
+	
 	<string name="CommentSummaryList.ProgressDialog">"Loading comments. Please wait."</string>
 	<string name="CommentSummaryList.NoResults">Sorry, no comments found.</string>
 	

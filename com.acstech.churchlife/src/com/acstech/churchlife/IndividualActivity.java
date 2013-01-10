@@ -55,7 +55,7 @@ import com.acstech.churchlife.webservice.CoreIndividualPhone;
  * @author softwarearchitect
  *
  */
-public class IndividualActivity extends OptionsActivity {
+public class IndividualActivity extends ChurchlifeBaseActivity {
 
     private final static int ADD_CONTACT = 100;
     
@@ -80,6 +80,7 @@ public class IndividualActivity extends OptionsActivity {
 	        	 _appPrefs = new AppPreferences(getApplicationContext());
 	        	 
 	        	 setContentView(R.layout.individual);
+	        	 setTitle(R.string.Menu_People);
 	        	 
 	        	 bindControls();							// Set state variables to their form controls	        	 	       
 	        	 
@@ -614,17 +615,15 @@ public class IndividualActivity extends OptionsActivity {
 		}	
 	}
 	
-    
-    // menu - add to contacts menu option 
+
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, ADD_CONTACT, Menu.FIRST, R.string.Individual_ContactCreateMenu);  		
-		return true;
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {		
+		menu.add(Menu.NONE, ADD_CONTACT, Menu.FIRST, R.string.Individual_ContactCreateMenu);  				
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	    case ADD_CONTACT:
@@ -635,6 +634,5 @@ public class IndividualActivity extends OptionsActivity {
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
-
     
 }

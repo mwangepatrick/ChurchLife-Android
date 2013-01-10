@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 import com.acstech.churchlife.ImageHelper;
 import com.acstech.churchlife.R;
-import com.acstech.churchlife.R.id;
-import com.acstech.churchlife.R.layout;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 
 /**
  * Extends the BaseAdapter so that a ListView can display a list items
@@ -21,15 +21,29 @@ import android.widget.TextView;
  * @author softwarearchitect
  *
  */
-public class ColorCodedListItemAdapter extends BaseAdapter {
+public class ColorCodedListItemAdapter extends BaseAdapter  {
+
+	// Event that gets raised when icon is touched
+	public interface OnIconClickListener
+	{
+	    public abstract void onIconClick(Object id);
+	}
+
 	
+	private OnIconClickListener _iconClickListener = null;
 	private ArrayList<ColorCodedListItem> _items;
 	private Context _context;
 
 	// Constructor
 	public ColorCodedListItemAdapter(Context context, ArrayList<ColorCodedListItem> items) {			
-		_context = context;
+		_context = context;		
 		_items = items;				
+	}
+	
+	// Event setter
+	public void setOnIconClickListener(OnIconClickListener l)
+	{
+		_iconClickListener = l;
 	}
 	
 	public Context getContext()			{  return _context;				}
@@ -88,8 +102,7 @@ public class ColorCodedListItemAdapter extends BaseAdapter {
 				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
 				 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
 				 holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
-			 }
-			 			  			 						 			 	
+			 }			 			  			 						 			 
 			 convertView.setTag(holder);
 		}
 		else {
@@ -114,15 +127,25 @@ public class ColorCodedListItemAdapter extends BaseAdapter {
 			}
 		
 			holder.iconImageView.setBackgroundResource(currentItem.getIconResourceID());
+			holder.iconImageView.setTag(currentItem.getId());
+			
+			holder.iconImageView.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					if (_iconClickListener != null) {
+						_iconClickListener.onIconClick(v.getTag());
+					}
+				}
+			});			
 		}
 		else
 		{
 			// title only item
 			holder.id = currentItem.getId();
 			holder.titleTextView.setText(currentItem.getTitle());			
-		}
-		
+		}			
 		return convertView;				
 	}
 
+	 
 }

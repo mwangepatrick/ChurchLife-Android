@@ -531,12 +531,18 @@ public class Api {
 	public Api(String webServiceUrl, String applicationId)	{
 		_baseUrl = webServiceUrl;
 		_applicationId = applicationId;
+		
+		// releasing url
+		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
 	}
 	
 	public Api(String webServiceUrl, String applicationId, ConnectivityManager connManager)	{
 		_baseUrl = webServiceUrl;
 		_applicationId = applicationId;
 		_connectivityManager = connManager;
+		
+		//zzz temp
+		_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
 	}	
 	
 }

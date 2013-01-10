@@ -23,7 +23,7 @@ import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
-public class CommentSummaryListActivity extends OptionsActivity {
+public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 
 	static final int DIALOG_PROGRESS_COMMENTSUMMARY = 0;		// all comment types (summary)
 	
@@ -48,6 +48,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	        try
 	        {      	 
 	        	 setContentView(R.layout.commentlist);
+	        	 setTitle("Comments"); //zzz
 	        	 
 	        	 bindControls();							// Set state variables to their form controls	        	 	       
 	        	 	        	 
@@ -65,8 +66,7 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	            	 _individualId = extraBundle.getInt("id");
 	            	 _individualName = extraBundle.getString("name");
 	            	 
-	            	 headerTextView.setText(_individualName);
-	        
+	            	 headerTextView.setText(_individualName);	            	 
 	            	 loadListWithProgressDialog(true);
 	             }		             
 	        	 
@@ -101,18 +101,18 @@ public class CommentSummaryListActivity extends OptionsActivity {
 	    }
 
 	    @Override
-		public boolean onCreateOptionsMenu(Menu menu) {
+	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
 	    	super.onCreateOptionsMenu(menu);
 	    	
 	    	if (_canAddComments) { 
-	    		MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
+	    		com.actionbarsherlock.view.MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
 				item.setIcon(R.drawable.ic_menu_add);
 	    	}
 	    	return true;
 	    }
 	    
 		@Override
-		public boolean onOptionsItemSelected(MenuItem item) {
+		public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
 		    // Handle item selection
 		    switch (item.getItemId()) {
 		    

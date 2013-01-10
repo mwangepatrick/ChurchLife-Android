@@ -17,7 +17,7 @@ import com.acstech.churchlife.listhandling.EventListItem;
 import com.acstech.churchlife.webservice.CoreEventDetail;
 import com.acstech.churchlife.R;
 
-public class EventActivity extends OptionsActivity {
+public class EventActivity extends ChurchlifeBaseActivity {
 
 	CoreEventDetail _event;					// passed in event detail (from web service call)
 	Date _dateSelected;						// passed in date selected (used in recurring events)
@@ -39,7 +39,7 @@ public class EventActivity extends OptionsActivity {
 	        	 _appPrefs = new AppPreferences(getApplicationContext());
 	        	 
 	        	 setContentView(R.layout.event);
-	        	 
+	        	 setTitle(R.string.Menu_Calendar);
 	        	 bindControls();							// Set state variables to their form controls	        	 	       
 	        	 
 	        	 // This activity MUST be passed the event object (as json string)

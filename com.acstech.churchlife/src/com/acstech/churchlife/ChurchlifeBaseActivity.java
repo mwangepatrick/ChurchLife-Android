@@ -16,8 +16,9 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
-public class ChurchlifeBaseActivity extends SlidingActivity {
+public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 	
 	ListView menuListView;
 	

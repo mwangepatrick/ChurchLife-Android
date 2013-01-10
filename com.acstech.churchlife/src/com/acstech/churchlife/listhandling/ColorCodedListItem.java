@@ -1,6 +1,5 @@
 package com.acstech.churchlife.listhandling;
 
-import com.acstech.churchlife.R;
 import com.acstech.churchlife.webservice.CoreAssignment;
 import com.acstech.churchlife.webservice.CoreAssignmentSummary;
 import com.acstech.churchlife.webservice.CoreCommentSummary;
