@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.os.Bundle;
 
 
@@ -28,65 +30,38 @@ public class ListViewDialog extends DialogFragment {
 		_items = value;
 	}	
 
-	
-	final CharSequence[] items = {"Joe User", "Bar Rafaell", "Sally Smith"};
-
-	
-	@Override 
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        
-        // Title
-        if (_title.length() > 0) {
-        	builder.setTitle(_title);
-        }
-		
-		builder.setItems(_items, null);
-		/*new DialogInterface.OnClickListener() {
-		    public void onClick(DialogInterface dialog, int item) {
-		         // Do something with the selection
-		    }		
-		});*/
-		builder.setPositiveButton(R.string.Dialog_Close, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-               dialog.dismiss();
-            }
-        });  		
-        
-		return  builder.create();	
+	@Override
+	public void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+	    setCancelable(true);
+	    int style = DialogFragment.STYLE_NORMAL, theme = 0;
+	    setStyle(style, theme);
 	}
 	
-	/*
+	
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-    	
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());        
-        
-        // Title
-        if (_title.length() > 0) {
-        	builder.setMessage(_title);
-        }
-        
-        // Items
-        //builder.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, _items),  null);
-        builder.setItems(_items, null);
-        
-        /*    .setPositiveButton(R.string.Save, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       // do something 
-                   }
-               })             						           
-               .setNegativeButton(R.string.Cancel, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int id) {
-                       // User cancelled the dialog
-                   }
-               });
-        */
-        
-        // Create the AlertDialog object and return it
-        //return builder.create();
-   // }
-	
 
+    	//android.R.layout.select_dialog_item - works too...default look
+    	final ListAdapter adapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem_header, _items);
+    	return new AlertDialog.Builder(getActivity())
+            .setCancelable(true)
+            .setTitle(_title)
+            .setAdapter(adapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // does nothing at this time
+                }
+            })            
+            .create();
+    	
+    		/*.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            })
+    	 	*/
+	}
+	
 }

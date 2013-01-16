@@ -4,7 +4,7 @@
 
     <string name="Menu.People">People</string>    
     <string name="Menu.Calendar">Calendar</string>
-    <string name="Menu.Connections">Connections</string>        
+    <string name="Menu.Connections">My Tasks</string>        
     <string name="Menu.MyInfo">My Church</string>
                 
     <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
@@ -16,13 +16,12 @@
     <string name="Dialog.Exit">Exit</string>
     <string name="Dialog.Yes">Yes</string>
     <string name="Dialog.No">No</string>
+    <string name="Dialog.Loading">Loading.  Please wait.</string>
+    <string name="Dialog.LoadingWithTitle">Loading %s.  Please wait.</string>
     
     <string name="Save">Save</string>
     <string name="Cancel">Cancel</string>
-      
-    <string name="TabPeople">People</string>
-    <string name="TabCalendar">Calendar</string>    
-    <string name="TabMyInfo">My Church</string>
+    <string name="EmptyString"></string>
     
     <string name="Login.Email">Email</string>   
     <string name="Login.Password">Password</string>
@@ -90,10 +89,24 @@
 	<string name="Comment.SaveDialog">Submitting Comment for Approval.  Please wait.</string>
 	<string name="Comment.Saved">Comment has been submitted for approval.</string>
 	
+	<string name="AssignmentListSummary.ProgressDialog">"Loading My Tasks. Please wait."</string>
 	<string name="AssignmentList.NoResults">Sorry, no assignments found.</string>
-	<string name="AssignmentListSummary.ProgressDialog">"Loading connections. Please wait."</string>
+		
+	<string name="AssignmentList.ProgressDialog">"Loading %s. Please wait."</string>
 	
-	<string name="AssignmentList.ProgressDialog">"Retrieving '%s'. Please wait."</string>
+	<string name="Assignment.ViewRecent">History</string>
+	<string name="Assignment.EnterNotes">Enter Notes</string>
+	<string name="Assignment.Reassign">Reassign</string>
+			
+	<string name="Connection.LoadingWithTitle">Loading connection for %s.  Please wait.</string>
+	
+	<string name="Connection.Responses">Responses:</string>
+	<string name="Connection.CommentValidation">The comment cannot be blank.</string>
+	<string name="Connection.SaveDialog">Submitting Connection for Approval.  Please wait.</string>
+	<string name="Connection.Saved">Connection has been submitted for approval.</string>
+		
+	<string name="IndividualConnection.Title">View Recent Connections</string>	
+	<string name="IndividualConnection.LoadingWithTitle">Loading recent connections for %s.  Please wait.</string>
 	
 	<string name="MyInfo.VersionPrefix">version</string>
     

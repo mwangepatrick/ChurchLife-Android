@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<style name="Theme.MyTheme" parent="Theme.Sherlock">
 	    <item name="actionBarStyle">@style/Widget.MyTheme.ActionBar</item>
@@ -7,8 +7,17 @@
 	</style>
 	
 	<style name="Widget.MyTheme.ActionBar" parent="Widget.Sherlock.ActionBar">	    
-	    <item name="android:background">#9E9E9E</item>
-    	<item name="background">#9E9E9E</item>
+	    <item name="android:background">@color/primary</item>
+    	<item name="background">@color/primary</item>
 	</style>
 
+	<style name="ButtonBar" >	    
+	    <item name="android:background">#9E9E9E</item>
+	</style>
+
+	<style name="ButtonBarButton" parent="@android:style/TextAppearance.Small" >	    
+	    <item name="android:background">@android:drawable/btn_default</item>
+	    <item name="android:textColor">@android:color/black</item>
+	</style>
+		    
 </resources>

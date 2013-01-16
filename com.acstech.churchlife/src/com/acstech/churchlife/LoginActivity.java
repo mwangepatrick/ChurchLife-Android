@@ -547,10 +547,8 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 		gs.setUser(loggedInUser);
 		gs.setPassword(password);
 					
-    	//start IndividualListActivity
-		Intent intent = new Intent();
-		//intent.setClass(LoginActivity.this, MainActivity.class); 
-		
+    	//start People
+		Intent intent = new Intent();		
 		intent.setClass(LoginActivity.this, IndividualListActivity.class);
 		
 		finish();				// ensures the user cannot use the 'back' to this activity

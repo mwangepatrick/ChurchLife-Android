@@ -9,15 +9,12 @@ import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
 import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter.OnIconClickListener;
 import com.acstech.churchlife.webservice.CoreAssignment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -63,8 +60,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
             	 loadListWithProgressDialog(true);
              }		             
             
-			 // assignment click event
-             
+			 // assignment click event             
 			 detailsListview.setOnItemClickListener(new OnItemClickListener() {
 				 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {            	
 					 ColorCodedListItem itemSelected = (ColorCodedListItem)parent.getAdapter().getItem(position);
@@ -144,38 +140,32 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        	if (_loader.success())	{
 		        		
 		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
-		        		
-		        		/*zzz
+		        				        	
 		        		//If only 1, go directly to the detail page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startAssignmentActivity(Integer.parseInt(item.getId()), true);      			
+		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle(), true);      			
 		        		}
 		        		else {
-		        			// set items to list
-		        			  
-		        			*/
-		        			// Add a 'click' listener to show team members
-		        			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
+		        			// Show the list of assignments
+		           			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
+		        			
+		           			// Add a 'click' listener to show team members in a dialog box		        			
 		        			lia.setOnIconClickListener(new OnIconClickListener() {
 								@Override
 								public void onIconClick(Object id) {
-									// Show dialog of team members
-									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));
-									    															        	
-						        	// Build a list of team member names
-									String[] items = new String[asm.TeamMembers.size()];
-					        		for (int i=0;i< items.length;i++){  
-						        		items[i] = asm.TeamMembers.get(i).getDisplayNameForList();               			
-						        	}         	               
-						    		
-									ListViewDialog dlg = new ListViewDialog();
-									dlg.setTitle("Team Members");
-									dlg.setItems(items);
-									dlg.show(getSupportFragmentManager(), "");									
+									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));									    		
+									if (asm.TeamMembers.size() > 0)
+									{										
+										ListViewDialog dlg = new ListViewDialog();
+										dlg.setTitle("Team Members");
+										dlg.setItems(asm.getTeamMemberList());
+										dlg.show(getSupportFragmentManager(), "");
+									}
 								}		        				
-		        			});		        			
+		        			});	
+		        			
 		        			detailsListview.setAdapter(lia);
-		        		//}
+		        		}
 		        	}
 		        	else {
 		        		throw _loader.getException();
@@ -201,7 +191,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	       	 		loadListWithProgressDialog(true);  
 	       	 	}
 	       	 	else {	 
-	       	 		startAssignmentActivity(Integer.parseInt(item.getId()), false);    		 		       	 	
+	       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle(), false);    		 		       	 	
 	       	 	}       	 	       	 	
 	    	}
 	        catch (Exception e) {
@@ -216,20 +206,17 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	     * 
 	     * @param assignmentId	    
 	     */
-	    private void startAssignmentActivity(int assignmentId, boolean closeThisActivity) {
+	    private void startAssignmentDetailActivity(int assignmentId, String assignmentName, boolean closeThisActivity) {
 	    	
 	    	Intent intent = new Intent();
-	    	/*
-	    	 * zzz TODO:
-	    	 * 	 	intent.setClass(this, AssignmentActivity.class);
+	    	intent.setClass(this, AssignmentDetailActivity.class);
 		 	intent.putExtra("assignmentid", assignmentId);
+		 	intent.putExtra("assignmentname", assignmentName);
 		 	startActivity(intent);	  
-		 	*/
-	    	
+		 	
 		 	if (closeThisActivity) {
 		 		finish();
-		 	}
-		 		    	
+		 	}		 		    	
 	    }
 	 
 }

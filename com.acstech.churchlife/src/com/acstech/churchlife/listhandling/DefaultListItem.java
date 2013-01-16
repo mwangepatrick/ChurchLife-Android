@@ -63,6 +63,11 @@ public class DefaultListItem {
 		_iconResourceId = iconResourceId;
 	}
 	
+	public DefaultListItem(int id, String description) {
+		_id = Integer.toString(id);
+		_description = description;
+	}
+	
 	public DefaultListItem(String id, String description) {
 		_id = id;
 		_description = description;

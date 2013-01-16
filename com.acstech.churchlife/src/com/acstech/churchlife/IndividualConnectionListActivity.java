@@ -19,23 +19,22 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.listhandling.ColorCodedListItem;
 import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
 import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
+import com.acstech.churchlife.listhandling.DefaultListItem;
+import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
+import com.acstech.churchlife.listhandling.IndividualConnectionListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
-public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
+public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 
-	static final int DIALOG_PROGRESS_COMMENTSUMMARY = 0;		// all comment types (summary)
-	
-	private static final int ADD_COMMENT = 100;
-	
+	static final int DIALOG_PROGRESS = 0;		
 	private ProgressDialog _progressD;
 	
 	int _individualId;											// passed via intent
 	String _individualName;										// passed via intent
-	boolean _canAddComments = false;
 	
-	CommentSummaryListLoader _loader;	
-	ColorCodedListItemAdapter _itemArrayAdapter;
+	IndividualConnectionListLoader _loader;	
+	DefaultListItemAdapter _itemArrayAdapter;
 	
 	TextView headerTextView;
 	ListView lv1;
@@ -47,7 +46,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        try
 	        {      	 
 	        	 setContentView(R.layout.commentlist);
-	        	 setTitle("Comments"); //zzz
+	        	 setTitle(R.string.IndividualConnection_Title);
 	        	 
 	        	 bindControls();							// Set state variables to their form controls	        	 	       
 	        	 	        	 
@@ -58,8 +57,8 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	            			 ExceptionInfo.TYPE.UNEXPECTED,
 							 ExceptionInfo.SEVERITY.CRITICAL, 
 							 "100",           												    
-							 "CommentSummaryActivity.onCreate",
-							 "No individual id was passed to the Comment Summary activity.");
+							 "IndividualConnectionList.onCreate",
+							 "No individual id was passed to the Individual Connection List activity.");
 	             }
 	             else {	       
 	            	 _individualId = extraBundle.getInt("id");
@@ -68,28 +67,28 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	            	 headerTextView.setText(_individualName);	            	 
 	            	 loadListWithProgressDialog(true);
 	             }		             
-	        	 
-	             // Wire up list on click - display comment type activity
+	        	 	             
+	             // Wire up list on click 
 	             lv1.setOnItemClickListener(new OnItemClickListener() {
 	                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 	                	                 	                	
-	                	 ColorCodedListItem itemSelected = (ColorCodedListItem)parent.getAdapter().getItem(position);
-	                	 ItemSelected(itemSelected);          	                	 
+	                	 DefaultListItem itemSelected = (DefaultListItem)parent.getAdapter().getItem(position);
+	                	 //ItemSelected(itemSelected);          	                	 
 	                 }
 	             });	             	        	         	
 	        }
 	    	catch (Exception e) {
-	    		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
-	    		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
+	    		removeDialog(DIALOG_PROGRESS);
+	    		ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
 	    		ExceptionHelper.notifyNonUsers(e);
 	    	}  	        
 	    }
 	 
 	    protected Dialog onCreateDialog(int id) {
 	        switch(id) {
-	        case DIALOG_PROGRESS_COMMENTSUMMARY:
-	        	_progressD = new ProgressDialog(CommentSummaryListActivity.this);
+	        case DIALOG_PROGRESS:
+	        	_progressD = new ProgressDialog(IndividualConnectionListActivity.this);
 	        	
-	        	String msg = getString(R.string.CommentSummaryList_ProgressDialog);	        		        
+	        	String msg = String.format(getString(R.string.IndividualConnection_LoadingWithTitle), _individualName);	        		        
 	        	_progressD.setMessage(msg);        	
 	        	_progressD.setIndeterminate(true);
 	        	_progressD.setCancelable(false);
@@ -99,6 +98,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        }
 	    }
 
+	    /*
 	    @Override
 	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
 	    	super.onCreateOptionsMenu(menu);
@@ -109,6 +109,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	}
 	    	return true;
 	    }
+	    
 	    
 		@Override
 		public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
@@ -127,7 +128,8 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 		        return super.onOptionsItemSelected(item);
 		    }
 		}
-		
+		*/
+	    
 	    /**
 	     *  Links state variables to their respective form controls
 	     */
@@ -136,6 +138,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
+	    /*
 	    private void setCanAddComments() throws AppException {
 	    	
 	    	GlobalState gs = GlobalState.getInstance(); 
@@ -145,6 +148,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
 	    	_canAddComments = (results.size() > 0);		   	
 	    }
+	    */
 	    
 	    
 	    /**
@@ -154,14 +158,14 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	     */
 	    private void loadListWithProgressDialog(boolean nextResult)
 	    {           	    
-	    	showDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
+	    	showDialog(DIALOG_PROGRESS);
 	    	
 	    	try
 	    	{	
 	    		// if first time....
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentSummaryListLoader(this, _individualId);
-	    			setCanAddComments();
+	    			_loader = new IndividualConnectionListLoader(this, _individualId);
+	    			//setCanAddComments();
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)
@@ -173,7 +177,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    		}
 	    	}
 	    	catch (Exception e) {
-				ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
+				ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
 	    		ExceptionHelper.notifyNonUsers(e); 				    				
 			}  	    	   	    
 	    }
@@ -184,30 +188,21 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        	
 	        	try
 	        	{	        		        	
-		        	if (_loader.success())	{
-		        		
-		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
-		        		
-		        		//If only 1 type, go directly to the comment type (detail) page	  
-		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), true);		        			
-		        		}
-		        		else {
-				     		// set items to list
-			        		lv1.setAdapter(new ColorCodedListItemAdapter(CommentSummaryListActivity.this, _loader.getList()));
-		        		}
+		        	if (_loader.success())	{		        		
+				     	// set items to list
+			        	lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList()));		        		
 		        	}
 		        	else {
 		        		throw _loader.getException();
 		        	}
 	        	}
 	        	catch (Throwable e) {
-	        		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
+	        		ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
 	        		ExceptionHelper.notifyNonUsers(e); 	        	
 				} 	        	
 	        	finally
 	        	{
-	        		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
+	        		removeDialog(DIALOG_PROGRESS);
 	        	}
 	        }
 	    };    
@@ -216,21 +211,24 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    private void ItemSelected(ColorCodedListItem item)
 	    {    	    
 	    	try {
+	    		/*
 	    		// Is this a comment type that was selected or a 'more records' item.	    	
 	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
 	       	 		loadListWithProgressDialog(true);  // how to tell back/next?
 	       	 	}
 	       	 	else {	 
 	       	 		startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), false);    		 		       	 	
-	       	 	}       	 	       	 	
+	       	 	} 
+	       	 	*/      	 	       	 	
 	    	}
 	        catch (Exception e) {
 	        	// must NOT raise errors.  called by an event
-				ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
+				ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
 		    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
 			}  
 	    }
 
+	    
 	    /**
 	     * Display the comment type screen
 	     * 
@@ -238,6 +236,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	     * @param individualName
 	     * @param commentTypeId
 	     */
+	    /*
 	    private void startCommentListActivity(int individualId, String individualName, int commentTypeId, boolean closeThisActivity) {
 	    	Intent intent = new Intent();
    		 	intent.setClass(this, CommentListActivity.class); 		        	 	
@@ -250,5 +249,6 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
    		 		finish();
    		 	}
 	    }
+	    */
 	    
 }

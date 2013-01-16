@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
@@ -15,11 +17,11 @@ import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.slidingmenu.lib.SlidingMenu;
-import com.slidingmenu.lib.app.SlidingActivity;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 	
+	FrameLayout menuHeader;
 	ListView menuListView;
 	
 	// default - display title bar (overridden if necessary)
@@ -40,7 +42,14 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	setTheme(R.style.Theme_MyTheme);
     	
     	super.onCreate(savedInstanceState);
-        
+    
+    	
+    	//est
+    	//TypedValue tv = new TypedValue();    	
+    	//this.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+    	//int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
+    	
+    	
     	//---------------------------------------
     	// show/hide title bar
     	//---------------------------------------
@@ -60,6 +69,8 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		bindControls();	
     		loadMenuItems();
     		 
+    		//menuHeader.setMinimumHeight(getSupportActionBar().getHeight()+50);
+    		
             // Wire up menu OnClick
             menuListView.setOnItemClickListener(new OnItemClickListener() {
             	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {                 	 
@@ -98,6 +109,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      *  Links state variables to their respective form controls
      */
     private void bindControls(){
+    	menuHeader = (FrameLayout)this.findViewById(R.id.menuHeader);
     	menuListView = (ListView)this.findViewById(R.id.menuListView01);
     }
     
@@ -108,10 +120,10 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	
     	ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem>();
     	
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_tab_people_unselected)); 
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_tab_calendar_unselected));
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections)));
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_MyInfo), R.drawable.ic_tab_info_unselected));
+    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people)); 
+    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
+    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo));
+    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_MyInfo), R.drawable.ic_action_info));
     	
     	menuListView.setAdapter(new DefaultListItemAdapter(this, itemList, R.layout.listitem_withicon));			   
     }
@@ -122,6 +134,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      */
     private void listMenuItemSelected(DefaultListItem item) {
     	Intent intent = null;
+    	boolean closeCurrentActivity = true;
     	
     	if (item.getTitle().equals(getResources().getString(R.string.Menu_People))) {
     		intent = new Intent().setClass(this, IndividualListActivity.class);  	
@@ -134,9 +147,14 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_MyInfo))) {
     		intent = new Intent().setClass(this, MyInfoActivity.class);
+    		// special case:  do not close the activity if this is the my info splash screen
+        	//    as it does not have a title bar
+    		closeCurrentActivity = false;
     	}    	
-    	    
-		finish();				// ensures the user cannot use the 'back' to this activity		
+    	        	
+    	if (closeCurrentActivity) {
+    		finish(); // ensures the user cannot use the 'back' to this activity
+    	}
 		startActivity(intent);	// launch intent    	
     }
 

@@ -18,7 +18,8 @@ public class CoreAcsUser extends CoreObject {
 	 
 	  public static String PERMISSION_GRANTED = "A";
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
-	
+	  public static String PERMISSION_ASSIGNCONNECTION = "AssignConnections";
+	  
 	  public int SiteNumber;
       public String Email;
       public String UserName;

@@ -118,13 +118,16 @@ public class ColorCodedListItemAdapter extends BaseAdapter  {
 			holder.titleTextView.setText(currentItem.getTitle());
 			holder.descriptionTextView.setText(currentItem.getDescription());
 					
-			if (currentItem.getColor().length() > 0)
-			{
+			if (currentItem.getColor().length() > 0)  {
 				//holder.colorImageView.getBackground().setColorFilter(Color.parseColor("#00ff00"), Mode.DARKEN);
 				//holder.colorImageView.setBackgroundColor(Color.parseColor("#" + currentItem.getColor()));
 				//holder.colorImageView.setBackgroundColor(Color.GREEN);
 				holder.colorImageView.setImageBitmap(ImageHelper.getBackground("#" + currentItem.getColor()));
 			}
+			else {
+				holder.colorImageView.setVisibility(View.GONE);
+			}
+				 
 		
 			holder.iconImageView.setBackgroundResource(currentItem.getIconResourceID());
 			holder.iconImageView.setTag(currentItem.getId());

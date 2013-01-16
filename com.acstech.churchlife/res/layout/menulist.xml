@@ -6,6 +6,27 @@
   android:layout_height="match_parent"  
   android:background="@drawable/menulist_background">
 
+    <FrameLayout
+        android:id="@+id/menuHeader"
+        android:layout_width="match_parent"        
+        android:layout_height="@dimen/abs__action_bar_default_height">
+                  
+        <ImageView
+            android:paddingLeft="5dp"
+        	android:id="@+id/imageView1"
+        	android:layout_width="143dp"
+        	android:layout_height="40dp"
+        	android:padding="2dp"        	
+        	android:layout_gravity="center_vertical"        	
+        	android:src="@drawable/homelogo" />
+    		        
+    </FrameLayout>
+
+	<View
+    	android:layout_width="fill_parent"
+    	android:layout_height="1dp"
+    	android:background="@android:color/darker_gray"/>
+    	    
   	<ListView
    		android:id="@+id/menuListView01"
    		android:layout_height="fill_parent"

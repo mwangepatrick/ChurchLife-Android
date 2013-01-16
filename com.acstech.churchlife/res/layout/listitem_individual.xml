@@ -9,7 +9,7 @@
 			android:text="Title"
 			android:layout_width="wrap_content" 
 			android:layout_height="wrap_content"				
-			android:textColor="@color/Mustard">
+			android:textColor="@color/tertiary">
 	</TextView>
 
 	<TextView 		

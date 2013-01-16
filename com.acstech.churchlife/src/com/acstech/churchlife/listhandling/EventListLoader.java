@@ -1,4 +1,4 @@
-package com.acstech.churchlife;
+package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,9 +6,10 @@ import java.util.List;
 
 import android.content.Context;
 
+import com.acstech.churchlife.GlobalState;
+import com.acstech.churchlife.R;
+import com.acstech.churchlife.R.string;
 import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.listhandling.EventListItem;
-import com.acstech.churchlife.listhandling.ListLoaderBase;
 import com.acstech.churchlife.webservice.CoreEvent;
 import com.acstech.churchlife.webservice.CorePagedResult;
 

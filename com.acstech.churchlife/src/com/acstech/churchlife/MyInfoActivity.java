@@ -3,13 +3,14 @@ package com.acstech.churchlife;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.R;
 
+import android.app.Activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class MyInfoActivity extends ChurchlifeBaseActivity  {
+public class MyInfoActivity extends Activity  {
 	 	
 	TextView txtName;
 	TextView txtVersion;

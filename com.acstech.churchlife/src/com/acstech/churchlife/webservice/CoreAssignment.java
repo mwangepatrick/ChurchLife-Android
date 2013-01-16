@@ -36,13 +36,22 @@ public class CoreAssignment extends CoreObject {
     
     public int getIconResourceId() {
     	if (TeamMembers.size() > 1) {
-  			return R.drawable.ic_team;
+  			return R.drawable.ic_action_team;
   		}
   		else {
-  			return 0;
+  			return 0;	
   		}  		
     }
 
+    // returns a string array of team member names (used when displaying)
+    public String[] getTeamMemberList() {
+    
+    	String[] items = new String[TeamMembers.size()];
+		for (int i=0;i< items.length;i++){  
+    		items[i] = TeamMembers.get(i).getDisplayNameForList();               			
+    	}
+		return items;
+    }
       	
     // Factory Method - parse json
     public static CoreAssignment GetCoreAssignment(String json) throws AppException

@@ -7,6 +7,7 @@ import java.util.Date;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.listhandling.EventListItem;
 import com.acstech.churchlife.listhandling.EventListItemAdapter;
+import com.acstech.churchlife.listhandling.EventListLoader;
 import com.acstech.churchlife.listhandling.SeparatedListAdapter;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreEventDetail;

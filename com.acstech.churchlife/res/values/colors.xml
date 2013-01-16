@@ -8,6 +8,15 @@
 	<color name="Mustard">#F7DC0C</color>
 	<color name="translucent_black">#80000000</color>
 		
+		
 	<color name="darkblue">#131731</color>
 	<color name="splashblue">#a1bdd2</color>
+	
+	
+	
+	<!--  new scheme  -->
+	<color name="primary">#3f5487</color>
+	<color name="secondary">#a6c0d3</color>
+	<color name="tertiary">#ffcb4a</color>
+	
 </resources>

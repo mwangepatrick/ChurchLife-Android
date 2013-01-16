@@ -111,7 +111,107 @@ public class Api {
     	}
 		return assignments;
 	}
-	
+
+	// Connections
+	public CoreConnection connection(String username, String password, String siteNumber, int connectionId) throws AppException {
+
+		isOnlineCheck();
+		
+		CoreConnection connection = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/%s", _baseUrl, siteNumber, connectionId));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	       
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			connection = CoreConnection.GetCoreConnection(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.connection");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("connectionId", connectionId);
+    		throw e;
+    	}
+		return connection;	
+	}
+
+	public void connectionAdd(String username, String password, String siteNumber, CoreConnectionChangeRequest connection)  throws AppException {
+		
+		RESTClient client = new RESTClient(String.format("%s/%s/connections", _baseUrl, siteNumber));
+    			
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	
+    	client.AddHeader("Content-Type", "application/x-www-form-urlencoded");    	
+    	    	
+    	try	{
+    		
+    	    client.AddPostEntity(connection.toJsonString());
+            
+            client.Execute(RequestMethod.POST);    	    		
+    		
+    		if (client.getResponseCode() != HttpStatus.SC_OK) {
+    			 throw AppException.AppExceptionFactory(
+            			 ExceptionInfo.TYPE.APPLICATION,
+						 ExceptionInfo.SEVERITY.CRITICAL, 
+						 "100",           												    
+						 "Api.connectionAdd",
+						 "This connection could not be saved.  Please try again.");
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.connectionAdd");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("connection", connection.toJsonString());
+    		throw e;
+    	}		
+	}
+
+	// connections by individual
+	public CorePagedResult<List<CoreConnection>> connections(String username, String password, String siteNumber, int individualId, int pageIndex) throws AppException {
+
+		isOnlineCheck();
+		
+		CorePagedResult<List<CoreConnection>> connections = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/individuals/%s/connections", _baseUrl, siteNumber, individualId));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	
+    	client.AddParam("pageIndex", Integer.toString(pageIndex));
+        
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			connections = CoreConnection.GetCoreConnectionPagedResult(client.getResponse());
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.connections");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		info.getParameters().put("individualdid", individualId);
+    		throw e;
+    	}
+		return connections;
+	}
+
 	
 	/************************************************************/
 	/*					 	Comments							*/
