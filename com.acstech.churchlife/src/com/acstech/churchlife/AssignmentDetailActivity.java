@@ -96,7 +96,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 				
 		// Reassign - check permission and hide/disable button IF the user does NOT have permission
 		GlobalState gs = GlobalState.getInstance(); 
-		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNCONNECTION) == false) {
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_REASSIGNCONNECTION) == false) {
 			reassignButton.setVisibility(View.GONE);
 		}
 					
@@ -143,7 +143,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	  *   Sets control properties
 	 */
 	 private void bindData(){		 		 	
-		 assignmentTextView.setText(_connection.getDescription());		 		 
+		 assignmentTextView.setText(_connection.getDescription());		  
 	 }
 	 
 	 

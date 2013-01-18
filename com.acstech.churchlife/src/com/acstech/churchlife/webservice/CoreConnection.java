@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.R;
 import com.acstech.churchlife.R.string;
+import com.acstech.churchlife.StringHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
@@ -44,12 +45,12 @@ public class CoreConnection  extends CoreObject {
     public String getFullDescription() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);		
-		String result = String.format("%s %s", sdf.format(DueDate), ContactType);
-		
+		String result = String.format("%s %s", sdf.format(DueDate), ConnectionTypeDescription);
+				
 		//zzz (what about 'by Joe Smith'....response?)
 		
 		if (Comment.trim().length() > 0) {
-			result = String.format("%s %s", result, Comment);
+			result = String.format("%s \n%s", result, Comment);
 		}
 				
 		return result;
@@ -98,7 +99,7 @@ public class CoreConnection  extends CoreObject {
   			  obj.DateCreated = DateHelper.StringToDate(createDate, "MM/dd/yyyy");
   		  }
   		  
-  		  obj.Comment = jo.optString("Comment");  		    		    		 
+  		  obj.Comment = StringHelper.NullOrEmpty(jo.optString("Comment"));  		    		    		 
   		  obj.ContactType = jo.getString("ContactType");
   		  obj.DueDate = DateHelper.StringToDate(jo.getString("DueDate"), "MM/dd/yyyy");
   		  obj.DueDateLong = jo.getString("DueDateLong");  		

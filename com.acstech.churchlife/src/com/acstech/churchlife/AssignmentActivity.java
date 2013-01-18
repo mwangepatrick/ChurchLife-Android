@@ -12,6 +12,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,8 +36,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	
 	EditText connectionEditText;
 	Button responsesButton;	
-	//Button enterButton;	
-	//zzz checkbox for revisit vs. done
+	CheckBox closeCheckBox;
 	Button saveButton;
 		
 	CoreConnection _connection;
@@ -55,8 +55,6 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 			 
 			 setContentView(R.layout.assignment); 
 			 bindControls();
-			 
-			 //zzz pass entire thing if we keep the 'detail view' screen...otherwise load it
 			 
         	 // This activity MUST be passed data
         	 Bundle extraBundle = this.getIntent().getExtras();
@@ -114,15 +112,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 
 		connectionEditText = (EditText)this.findViewById(R.id.connectionEditText);		
 		responsesButton = (Button)this.findViewById(R.id.responsesButton);
+		closeCheckBox = (CheckBox)this.findViewById(R.id.closeCheckBox);
 		saveButton = (Button)this.findViewById(R.id.saveButton);
-			
-		 /*
-		// Reassign - check permission and hide/disable button IF the user does NOT have permission
-		GlobalState gs = GlobalState.getInstance(); 
-		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNCONNECTION) == false) {
-			reassignButton.setVisibility(View.GONE);
-		}*/
-		 			
+								
 		// Responses button click event             
 		responsesButton.setOnClickListener(new OnClickListener() {				 
 			 @Override
@@ -152,9 +144,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		 setTitle(_connection.ContactInformation.getDisplayNameForList());
 		 connectionEditText.setText(_connection.Comment);
-		 
-		 //zzz- set to string delimited response list
-		 responsesButton.setText("test");
+		 //responsesButton.setText("test");
 	 }
 	 
 	 
@@ -259,8 +249,8 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	    		
 	    		CoreConnectionChangeRequest req = new CoreConnectionChangeRequest();
 	    		req.ConnectionId = _connection.ConnectionId;
-	    		req.Complete = true;	//depends on button or checkmark click
-	    		req.ConnectionDate = new Date(); 
+	    		req.Complete = closeCheckBox.isChecked();
+	    		req.ConnectionDate = new Date(); //????
 	    		req.ConnectionTypeId = _connection.ConnectionTypeId;
 	    		req.FamilyConnection = _connection.FamilyConnection;
 	    		req.ContactIndvId = _connection.ContactInformation.IndvId;
