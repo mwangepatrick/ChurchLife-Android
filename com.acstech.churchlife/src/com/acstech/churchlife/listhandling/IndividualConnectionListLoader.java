@@ -46,10 +46,17 @@ public class IndividualConnectionListLoader extends ListLoaderBase<DefaultListIt
 		if (_webServiceResults.Page.size() == 0) {    					    		
 			_itemList.add(new DefaultListItem(getNoResultsMessage()));	    				
 		}	    			
-		else {		    				
+		else {		
+			
+			// Remove the 'More Results' item at the end of the list if this is a subsequent load
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle().equals(getNextResultsMessage()))
+			{
+				_itemList.remove(_itemList.size()-1);				
+			}
+			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreConnection item : _webServiceResults.Page) {
-				_itemList.add(new DefaultListItem(item.getFullDescription()));
+				_itemList.add(new DefaultListItem(item.ConnectionId,"", item.getFullDescription()));
 			}
 			
   	    	// If the web service indicates more records...Add the 'More Records' item
@@ -64,7 +71,7 @@ public class IndividualConnectionListLoader extends ListLoaderBase<DefaultListIt
 		super(context);
 		_individualId = individualId;
 		
-		super.setNoResultsMessage(R.string.CommentSummaryList_NoResults);
+		super.setNoResultsMessage(R.string.IndividualConnection_NoResults);
 		super.setNextResultsMessage(R.string.IndividualList_More);		
 	}
 }

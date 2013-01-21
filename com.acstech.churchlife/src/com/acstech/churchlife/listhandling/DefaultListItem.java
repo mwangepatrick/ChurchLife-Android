@@ -73,6 +73,12 @@ public class DefaultListItem {
 		_description = description;
 	}
 	
+	public DefaultListItem(int id, String description, String title) {
+		_id = Integer.toString(id);
+		_description = description;
+		_title = title;
+	}
+	
 	public DefaultListItem(String id, String description, String title) {
 		_id = id;
 		_description = description;

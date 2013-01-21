@@ -72,7 +72,7 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	             lv1.setOnItemClickListener(new OnItemClickListener() {
 	                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 	                	                 	                	
 	                	 DefaultListItem itemSelected = (DefaultListItem)parent.getAdapter().getItem(position);
-	                	 //ItemSelected(itemSelected);          	                	 
+	                	 ItemSelected(itemSelected);          	                	 
 	                 }
 	             });	             	        	         	
 	        }
@@ -208,18 +208,18 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    };    
 	    	    	  	  
 	    // Occurs when a user selects an comment type on the listview.    
-	    private void ItemSelected(ColorCodedListItem item)
+	    private void ItemSelected(DefaultListItem item)
 	    {    	    
 	    	try {
-	    		/*
+	    		
 	    		// Is this a comment type that was selected or a 'more records' item.	    	
 	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
-	       	 		loadListWithProgressDialog(true);  // how to tell back/next?
+	       	 		loadListWithProgressDialog(true);  
 	       	 	}
 	       	 	else {	 
-	       	 		startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), false);    		 		       	 	
+	       	 		//nothing to do  		 		       	 	
 	       	 	} 
-	       	 	*/      	 	       	 	
+	       	 	      	 	       	 	
 	    	}
 	        catch (Exception e) {
 	        	// must NOT raise errors.  called by an event
@@ -228,27 +228,5 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 			}  
 	    }
 
-	    
-	    /**
-	     * Display the comment type screen
-	     * 
-	     * @param individualId
-	     * @param individualName
-	     * @param commentTypeId
-	     */
-	    /*
-	    private void startCommentListActivity(int individualId, String individualName, int commentTypeId, boolean closeThisActivity) {
-	    	Intent intent = new Intent();
-   		 	intent.setClass(this, CommentListActivity.class); 		        	 	
-   		 	intent.putExtra("id", _individualId);
-   		 	intent.putExtra("name", _individualName);
-   		 	intent.putExtra("commenttypeid", commentTypeId);
-   		 	startActivity(intent);	  
-   		 	
-   		 	if (closeThisActivity) {
-   		 		finish();
-   		 	}
-	    }
-	    */
-	    
+	    	    
 }

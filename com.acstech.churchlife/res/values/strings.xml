@@ -110,6 +110,7 @@
 		
 	<string name="IndividualConnection.Title">View Recent Connections</string>	
 	<string name="IndividualConnection.LoadingWithTitle">Loading recent connections for %s.  Please wait.</string>
+	<string name="IndividualConnection.NoResults">Sorry, no recent connections found.</string>	
 	
 	<string name="MyInfo.VersionPrefix">version</string>
     

@@ -143,7 +143,9 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
 			
 		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-	    	_canAddComments = (results.size() > 0);		   	
+		   	if (results != null) 	{
+		   		_canAddComments = (results.size() > 0);
+		   	}
 	    }
 	    
 	    
@@ -173,6 +175,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    		}
 	    	}
 	    	catch (Exception e) {
+	    		removeDialog(DIALOG_PROGRESS_COMMENTSUMMARY);
 				ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
 	    		ExceptionHelper.notifyNonUsers(e); 				    				
 			}  	    	   	    

@@ -12,6 +12,7 @@ import com.acstech.churchlife.AppPreferences;
 import com.acstech.churchlife.config;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.webservice.Api;
 
 // Performs a web service call on another thread.
@@ -31,6 +32,7 @@ public abstract class ListLoaderBase<T> {
 	
 	protected abstract ArrayList<T> getList();	
 	protected abstract void getWebserviceResults() throws AppException; 
+	
 	protected abstract void buildItemList() throws AppException;
 		
 	private String _noResultsMessage = "Sorry, no record found.";
@@ -107,17 +109,18 @@ public abstract class ListLoaderBase<T> {
 		}	
 		else {
 			Load(0, onLoaded);
-		}
+		}		
 	}
 	
-	public void Load(int pageIndex, Runnable onLoaded) throws AppException {
+	// Hanlder CANNOT throw AppException.  Caller should check for _exception existence!
+	public void Load(int pageIndex, Runnable onLoaded) {
 		
 		_pageIndex = pageIndex;
 		_postRun = onLoaded;
 		
 		// This handler is called once the search is complete.  It looks at the data returned
     	//  from the thread (in the Message) to determine success/failure. 
-    	final Handler handler = new Handler() {
+    	final Handler handler = new Handler()  {
     		public void handleMessage(Message msg) {    			    
     			try {
 	    			if (msg.what == 0) {
@@ -130,12 +133,12 @@ public abstract class ListLoaderBase<T> {
 	       			}		    						    		
 	       			else if (msg.what < 0) {
 	       				// If < 0, the exception is in the message bundle.  Save it
-	       				Bundle b = msg.getData();
-	       				_exception = ExceptionHelper.getAppExceptionFromBundle(b, "ListLoader.handleMessage");	    				
+	       				Bundle b = msg.getData();	       			
+	       				_exception = ExceptionHelper.getAppExceptionFromBundle(b, "ListLoader.handleMessage");
 	       			} 
     			}
-    			catch (Exception e) {
-    				_exception = e;			    				
+    			catch (Exception e) {	
+    				_exception = e;    		    	
     			}    
     		}
     	};
@@ -156,7 +159,7 @@ public abstract class ListLoaderBase<T> {
     			}    			       	    	    	    	
     		 }
     	};
-    	searchThread.start();
+    	searchThread.start();    	    	    	  
 	}
 	
 	public ListLoaderBase(Context context) {

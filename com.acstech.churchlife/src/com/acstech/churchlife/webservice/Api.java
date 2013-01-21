@@ -635,7 +635,7 @@ public class Api {
 		
 		// releasing url
 		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
-		_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
+		//_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
 	}
 	
 	public Api(String webServiceUrl, String applicationId, ConnectivityManager connManager)	{
@@ -646,7 +646,7 @@ public class Api {
 		//zzz temp
 		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
 		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
-		_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
+		//_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
 	}	
 	
 }

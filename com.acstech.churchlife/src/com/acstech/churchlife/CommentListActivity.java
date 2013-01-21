@@ -134,6 +134,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	    		}
 	    	}
 	    	catch (Exception e) {
+	    		removeDialog(DIALOG_PROGRESS_COMMENT);
 				ExceptionHelper.notifyUsers(e, CommentListActivity.this);
 	    		ExceptionHelper.notifyNonUsers(e); 				    				
 			}  	    		    	

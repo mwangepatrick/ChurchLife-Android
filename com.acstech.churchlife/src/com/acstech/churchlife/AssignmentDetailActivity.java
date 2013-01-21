@@ -143,7 +143,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	  *   Sets control properties
 	 */
 	 private void bindData(){		 		 	
-		 assignmentTextView.setText(_connection.getDescription());		  
+		 assignmentTextView.setText(_connection.getDescription());		
 	 }
 	 
 	 

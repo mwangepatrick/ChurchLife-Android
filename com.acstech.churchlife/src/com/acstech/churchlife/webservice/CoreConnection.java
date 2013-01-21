@@ -16,6 +16,7 @@ import com.acstech.churchlife.R.string;
 import com.acstech.churchlife.StringHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.DefaultListItem;
 
 public class CoreConnection  extends CoreObject {
 
@@ -46,11 +47,20 @@ public class CoreConnection  extends CoreObject {
     	String DATE_FORMAT = "MM/dd/yyyy";		
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);		
 		String result = String.format("%s %s", sdf.format(DueDate), ConnectionTypeDescription);
+		
+		// list of all people assigned to this connection
+		String authorList = "";
+		for (CoreIndividual indv : TeamMembers) {
+			if (authorList.length() > 0 ) { authorList = authorList + ", "; }
+			authorList = authorList + String.format("%s %s", indv.FirstName, indv.LastName);
+		}
 				
-		//zzz (what about 'by Joe Smith'....response?)
+		if (authorList.length() > 0) {
+			authorList = String.format("by %s", authorList);
+		}
 		
 		if (Comment.trim().length() > 0) {
-			result = String.format("%s \n%s", result, Comment);
+			result = String.format("%s %s \n%s", result, authorList, Comment);
 		}
 				
 		return result;
