@@ -156,7 +156,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));									    		
 									if (asm.TeamMembers.size() > 0)
 									{										
-										ListViewDialog dlg = new ListViewDialog();
+										DialogListViewFragment dlg = new DialogListViewFragment();
 										dlg.setTitle("Team Members");
 										dlg.setItems(asm.getTeamMemberList());
 										dlg.show(getSupportFragmentManager(), "");

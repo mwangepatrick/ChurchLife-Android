@@ -12,11 +12,9 @@ import org.json.JSONObject;
 
 import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.R;
-import com.acstech.churchlife.R.string;
 import com.acstech.churchlife.StringHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.listhandling.DefaultListItem;
 
 public class CoreConnection  extends CoreObject {
 
@@ -36,6 +34,7 @@ public class CoreConnection  extends CoreObject {
 	public int TeamMemberCount;
 	public CoreIndividual ContactInformation;
     public List<CoreIndividual> TeamMembers;
+    public List<CoreResponseType> Responses;
     
     public String getDescription() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
@@ -54,13 +53,13 @@ public class CoreConnection  extends CoreObject {
 			if (authorList.length() > 0 ) { authorList = authorList + ", "; }
 			authorList = authorList + String.format("%s %s", indv.FirstName, indv.LastName);
 		}
-				
+			
 		if (authorList.length() > 0) {
-			authorList = String.format("by %s", authorList);
+			result = String.format("%s by %s", result, authorList);
 		}
-		
+				
 		if (Comment.trim().length() > 0) {
-			result = String.format("%s %s \n%s", result, authorList, Comment);
+			result = String.format("%s \n%s", result, Comment);
 		}
 				
 		return result;
@@ -83,6 +82,15 @@ public class CoreConnection  extends CoreObject {
     		items[i] = TeamMembers.get(i).getDisplayNameForList();               			
     	}
 		return items;
+    }
+        
+    public boolean containsResponse(int responseTypeId) {
+    	for (CoreResponseType r : Responses) {
+    		if (r.RespID == responseTypeId) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     // Factory Method - parse json
@@ -126,7 +134,16 @@ public class CoreConnection  extends CoreObject {
   		  for (int i = 0; i < ja.length(); i++) {
   			  JSONObject member = ja.getJSONObject(i);  	  			
   			  obj.TeamMembers.add(CoreIndividual.GetCoreIndividual(member.toString()));  	  			
-  		  }  		  
+  		  }
+  		  
+  		  // Responses (list of CoreResponseType)	  		
+  		  JSONArray jar = jo.getJSONArray("Responses");	
+  		  obj.Responses = new ArrayList<CoreResponseType>();
+	  		  
+  		  for (int i = 0; i < jar.length(); i++) {
+  			  JSONObject r = jar.getJSONObject(i);  	  			
+  			  obj.Responses.add(CoreResponseType.GetCoreResponseType(r.toString()));  	  			
+  		  }
   	  }
   	  catch (JSONException e) {
 			
@@ -181,5 +198,4 @@ public class CoreConnection  extends CoreObject {
   	  	return results;
     }
 
-    
 }

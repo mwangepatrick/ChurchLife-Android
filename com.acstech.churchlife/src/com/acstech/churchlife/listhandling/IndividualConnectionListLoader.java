@@ -49,8 +49,7 @@ public class IndividualConnectionListLoader extends ListLoaderBase<DefaultListIt
 		else {		
 			
 			// Remove the 'More Results' item at the end of the list if this is a subsequent load
-			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle().equals(getNextResultsMessage()))
-			{
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle().equals(getNextResultsMessage())) {
 				_itemList.remove(_itemList.size()-1);				
 			}
 			

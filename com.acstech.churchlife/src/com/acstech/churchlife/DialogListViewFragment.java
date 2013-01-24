@@ -9,7 +9,7 @@ import android.widget.ListAdapter;
 import android.os.Bundle;
 
 
-public class ListViewDialog extends DialogFragment {
+public class DialogListViewFragment extends DialogFragment {
 
 	private String _title = "";
 	private String[] _items = null;
@@ -43,8 +43,9 @@ public class ListViewDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
     	//android.R.layout.select_dialog_item - works too...default look
-    	final ListAdapter adapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem_header, _items);
-    	return new AlertDialog.Builder(getActivity())
+    	//final ListAdapter adapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem_header, _items);
+    	final ListAdapter adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.select_dialog_item, _items);
+    		return new AlertDialog.Builder(getActivity())
             .setCancelable(true)
             .setTitle(_title)
             .setAdapter(adapter, new DialogInterface.OnClickListener() {

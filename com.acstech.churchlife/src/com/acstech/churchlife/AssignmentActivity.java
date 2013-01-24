@@ -1,32 +1,26 @@
 package com.acstech.churchlife;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.ResponseTypeListLoader;
 import com.acstech.churchlife.webservice.Api;
-import com.acstech.churchlife.webservice.CoreAcsUser;
-import com.acstech.churchlife.webservice.CoreCommentChangeRequest;
-import com.acstech.churchlife.webservice.CoreCommentType;
 import com.acstech.churchlife.webservice.CoreConnection;
 import com.acstech.churchlife.webservice.CoreConnectionChangeRequest;
+import com.acstech.churchlife.webservice.CoreResponseType;
 
 public class AssignmentActivity  extends ChurchlifeBaseActivity {
 
@@ -40,6 +34,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	Button saveButton;
 		
 	CoreConnection _connection;
+	ResponseTypeListLoader _responseTypeLoader;
+	
+	boolean[] _selectedResponses = null;		// holds user selection of response types
 	
 	AppPreferences _appPrefs; 
 	private ProgressDialog _progressD;
@@ -68,10 +65,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
              }
              else {
             	 _connection = CoreConnection.GetCoreConnection(extraBundle.getString("assignment"));
-            	 bindData();
-            	 //zzz remove after testing
-            	 //int assignmentId = extraBundle.getInt("assignmentid");
-            	 //loadDataWithProgressDialog(assignmentId);            	    
+            	 bindData();	            	          	   
              }		                         
 		}
 	 	catch (Exception e) {
@@ -119,23 +113,41 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		responsesButton.setOnClickListener(new OnClickListener() {				 
 			 @Override
 			public void onClick(View view) {
-				 //ItemSelected(itemSelected);
-			}			
+				 DialogListMultiSelectFragment dlg = new DialogListMultiSelectFragment();
+				 dlg.setTitle(getResources().getString(R.string.Connection_Responses));				
+				 dlg.setItems(_responseTypeLoader.getDescriptionArray());		
+				 dlg.setSelections(_selectedResponses);				 
+				 dlg.show(getSupportFragmentManager(), "responsepicker");
+				 dlg.setOnDimissListener(new DialogListMultiSelectFragment.OnDismissListener() {					
+					@Override
+					public void onDismiss(boolean[] selection) {
+						_selectedResponses = selection;				// update class level 'selections' variable
+						setResponseButtonText();					// update button label (looks at 'selections')
+					}
+				});			 				
+			}	 					
 		});
 		 
 		// Save  button click event
 		saveButton.setOnClickListener(new OnClickListener() {				 
 			 @Override
 			public void onClick(View view) {
-          		if (inputIsValid()) {
-         			saveConnection();	
-         			finish();	             			
-         		}
+				 try {					
+					 if (inputIsValid()) {          				          	
+	         			saveConnection();	
+	         			finish();	             			
+	         		 }
+				}
+          		catch (Exception e) {    	        	    	        	
+    	        	ExceptionHelper.notifyUsers(e, AssignmentActivity.this);
+    		    	ExceptionHelper.notifyNonUsers(e)  ; 	
+    	        }
 			}			
 		});
 		 		
 	 }
 	 
+	
 	 /**
 	  * Called after webservice retrieves the connection (class level variable) object.  
 	  *   Sets control properties
@@ -144,89 +156,108 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		 setTitle(_connection.ContactInformation.getDisplayNameForList());
 		 connectionEditText.setText(_connection.Comment);
-		 //responsesButton.setText("test");
+		 
+		 loadResponseTypes();  						
 	 }
 	 
-	 
-	 /**
-     * Displays a progress dialog and launches a background thread to connect to a web service
-     *   to retrieve a SINGLE connection. 
-     *   
-     */
-	    private void loadDataWithProgressDialog(final int connectionId)
-	    {               	    			   
-	    	showDialog(DIALOG_PROGRESS_LOAD);
-	    	
-	    	// This handler is called once the lookup is complete.  It looks at the data returned from the
-	    	//  thread (in the Message) to determine success/failure.  If successful, the values are
-	    	//  bound to this activity's layout controls
-	    	final Handler handler = new Handler() {
-	    		public void handleMessage(Message msg) {
-	    		  
-	    			removeDialog(DIALOG_PROGRESS_LOAD);
-	    			
-	    			try {
-		    			if (msg.what == 0) {	
-		    				
-		    				_connection = CoreConnection.GetCoreConnection(msg.getData().getString("connection"));
-		    				bindData();		    					    			
-		       			}
-		       			else if (msg.what < 0) {
-		       				// If < 0, the exception details are in the message bundle.  Throw it 
-		       				//  and let the exception handler (below) handle it	       				
-		       				Bundle b = msg.getData();
-		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadDataWithProgressDialog.handleMessage");	       				
-		       			}	    				
-	    			} 			
-	    			catch (Exception e) {  				
-	    					ExceptionHelper.notifyUsers(e, AssignmentActivity.this);
-	    	    			ExceptionHelper.notifyNonUsers(e);
-	    				}
-	    			}    			    		
-	    	};
-	    	
-	    	Thread searchThread = new Thread() {  
-	    		public void run() {
-	    			try {    				    				
-	    				GlobalState gs = GlobalState.getInstance(); 		
-	    			 	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
-
-	    			 	CoreConnection conn = apiCaller.connection(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), connectionId);
-
-		    	    	// Return the response object (as string) to the message handler above
-		    	    	Message msg = handler.obtainMessage();		
-		    	    	msg.what = 0;
-		    	    	
-		    	    	Bundle b = new Bundle();
-	    				b.putString("connection", conn.toJsonString());   
-	    				msg.setData(b);
-	    						    	    		    	    			    	  
-		    	    	handler.sendMessage(msg);	    	    	
-	    			}
-	    			catch (Exception e) {    				
-	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error,     				
-	    				
-	    				Message msg = handler.obtainMessage();
-	    				msg.what = -1;
-	    				msg.setData(ExceptionHelper.getBundleForException(e));	
-	    				handler.sendMessage(msg);    	    				
-	    			}    			       	    	    	    	
-	    		 }
-	    	};
-	    	searchThread.start();    	
-	    }
 
 	    /**
-	     * Ensures all form fields have valid input.  
-	     * 
-	     * Should be called on button click before processing.   Displays a message 
-	     *   to the user indicating which field is invalid.  This procedure stops 
-	     *   checking for invalid fields once the first invalid field is encountered.
+	     * Displays a 'please wait' dialog and launches a background thread to connect 
+	     *   to a web service to retrieve search results 
 	     *   
-	     * @return true if input fields are valid, otherwise false
 	     */
-	    private Boolean inputIsValid()
-	    {    	
+	    private void loadResponseTypes()
+	    {           	    
+	    	showDialog(DIALOG_PROGRESS_LOAD);
+	    	
+	    	try
+	    	{	
+	    		_responseTypeLoader = new ResponseTypeListLoader(this);	    				    		
+	    		_responseTypeLoader.Load(0, onListLoaded);	    		
+	    	}
+	    	catch (Exception e) {
+				ExceptionHelper.notifyUsers(e, AssignmentActivity.this);
+	    		ExceptionHelper.notifyNonUsers(e); 				    				
+			}  	    		    		    	
+	    }
+	    
+	    // display the results from the loader operation
+	    final Runnable onListLoaded = new Runnable() {
+	        public void run() {	        	
+	        	try
+	        	{
+	        		//removeDialog(DIALOG_PROGRESS_LOAD);	        		
+		        	if (_responseTypeLoader.success())	{
+		        		
+		        		// update the _selected list to indicate which responses
+		        		//  this connection already has (now that we have a list
+		        		//  and can resolve the id to a position in the list)
+		        		ArrayList<CoreResponseType> responses = _responseTypeLoader.getList();
+		        		
+		        		_selectedResponses = new boolean[responses.size()];
+		        		for (int i=0; i < responses.size()-1; i++) {
+		        		
+		        			if (_connection.containsResponse(responses.get(i).RespID)) {
+			        			_selectedResponses[i] = true;		        				
+		        			}
+		        			else {
+			        			_selectedResponses[i] = false;
+		        			}		        			
+		        		}		        		
+		        		
+		        		setResponseButtonText();
+		        		
+		        	}
+		        	else {
+		        		throw _responseTypeLoader.getException();
+		        	}
+	        	}
+	        	catch (Throwable e) {
+	        		ExceptionHelper.notifyUsers(e, AssignmentActivity.this);
+	        		ExceptionHelper.notifyNonUsers(e); 	        	
+				} 	        		        
+	        	finally {
+	        		removeDialog(DIALOG_PROGRESS_LOAD);
+	        	}
+	        }
+	    };
+	   
+	 // Builds a string of all 'selected' responses.  Uses the class level _selectedResponses
+	 //  array and the class level response types list loader to compose.  This keeps all of
+	 //  the string building logic in one central place (the UI)
+	 private void setResponseButtonText() {
+		 
+		StringBuilder textBuilder = new StringBuilder();
+		 
+		for (int i=0; i < _selectedResponses.length-1; i++) {     		
+			 if (_selectedResponses[i] == true) {				 
+				 if (textBuilder.length() > 0) { textBuilder.append(","); }
+				 
+				 //append the text for this response (by position in the list)
+				 textBuilder.append(_responseTypeLoader.getList().get(i).Resp_Desc);				 
+			 }			  					        		
+ 		}
+		 		 
+		if (textBuilder.length() == 0) {
+			responsesButton.setText(R.string.Connection_ResponseDefault);
+		}
+		else
+		{
+			responsesButton.setText(textBuilder.toString());
+		}			   
+	 }
+	    
+	 /**
+	  * Ensures all form fields have valid input.  
+	  * 
+	  * Should be called on button click before processing.   Displays a message 
+	  *   to the user indicating which field is invalid.  This procedure stops 
+	  *   checking for invalid fields once the first invalid field is encountered.
+	  *   
+	  * @return true if input fields are valid, otherwise false
+	 */
+	 private Boolean inputIsValid()
+	 {    	
 	    	String msg = "";
 	    	
     		if (connectionEditText.getText().length() == 0) {   
@@ -240,55 +271,49 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	    	
 	    	// If a validation message exists, the input is invalid
 	    	return (msg.length() == 0);    	    
-	    }
+	 }
 	    
-	    // Input should have already been validated at this point!
-	    private void saveConnection() {
-	    	try {	    		
-	    		showDialog(DIALOG_PROGRESS_SAVE);   			// progress dialog
-	    		
-	    		CoreConnectionChangeRequest req = new CoreConnectionChangeRequest();
-	    		req.ConnectionId = _connection.ConnectionId;
-	    		req.Complete = closeCheckBox.isChecked();
-	    		req.ConnectionDate = new Date(); //????
-	    		req.ConnectionTypeId = _connection.ConnectionTypeId;
-	    		req.FamilyConnection = _connection.FamilyConnection;
-	    		req.ContactIndvId = _connection.ContactInformation.IndvId;
-	    		//req.OpenCategoryId
-	    		req.Reassign = false;
-	    		//req.NewCallerIndvId
-	    		//req.NewTeamId
-	    		req.Comment = connectionEditText.getText().toString();
-	    		req.ResponseIdList = Arrays.asList(1, 2, 3);
-	    
-	    		//for (int i : ints) intList.add(i);
-	    		//List<Integer> messages = Arrays.asList(1, 2, 3);
-	    		
-	    		//req.ResponseIdList
-	    		
-	    		/*    		
-	    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
-	    		*/
-	    		GlobalState gs = GlobalState.getInstance(); 
-	    		AppPreferences appPrefs = new AppPreferences(this.getApplicationContext());
-	    		
-	    		Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-	    		
-	    	   	apiCaller.connectionAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
-	    		
-	    	   	removeDialog(DIALOG_PROGRESS_SAVE);
-	    	   	
-	    	   	//zzz chnage to saved
-	    	   	Toast.makeText(AssignmentActivity.this, getString(R.string.Connection_Saved), Toast.LENGTH_LONG).show();	    	   	
-	    	}
-	        catch (Exception e) {
-	        	
-	        	removeDialog(DIALOG_PROGRESS_SAVE);
-	        	
-	        	// does NOT raise errors.  called by an event
-				ExceptionHelper.notifyUsers(e, AssignmentActivity.this);
-		    	ExceptionHelper.notifyNonUsers(e)  ; 	
-	        }
-	    }
+	 // Input should have already been validated at this point!
+	 private void saveConnection() throws AppException {
+    	try {
+    		showDialog(DIALOG_PROGRESS_SAVE);   			// progress dialog
+   
+    		CoreConnectionChangeRequest req = new CoreConnectionChangeRequest();
+    		req.ConnectionId = _connection.ConnectionId;
+    		req.Complete = closeCheckBox.isChecked();
+    		req.ConnectionDate = new Date();
+    		req.ConnectionTypeId = _connection.ConnectionTypeId;
+    		req.FamilyConnection = _connection.FamilyConnection;
+    		req.ContactIndvId = _connection.ContactInformation.IndvId;	    		
+    		req.Reassign = false;
+    		//req.OpenCategoryId
+    		//req.NewCallerIndvId
+    		//req.NewTeamId
+    		req.Comment = connectionEditText.getText().toString();
+    		
+    		// Iterate over _selectedResponses and add all user selected responses
+    		req.ResponseIdList = new ArrayList<Integer>();    		
+    		for (int i = 0; i < _selectedResponses.length-1; i++) {
+    			if (_selectedResponses[i] == true) {
+    				int id = _responseTypeLoader.getList().get(i).RespID;
+    				req.ResponseIdList.add(id);
+    			}
+    		}
+    		
+    		// send to webservice
+    		GlobalState gs = GlobalState.getInstance(); 
+    		AppPreferences appPrefs = new AppPreferences(this.getApplicationContext());    		
+    		Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+    		
+    	   	apiCaller.connectionAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
+    			    		
+    	   	removeDialog(DIALOG_PROGRESS_SAVE);
+    	   	    	
+    	   	Toast.makeText(AssignmentActivity.this, getString(R.string.Connection_Saved), Toast.LENGTH_LONG).show();	    	   	
+    	}
+    	finally {
+    		removeDialog(DIALOG_PROGRESS_SAVE);
+    	}        
+	 }
 
 }

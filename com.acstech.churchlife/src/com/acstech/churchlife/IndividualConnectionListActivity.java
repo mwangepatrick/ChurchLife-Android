@@ -97,38 +97,6 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	            return null;
 	        }
 	    }
-
-	    /*
-	    @Override
-	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
-	    	super.onCreateOptionsMenu(menu);
-	    	
-	    	if (_canAddComments) { 
-	    		com.actionbarsherlock.view.MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
-				item.setIcon(R.drawable.ic_menu_add);
-	    	}
-	    	return true;
-	    }
-	    
-	    
-		@Override
-		public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		    // Handle item selection
-		    switch (item.getItemId()) {
-		    
-		    case ADD_COMMENT:
-		    	Intent settingsIntent = new Intent(getBaseContext(), CommentActivity.class);		    							    	 		        	
-		    	settingsIntent.putExtra("id", _individualId);
-		    	settingsIntent.putExtra("name", _individualName);
-		    	settingsIntent.putExtra("commenttypeid", 0);	   		 	
-	   		 	startActivity(settingsIntent);		    			    
-		        return true;
-		        		   		        	      
-		    default:
-		        return super.onOptionsItemSelected(item);
-		    }
-		}
-		*/
 	    
 	    /**
 	     *  Links state variables to their respective form controls
@@ -137,18 +105,6 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    	lv1 = (ListView)this.findViewById(R.id.ListView01);
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
-	    
-	    /*
-	    private void setCanAddComments() throws AppException {
-	    	
-	    	GlobalState gs = GlobalState.getInstance(); 
-	    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
-			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-			
-		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-	    	_canAddComments = (results.size() > 0);		   	
-	    }
-	    */
 	    
 	    
 	    /**
@@ -165,7 +121,6 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    		// if first time....
 	    		if (_loader == null) {	    			
 	    			_loader = new IndividualConnectionListLoader(this, _individualId);
-	    			//setCanAddComments();
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)

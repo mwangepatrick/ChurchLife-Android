@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,11 +51,18 @@ public class CoreConnectionChangeRequest extends CoreObject {
 	  		jo.put("Reassign", Reassign);
 	  		jo.put("NewCallerIndvId", NewCallerIndvId);
 	  		jo.put("NewTeamId", NewTeamId);
-	  		jo.put("Comment", Comment);
+	  		jo.put("Comment", Comment);	  		
 	  		
-	  		//zzz test this
-	  		jo.put("ResponseIdList", ResponseIdList); 
-	  		  	  	
+	  		// to keep from being enquoted, use JSONArray
+	  		//
+	  		// ex.  was this:  "ResponseIdList", "[1,2,3]"
+	  		//      now this:  "ResponseIdList", [1,2,3]
+	  		JSONArray responses = new JSONArray();
+	  		for (int i : ResponseIdList) {
+	  			responses.put(i);
+    		}
+	  		jo.put("ResponseIdList", responses);
+    		
     	}
     	catch (JSONException e) {  		
   			ExceptionInfo i = ExceptionInfo.ExceptionInfoFactory(

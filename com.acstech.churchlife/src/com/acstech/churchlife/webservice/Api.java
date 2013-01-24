@@ -14,6 +14,8 @@ import android.net.NetworkInfo;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo.SEVERITY;
+import com.acstech.churchlife.exceptionhandling.ExceptionInfo.TYPE;
 import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
 
 
@@ -179,6 +181,38 @@ public class Api {
     	}		
 	}
 
+	public List<CoreResponseType> responsetypes(String username, String password, String siteNumber) throws AppException {
+
+		isOnlineCheck();
+		
+		List<CoreResponseType> list = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/types/responses", _baseUrl, siteNumber));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	    	
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		    	
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			list = CoreResponseType.GetCoreResponseTypeList(client.getResponse());
+    		}
+    		else {    			
+    			handleExceptionalResponse(client);
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.responsetypes");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		throw e;
+    	}
+		return list;
+	}
+
+	
 	// connections by individual
 	public CorePagedResult<List<CoreConnection>> connections(String username, String password, String siteNumber, int individualId, int pageIndex) throws AppException {
 
@@ -198,6 +232,9 @@ public class Api {
     		
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
     			connections = CoreConnection.GetCoreConnectionPagedResult(client.getResponse());
+    		}    	
+    		else {    			
+    			handleExceptionalResponse(client);
     		}
     	}
     	catch (AppException e)	{
@@ -248,6 +285,9 @@ public class Api {
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
     			comments = CoreCommentSummary.GetCoreCommentSummaryPagedResult(client.getResponse());
     		}
+    		else {    			
+    			handleExceptionalResponse(client);
+    		}
     	}
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
@@ -279,6 +319,9 @@ public class Api {
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
     			comments = CoreComment.GetCoreCommentPagedResult(client.getResponse());
     		}
+    		else {    			
+    			handleExceptionalResponse(client);
+    		}
     	}
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
@@ -309,6 +352,9 @@ public class Api {
     		    	
     		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
     			list = CoreCommentType.GetCoreCommentTypeList(client.getResponse());
+    		}
+    		else {    			
+    			handleExceptionalResponse(client);
     		}
     	}
     	catch (AppException e)	{
@@ -598,6 +644,35 @@ public class Api {
 		return users;
 	}
 	
+	
+	/**
+	 * Used to handle responses that are not expected (exceptions mostly)
+	 * 
+	 * @param client
+	 */
+	public void handleExceptionalResponse(RESTClient client) throws AppException {
+		
+		String defaultMsg = String.format("%s %s", client.getResponseCode(), client.getErrorMessage());
+		// String.format("An error has occurred attempting this web service request.  The error code is %s.", client.getResponseCode()));			
+		
+		//status specific errors
+		switch (client.getResponseCode()) {
+			case HttpStatus.SC_FORBIDDEN:
+			case HttpStatus.SC_METHOD_NOT_ALLOWED:
+			case HttpStatus.SC_UNAUTHORIZED:
+				throw AppException.AppExceptionFactory(ExceptionInfo.TYPE.UNAUTHORIZED,
+						 							   ExceptionInfo.SEVERITY.HIGH, 
+						 							   "100",           												    
+						 							   "Api.connections",
+						 							   defaultMsg);		
+			default:	
+				throw AppException.AppExceptionFactory(ExceptionInfo.TYPE.UNEXPECTED,
+						   							   ExceptionInfo.SEVERITY.HIGH, 
+						   							   "100",           												    
+						   							   "Api.connections",
+						   							   defaultMsg);
+		}		
+	}
 	
 	
 	public void isOnlineCheck() throws AppException {

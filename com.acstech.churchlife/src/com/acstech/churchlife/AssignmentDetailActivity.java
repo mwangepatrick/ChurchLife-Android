@@ -94,26 +94,33 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		enterButton = (Button)this.findViewById(R.id.enterButton);
 		reassignButton = (Button)this.findViewById(R.id.reassignButton);
 				
-		// Reassign - check permission and hide/disable button IF the user does NOT have permission
+		// Reassign - check permission and hide button IF the user does NOT have permission
 		GlobalState gs = GlobalState.getInstance(); 
 		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_REASSIGNCONNECTION) == false) {
 			reassignButton.setVisibility(View.GONE);
 		}
-					
-		// view recent button click event             
-		viewRecentButton.setOnClickListener(new OnClickListener() {				 
-			 @Override
-			public void onClick(View view) {
-				 try {
-					 startConnectionListActivity();
-				 }
-				 catch (Exception e) {
-				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
-				 		ExceptionHelper.notifyNonUsers(e);
-				 }
-			}
-		});
-		 
+		
+		// View Recent History button - check permission and hide button
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWOUTREACHHISTORY) == false) {
+			viewRecentButton.setVisibility(View.INVISIBLE);
+		}
+		else
+		{
+			// view recent button click event             
+			viewRecentButton.setOnClickListener(new OnClickListener() {				 
+				 @Override
+				public void onClick(View view) {
+					 try {
+						 startConnectionListActivity();
+					 }
+					 catch (Exception e) {
+					 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
+					 		ExceptionHelper.notifyNonUsers(e);
+					 }
+				}
+			});
+		}
+		
 		// Enter (edit details) button click event
 		enterButton.setOnClickListener(new OnClickListener() {				 
 			 @Override

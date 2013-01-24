@@ -94,7 +94,7 @@ public abstract class ListLoaderBase<T> {
 	 * @param onLoaded
 	 * @throws AppException
 	 */
-	public void LoadNext(Runnable onLoaded) throws AppException {
+	public void LoadNext(Runnable onLoaded)  {
 		if (getList() != null) {
 			Load(_pageIndex+1, onLoaded);
 		}
@@ -103,7 +103,7 @@ public abstract class ListLoaderBase<T> {
 		}		
 	}
 	
-	public void LoadPrevious(Runnable onLoaded) throws AppException {
+	public void LoadPrevious(Runnable onLoaded)  {
 		if (_pageIndex > 0) {
 			Load(_pageIndex-1, onLoaded);
 		}	
@@ -112,7 +112,7 @@ public abstract class ListLoaderBase<T> {
 		}		
 	}
 	
-	// Hanlder CANNOT throw AppException.  Caller should check for _exception existence!
+	// Handler CANNOT throw AppException.  Caller should check for _exception existence!
 	public void Load(int pageIndex, Runnable onLoaded) {
 		
 		_pageIndex = pageIndex;
@@ -124,12 +124,7 @@ public abstract class ListLoaderBase<T> {
     		public void handleMessage(Message msg) {    			    
     			try {
 	    			if (msg.what == 0) {
-	    				
-	    				buildItemList();	    			
-	    				
-	          	 		if (_postRun != null) {
-	           	 			_postRun.run();	
-	           	 		}          	 		    			
+	    				buildItemList();	    			     	 		    			
 	       			}		    						    		
 	       			else if (msg.what < 0) {
 	       				// If < 0, the exception is in the message bundle.  Save it
@@ -139,7 +134,12 @@ public abstract class ListLoaderBase<T> {
     			}
     			catch (Exception e) {	
     				_exception = e;    		    	
-    			}    
+    			}   
+    			finally {
+    				if (_postRun != null) {
+           	 			_postRun.run();	
+           	 		}   
+    			}
     		}
     	};
     	

@@ -60,28 +60,7 @@ public class AssignmentListLoader extends ListLoaderBase<ColorCodedListItem>{
 		
 		// check for empty
 		if (_webServiceResults.Page.size() == 0) {    					    		
-			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));
-			
-			/*
-			//zzz test...remove			
-			CoreAssignment as = new CoreAssignment();
-			as.AssignmentID = 12345;
-			as.AssignmentTypeID = 5;
-			as.AssignmentType = "Hospital Visitz";			
-			as.Completed = false;			
-			as.AssignmentColor = "";
-			as.ContactInformation = new CoreIndividual();
-			as.ContactInformation.FirstName = "Joe";
-			as.ContactInformation.LastName = "Schmoe";
-			
-			try {
-				as.DueDate = DateHelper.StringToDate("12/12/2012", "MM/dd/yyyy");
-			} catch (AppException e) {
-				e.printStackTrace();
-			}
-			_itemList.add(new ColorCodedListItem(as));
-			_itemList.add(new ColorCodedListItem(as));
-			*/		
+			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));				
 		}	    			
 		else {		    				
 			// Add all items from the latest web service request to the adapter 

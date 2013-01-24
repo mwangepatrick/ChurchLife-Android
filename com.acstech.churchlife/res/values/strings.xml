@@ -100,7 +100,7 @@
 			
 	<string name="Connection.LoadingWithTitle">Loading connection for %s.  Please wait.</string>
 	
-	<string name="Connection.Responses">Responses:</string>
+	<string name="Connection.Responses">Responses</string>
 	<string name="Connection.ResponseDefault">Click here to Add</string>
 	<string name="Connection.Close">Close Connection</string>
 	
