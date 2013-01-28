@@ -17,11 +17,6 @@ public class CommentListLoader extends ListLoaderBase<CommentListItem>{
 	private int _commentTypeId;
 	
 	private CorePagedResult<List<CoreComment>> _webServiceResults;			// results from webservice call	
-	private ArrayList<CommentListItem> _itemList;							// item list for list adapter binds to	
-	
-	public ArrayList<CommentListItem> getList(){
-		return _itemList;
-	}
 	
 	/**
 	 * calls API and gets json data in return and parses it into an object

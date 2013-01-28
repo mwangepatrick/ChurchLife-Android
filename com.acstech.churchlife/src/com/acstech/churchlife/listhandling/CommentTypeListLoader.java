@@ -13,6 +13,7 @@ public class CommentTypeListLoader extends ListLoaderBase<CoreCommentType>{
 	
 	private List<CoreCommentType> _webServiceResults;			// results from webservice call	
 
+	@Override
 	public ArrayList<CoreCommentType> getList(){	
 		return (ArrayList<CoreCommentType>) _webServiceResults;
 	}

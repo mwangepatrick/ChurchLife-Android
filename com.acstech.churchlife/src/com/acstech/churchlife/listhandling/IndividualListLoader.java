@@ -7,32 +7,20 @@ import android.content.Context;
 
 import com.acstech.churchlife.GlobalState;
 import com.acstech.churchlife.R;
-import com.acstech.churchlife.R.string;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.webservice.CoreIndividual;
 import com.acstech.churchlife.webservice.CorePagedResult;
 
-public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
-
-	private String _searchText;
+public class IndividualListLoader extends ListLoaderBase<DefaultListItem> {
 	
 	private CorePagedResult<List<CoreIndividual>> _webServiceResults;		// results from webservice call	
-	private ArrayList<DefaultListItem> _itemList;							// item list for list adapter binds to	
-	
-	public ArrayList<DefaultListItem> getList(){
-		return _itemList;
-	}
-	
-	public void setSearchText(String value) {
-		_searchText = value;
-	}
 	
 	/**
 	 * calls API and gets json data in return and parses it into an object
 	 */
 	protected void getWebserviceResults() throws AppException { 		
 		GlobalState gs = GlobalState.getInstance(); 		
-	   	 _webServiceResults = getWebServiceCaller().individuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _searchText, _pageIndex);	   		   
+	   	 _webServiceResults = getWebServiceCaller().individuals(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), getSearchText(), _pageIndex);	   		   
 	}
 	
 	/**
@@ -78,7 +66,7 @@ public class IndividualListLoader extends ListLoaderBase<DefaultListItem>{
 	
 	public IndividualListLoader(Context context, String searchText){
 		super(context);
-		_searchText = searchText;
+		setSearchText(searchText);
 
 		super.setNextResultsMessage(R.string.IndividualList_More);
 		super.setNoResultsMessage(R.string.IndividualList_NoResults);

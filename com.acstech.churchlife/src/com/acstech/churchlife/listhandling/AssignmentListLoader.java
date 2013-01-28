@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.GlobalState;
 import com.acstech.churchlife.R;
 import com.acstech.churchlife.exceptionhandling.AppException;
@@ -16,11 +15,6 @@ public class AssignmentListLoader extends ListLoaderBase<ColorCodedListItem>{
 
 	private int _assignmentTypeId;
 	private CorePagedResult<List<CoreAssignment>> _webServiceResults;				// results from webservice call	
-	private ArrayList<ColorCodedListItem> _itemList;								// item list for list adapter binds to	
-	
-	public ArrayList<ColorCodedListItem> getList(){
-		return _itemList;
-	}
 	
 	/**
 	 * 

@@ -13,6 +13,7 @@ public class ResponseTypeListLoader extends ListLoaderBase<CoreResponseType>{
 	
 	private List<CoreResponseType> _webServiceResults;			// results from webservice call	
 	
+	@Override
 	public ArrayList<CoreResponseType> getList(){	
 		return (ArrayList<CoreResponseType>) _webServiceResults;
 	}

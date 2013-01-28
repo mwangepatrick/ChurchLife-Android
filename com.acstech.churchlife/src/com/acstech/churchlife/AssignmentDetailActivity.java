@@ -9,7 +9,6 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
@@ -126,7 +125,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 			 @Override
 			public void onClick(View view) {
 				 try {
-					 startAssignmentActivity();
+					 startAssignmentActivity(-1);
 				 }
 				 catch (Exception e) {
 				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
@@ -134,13 +133,39 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 				 }  
 			}			
 		});
-		 
-		
+		 		
 		// Reassign button click event
 		reassignButton.setOnClickListener(new OnClickListener() {				 
-			 @Override
+			@Override
 			public void onClick(View view) {
-				 //
+				 try {
+					 DialogListSingleSelectFragment dlg = new DialogListSingleSelectFragment();
+					 dlg.setTitle(getResources().getString(R.string.Connection_ReassignDialogTitle));	
+					 
+					 String individualOption = getResources().getString(R.string.Connection_ReassignDialogIndividual);
+					 String teamOption = getResources().getString(R.string.Connection_ReassignDialogTeam);
+					 
+					 dlg.setItems(new String[] { individualOption, teamOption});		
+					 
+					 dlg.show(getSupportFragmentManager(), "reassignpicker");
+					 dlg.setOnDimissListener(new DialogListSingleSelectFragment.OnDismissListener() {					
+						@Override
+						public void onDismiss(int selection) {
+							try {					
+								// route to the 'team' or 'individual' picker activity (pass connection)
+								startAssignmentActivity(selection);
+							 }
+							 catch (Exception e) {
+							 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
+							 		ExceptionHelper.notifyNonUsers(e);
+							 }	
+						}
+					});						 
+				 }
+				 catch (Exception e) {
+				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
+				 		ExceptionHelper.notifyNonUsers(e);
+				 }				 
 			}			
 		});		
 	 }
@@ -227,10 +252,17 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	     * 
 	     * @throws AppException 
 	     */
-	    private void startAssignmentActivity() throws AppException {	    	
+	    private void startAssignmentActivity(int assignTo) throws AppException {	    	
 	    	Intent intent = new Intent();
 	    	intent.setClass(this, AssignmentActivity.class);
 		 	intent.putExtra("assignment", _connection.toJsonString());
+		 	
+		 	// if we are re-assigning, tell the assignment activity
+		 	//  to open with the re-assign individual/team picker
+		 	if (assignTo >= 0) {
+		 		intent.putExtra("assignto", assignTo);
+		 	}
+		 	
 		 	startActivity(intent);	  		 			
 		 	finish();					// always close this activity		 			 		    
 	    }
@@ -247,5 +279,6 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		 	intent.putExtra("name", _connection.ContactInformation.getDisplayNameForList());
 		 	startActivity(intent);		 			 		    
 	    }
-	    	    	   
+
+	    
 }

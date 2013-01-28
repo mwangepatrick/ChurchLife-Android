@@ -3,14 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"  
     android:padding="5dp">
-     
+
+	<ScrollView android:layout_width="match_parent"			
+	    		android:layout_height="wrap_content"
+	    		android:layout_above="@+id/footer"> 
+	    
+	    <RelativeLayout 
+    		android:layout_width="match_parent"
+    		android:layout_height="wrap_content">
+    					
+	        
     <EditText
         android:id="@+id/connectionEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
  		android:gravity="top"
  		android:text="line 2 goes here and some more comment data here."
- 		android:lines="10"
+ 		android:lines="5"
         android:inputType="textMultiLine">        
     </EditText>
 
@@ -23,8 +32,7 @@
 	    android:layout_alignParentLeft="true"
 	    android:text="@string/Connection.Responses"
 	    android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    
+        
     <Button
         android:id="@+id/responsesButton"
         android:layout_width="wrap_content"
@@ -58,7 +66,10 @@
         	android:layout_alignParentRight="true" 
         	android:layout_below="@+id/responsesButton">
     </CheckBox>
-    	
+
+		</RelativeLayout>
+	</ScrollView>
+		
     <!-- button bar -->
 	<LinearLayout 
 		android:id="@+id/footer" 		

@@ -16,11 +16,6 @@ public class CommentSummaryListLoader extends ListLoaderBase<ColorCodedListItem>
 	private int _individualId;
 	
 	private CorePagedResult<List<CoreCommentSummary>> _webServiceResults;			// results from webservice call	
-	private ArrayList<ColorCodedListItem> _itemList;							// item list for list adapter binds to	
-	
-	public ArrayList<ColorCodedListItem> getList(){
-		return _itemList;
-	}
 	
 	/**
 	 * calls API and gets json data in return and parses it into an object

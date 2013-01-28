@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+ 	android:layout_width="fill_parent"
+  	android:layout_height="fill_parent">
+    
+    <LinearLayout 
+        android:id="@+id/searchLayout"
+		android:orientation="horizontal"
+ 		android:layout_width="fill_parent"
+  		android:layout_height="wrap_content"
+  		android:paddingLeft="3dp">
+        
+		<EditText
+	  		android:id="@+id/txtSearchFor" 
+	  		android:layout_height="wrap_content" 	  		
+	  		android:layout_width="0dip"
+	  		android:layout_weight="5"	  		
+	  		android:inputType="textNoSuggestions">
+	  		<requestFocus></requestFocus>
+	  	</EditText>	 
+		<Button			
+			android:text="@string/IndividualList.Search" 
+			android:id="@+id/btnSearch"		
+			android:layout_width="0dip" 
+			android:layout_weight="2"
+			android:layout_height="wrap_content">
+		</Button>        
+        
+    </LinearLayout>
+        
+		
+  	<ListView
+   		android:id="@+id/ListView01"
+   		android:layout_height="wrap_content"
+   		android:layout_width="fill_parent"
+   		android:layout_below="@+id/searchLayout"/>
+
+</RelativeLayout>

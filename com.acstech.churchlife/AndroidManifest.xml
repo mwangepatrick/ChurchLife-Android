@@ -77,6 +77,12 @@
 		<activity android:name="com.acstech.churchlife.AssignmentActivity">
 		</activity>
 		
+		<activity android:name="com.acstech.churchlife.AssignToPickerActivity"
+		    	  android:theme="@android:style/Theme.Dialog">
+		</activity>
+		
+		
+		
 		<activity android:name="com.acstech.churchlife.IndividualConnectionListActivity">
 		</activity>
 						

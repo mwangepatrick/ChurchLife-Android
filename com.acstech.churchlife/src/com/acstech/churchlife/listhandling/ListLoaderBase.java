@@ -12,7 +12,6 @@ import com.acstech.churchlife.AppPreferences;
 import com.acstech.churchlife.config;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
-import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.webservice.Api;
 
 // Performs a web service call on another thread.
@@ -28,26 +27,37 @@ import com.acstech.churchlife.webservice.Api;
 */
 public abstract class ListLoaderBase<T> {
 	
-	private Context _context;
-	
-	protected abstract ArrayList<T> getList();	
-	protected abstract void getWebserviceResults() throws AppException; 
-	
+	protected abstract void getWebserviceResults() throws AppException; 	
 	protected abstract void buildItemList() throws AppException;
-		
+	
 	private String _noResultsMessage = "Sorry, no record found.";
 	private String _nextResultsMessage = "More Results";
 	
+	private Context _context;
+	protected ArrayList<T> _itemList;
+	
+	private String _searchText = "";			// some consumers use this...others don't	
 	protected int _pageIndex = -1;								
 	protected Throwable _exception;	
 	protected Runnable _postRun;				// passed to load - method to execute when load is complete
-		
+
+	
+	public ArrayList<T> getList(){
+		return _itemList;
+	}
 	
 	public Api getWebServiceCaller() {	
 		AppPreferences appPrefs = new AppPreferences(_context.getApplicationContext());
 		return new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
 	}
 	
+	public void setSearchText(String value) {
+		_searchText = value;
+	}
+	
+	public String getSearchText() {
+		return _searchText;
+	}
 	
 	public String getNoResultsMessage() {
 		return _noResultsMessage;

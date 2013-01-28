@@ -137,12 +137,14 @@ public class CoreConnection  extends CoreObject {
   		  }
   		  
   		  // Responses (list of CoreResponseType)	  		
-  		  JSONArray jar = jo.getJSONArray("Responses");	
+  		  JSONArray jar = jo.optJSONArray("Responses");	
   		  obj.Responses = new ArrayList<CoreResponseType>();
 	  		  
-  		  for (int i = 0; i < jar.length(); i++) {
-  			  JSONObject r = jar.getJSONObject(i);  	  			
-  			  obj.Responses.add(CoreResponseType.GetCoreResponseType(r.toString()));  	  			
+  		  if (jar != null) {  			  
+	  		  for (int i = 0; i < jar.length(); i++) {
+	  			  JSONObject r = jar.getJSONObject(i);  	  			
+	  			  obj.Responses.add(CoreResponseType.GetCoreResponseType(r.toString()));  	  			
+	  		  }
   		  }
   	  }
   	  catch (JSONException e) {

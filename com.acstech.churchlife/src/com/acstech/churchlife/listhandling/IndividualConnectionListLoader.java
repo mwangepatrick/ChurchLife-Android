@@ -16,12 +16,7 @@ public class IndividualConnectionListLoader extends ListLoaderBase<DefaultListIt
 	private int _individualId;
 	
 	private CorePagedResult<List<CoreConnection>> _webServiceResults;		// results from webservice call	
-	private ArrayList<DefaultListItem> _itemList;							// item list for list adapter binds to	
-	
-	public ArrayList<DefaultListItem> getList(){
-		return _itemList;
-	}
-	
+		
 	/**
 	 * calls API and gets json data in return and parses it into an object
 	 */

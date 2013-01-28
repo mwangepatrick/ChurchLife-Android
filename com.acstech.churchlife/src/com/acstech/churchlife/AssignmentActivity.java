@@ -5,6 +5,7 @@ import java.util.Date;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,7 +66,14 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
              }
              else {
             	 _connection = CoreConnection.GetCoreConnection(extraBundle.getString("assignment"));
-            	 bindData();	            	          	   
+            	 bindData();	         
+            	 
+            	 // check for re-assignment
+            	 if (extraBundle.get("assignto") != null) {
+            		 int option = extraBundle.getInt("assignto");
+            		 startReAssignmentPickerActivity(option);
+            	 }
+            	 
              }		                         
 		}
 	 	catch (Exception e) {
@@ -156,8 +164,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		 setTitle(_connection.ContactInformation.getDisplayNameForList());
 		 connectionEditText.setText(_connection.Comment);
+		 closeCheckBox.setChecked(true);					// default to close this connection
 		 
-		 loadResponseTypes();  						
+		 loadResponseTypes();		 
 	 }
 	 
 
@@ -315,5 +324,19 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
     		removeDialog(DIALOG_PROGRESS_SAVE);
     	}        
 	 }
+
+	// "assign to" picker	    
+    /**
+     * Display the re-assignment picker screen
+     * 
+     * @throws AppException 
+     */
+    private void startReAssignmentPickerActivity(int reassignTo) throws AppException {	    	
+    	Intent intent = new Intent();
+    	intent.setClass(this, AssignToPickerActivity.class);	 
+	 	intent.putExtra("assignto", reassignTo);	 	
+	 	startActivity(intent);	  		 			
+	 	finish();					// always close this activity		 			 		    
+    }
 
 }

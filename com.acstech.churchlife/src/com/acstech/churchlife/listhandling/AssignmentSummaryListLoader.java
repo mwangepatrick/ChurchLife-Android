@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.GlobalState;
 import com.acstech.churchlife.R;
 import com.acstech.churchlife.exceptionhandling.AppException;
@@ -15,11 +14,6 @@ import com.acstech.churchlife.webservice.CorePagedResult;
 public class AssignmentSummaryListLoader extends ListLoaderBase<ColorCodedListItem>{
 
 	private CorePagedResult<List<CoreAssignmentSummary>> _webServiceResults;				// results from webservice call	
-	private ArrayList<ColorCodedListItem> _itemList;								// item list for list adapter binds to	
-	
-	public ArrayList<ColorCodedListItem> getList(){
-		return _itemList;
-	}
 	
 	/**
 	 * calls API and gets json data in return and parses it into an object

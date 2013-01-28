@@ -107,6 +107,13 @@
 	<string name="Connection.CommentValidation">The comment cannot be blank.</string>
 	<string name="Connection.SaveDialog">Submitting Connection for Approval.  Please wait.</string>
 	<string name="Connection.Saved">Connection has been submitted for approval.</string>
+	
+	<string name="Connection.ReassignDialogTitle">Reassign To</string>
+	<string name="Connection.ReassignDialogIndividual">Individual</string>
+	<string name="Connection.ReassignDialogTeam">Team</string>
+
+	<string name="Connection.ReassignHintIndividual">Search for individual</string>
+	<string name="Connection.ReassignHintTeam">Search for team</string>
 		
 	<string name="IndividualConnection.Title">View Recent Connections</string>	
 	<string name="IndividualConnection.LoadingWithTitle">Loading recent connections for %s.  Please wait.</string>

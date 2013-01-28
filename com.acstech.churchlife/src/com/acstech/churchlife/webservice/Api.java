@@ -14,8 +14,6 @@ import android.net.NetworkInfo;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.exceptionhandling.ExceptionInfo.SEVERITY;
-import com.acstech.churchlife.exceptionhandling.ExceptionInfo.TYPE;
 import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
 
 
@@ -212,6 +210,38 @@ public class Api {
 		return list;
 	}
 
+	// connections teams
+	public List<CoreConnectionTeam> connectionteams(String username, String password, String siteNumber) throws AppException {
+
+		isOnlineCheck();
+		
+		List<CoreConnectionTeam> list = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/teams", _baseUrl, siteNumber));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
+    	    	
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		    	
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			list = CoreConnectionTeam.GetCoreConnectionTeamList(client.getResponse());
+    		}
+    		else {    			
+    			handleExceptionalResponse(client);
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.connectionteams");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		throw e;
+    	}
+		return list;
+	}
+	
 	
 	// connections by individual
 	public CorePagedResult<List<CoreConnection>> connections(String username, String password, String siteNumber, int individualId, int pageIndex) throws AppException {

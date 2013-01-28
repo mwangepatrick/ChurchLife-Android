@@ -1,12 +1,8 @@
 package com.acstech.churchlife;
 
-import java.util.List;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,14 +12,9 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.listhandling.ColorCodedListItem;
-import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
-import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
 import com.acstech.churchlife.listhandling.DefaultListItem;
 import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
 import com.acstech.churchlife.listhandling.IndividualConnectionListLoader;
-import com.acstech.churchlife.webservice.Api;
-import com.acstech.churchlife.webservice.CoreCommentType;
 
 public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 
