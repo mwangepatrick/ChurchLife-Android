@@ -11,7 +11,28 @@
 	    <RelativeLayout 
     		android:layout_width="match_parent"
     		android:layout_height="wrap_content">
-    					
+    		
+	         <LinearLayout android:id="@+id/reassignLayout"
+        		  android:layout_width="match_parent"
+    			  android:layout_height="wrap_content"
+    			  android:orientation="horizontal"
+    			  android:gravity="center"
+    			  android:padding="5dp">
+        
+		        <TextView
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="@string/Connection.ReassignTitle" 
+			    	android:textAppearance="?android:attr/textAppearanceMedium" 
+			    	android:paddingRight="5dp"/>        
+		        <TextView
+		            android:id="@+id/reassignTextView"
+			    	android:layout_width="wrap_content"
+			    	android:layout_height="wrap_content"
+			    	android:text="Reassign Target" 
+			    	android:textAppearance="?android:attr/textAppearanceMedium" />
+		               
+		    </LinearLayout>			
 	        
     <EditText
         android:id="@+id/connectionEditText"
@@ -19,8 +40,9 @@
         android:layout_height="wrap_content"
  		android:gravity="top"
  		android:text="line 2 goes here and some more comment data here."
- 		android:lines="5"
-        android:inputType="textMultiLine">        
+ 		android:lines="4"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/reassignLayout">        
     </EditText>
 
     <TextView
