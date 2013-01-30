@@ -57,6 +57,16 @@ public class AssignmentListLoader extends ListLoaderBase<ColorCodedListItem>{
 			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));				
 		}	    			
 		else {		    				
+			DefaultListItem moreItem = new DefaultListItem(getNextResultsMessage());
+			
+			//zzz be nice to have base functionality help with this
+			
+			// Check for 'More Items' at the end of the existing itemList.  If it is there,
+			//  remove it as this search will add it if there are still more records.
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle() == moreItem.getTitle()) {
+				_itemList.remove(_itemList.size()-1);				
+			}
+			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreAssignment item : _webServiceResults.Page) {
 				_itemList.add(new ColorCodedListItem(item));

@@ -179,12 +179,12 @@ public class Api {
     	}		
 	}
 
-	public List<CoreResponseType> responsetypes(String username, String password, String siteNumber) throws AppException {
+	public List<CoreResponseType> responsetypes(String username, String password, String siteNumber, int connectionId) throws AppException {
 
 		isOnlineCheck();
 		
 		List<CoreResponseType> list = null;
-    	RESTClient client = new RESTClient(String.format("%s/%s/types/responses", _baseUrl, siteNumber));
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/%s/responses", _baseUrl, siteNumber, connectionId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);

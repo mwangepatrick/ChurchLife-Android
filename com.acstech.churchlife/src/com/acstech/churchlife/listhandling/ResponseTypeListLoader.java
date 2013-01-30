@@ -11,6 +11,8 @@ import com.acstech.churchlife.webservice.CoreResponseType;
 
 public class ResponseTypeListLoader extends ListLoaderBase<CoreResponseType>{
 	
+	private int _connectionId;
+	
 	private List<CoreResponseType> _webServiceResults;			// results from webservice call	
 	
 	@Override
@@ -45,7 +47,7 @@ public class ResponseTypeListLoader extends ListLoaderBase<CoreResponseType>{
 	 */
 	protected void getWebserviceResults() throws AppException { 		
 		GlobalState gs = GlobalState.getInstance(); 
-	   	_webServiceResults = super.getWebServiceCaller().responsetypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+	   	_webServiceResults = super.getWebServiceCaller().responsetypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), _connectionId);
 	}
 	
 	/**
@@ -58,8 +60,9 @@ public class ResponseTypeListLoader extends ListLoaderBase<CoreResponseType>{
 		//   There is no 'Next' or 'No results found' logic in this list		
 	}
 	
-	public ResponseTypeListLoader(Context context){
+	public ResponseTypeListLoader(Context context, int connectionId){
 		super(context);		
+		_connectionId = connectionId;
 	}
 	
 

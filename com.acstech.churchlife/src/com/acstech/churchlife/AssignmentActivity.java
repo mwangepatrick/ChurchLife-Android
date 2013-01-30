@@ -3,6 +3,7 @@ package com.acstech.churchlife;
 import java.util.ArrayList;
 import java.util.Date;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
@@ -29,11 +32,17 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	static final int DIALOG_PROGRESS_LOAD = 0;
 	static final int DIALOG_PROGRESS_SAVE = 1;
 	
+	LinearLayout reassignLayout;
+	TextView reassignTextView;
+	
 	EditText connectionEditText;
 	Button responsesButton;	
 	CheckBox closeCheckBox;
 	Button saveButton;
 		
+	private int _assignToMode = 0;				// 0 = individual, 1 = team
+	private int _assignToId = 0;
+	
 	CoreConnection _connection;
 	ResponseTypeListLoader _responseTypeLoader;
 	
@@ -70,10 +79,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
             	 
             	 // check for re-assignment
             	 if (extraBundle.get("assignto") != null) {
-            		 int option = extraBundle.getInt("assignto");
-            		 startReAssignmentPickerActivity(option);
-            	 }
-            	 
+            		 _assignToMode = extraBundle.getInt("assignto");
+            		 startReAssignmentPickerActivity(_assignToMode);
+            	 }            	 
              }		                         
 		}
 	 	catch (Exception e) {
@@ -111,12 +119,15 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 *  Links state variables to their respective form controls
 	 */
 	 private void bindControls(){
-
+		reassignLayout = (LinearLayout)this.findViewById(R.id.reassignLayout);	
+		reassignTextView = (TextView)this.findViewById(R.id.reassignTextView);					
 		connectionEditText = (EditText)this.findViewById(R.id.connectionEditText);		
 		responsesButton = (Button)this.findViewById(R.id.responsesButton);
 		closeCheckBox = (CheckBox)this.findViewById(R.id.closeCheckBox);
 		saveButton = (Button)this.findViewById(R.id.saveButton);
-								
+					
+		reassignLayout.setVisibility(View.GONE);
+		
 		// Responses button click event             
 		responsesButton.setOnClickListener(new OnClickListener() {				 
 			 @Override
@@ -181,7 +192,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	    	
 	    	try
 	    	{	
-	    		_responseTypeLoader = new ResponseTypeListLoader(this);	    				    		
+	    		_responseTypeLoader = new ResponseTypeListLoader(this, _connection.ConnectionId);	    				    		
 	    		_responseTypeLoader.Load(0, onListLoaded);	    		
 	    	}
 	    	catch (Exception e) {
@@ -293,11 +304,23 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
     		req.ConnectionDate = new Date();
     		req.ConnectionTypeId = _connection.ConnectionTypeId;
     		req.FamilyConnection = _connection.FamilyConnection;
-    		req.ContactIndvId = _connection.ContactInformation.IndvId;	    		
-    		req.Reassign = false;
-    		//req.OpenCategoryId
-    		//req.NewCallerIndvId
-    		//req.NewTeamId
+    		req.ContactIndvId = _connection.ContactInformation.IndvId;
+    		
+    		// reassign
+    		if (_assignToId > 0) {
+    			req.Reassign = true;
+    			
+    			if (_assignToMode == 0) {				// _assignToId is an individual id
+    				req.NewCallerIndvId = _assignToId;
+    			}
+    			else {									// _assignToId is an team id
+    				req.NewTeamId = _assignToId;
+    			}
+    		}    		
+    		else {
+    			req.Reassign = false;
+    		}
+    		
     		req.Comment = connectionEditText.getText().toString();
     		
     		// Iterate over _selectedResponses and add all user selected responses
@@ -331,12 +354,26 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
      * 
      * @throws AppException 
      */
-    private void startReAssignmentPickerActivity(int reassignTo) throws AppException {	    	
+    private void startReAssignmentPickerActivity(int assignTo) throws AppException {	    	
     	Intent intent = new Intent();
     	intent.setClass(this, AssignToPickerActivity.class);	 
-	 	intent.putExtra("assignto", reassignTo);	 	
-	 	startActivity(intent);	  		 			
-	 	finish();					// always close this activity		 			 		    
+	 	intent.putExtra("assignto", assignTo);	
+	 	startActivityForResult(intent, 0);	 		 	
     }
 
+    // This catches the result (assignment value) returned from the AssignToPicker activity
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    
+    	super.onActivityResult(requestCode, resultCode, data);
+    	
+        if (resultCode == Activity.RESULT_OK) {
+           _assignToId =  Integer.parseInt(data.getStringExtra("id"));
+           
+           reassignLayout.setVisibility(View.VISIBLE);           
+           reassignTextView.setText(data.getStringExtra("description")); 
+           closeCheckBox.setChecked(false);
+        }        
+    }
+    
 }

@@ -146,6 +146,11 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle(), true);      			
 		        		}
 		        		else {
+		        			
+		        			int index = detailsListview.getFirstVisiblePosition();
+		    				View v = detailsListview.getChildAt(0);
+		    				int top = (v == null) ? 0 : v.getTop();
+		    				
 		        			// Show the list of assignments
 		           			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
 		        			
@@ -165,6 +170,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        			});	
 		        			
 		        			detailsListview.setAdapter(lia);
+		        			detailsListview.setSelectionFromTop(index, top);   // restore scroll position
 		        		}
 		        	}
 		        	else {

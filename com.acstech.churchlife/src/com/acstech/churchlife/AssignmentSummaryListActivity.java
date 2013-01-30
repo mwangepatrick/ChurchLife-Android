@@ -122,8 +122,15 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 		        			startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle(), true);      			
 		        		}
 		        		else {
+		        			// save index and top position (preserve scroll location)
+		    				int index = detailsListview.getFirstVisiblePosition();
+		    				View v = detailsListview.getChildAt(0);
+		    				int top = (v == null) ? 0 : v.getTop();
+		    				
 				     		// set items to list
 		        			detailsListview.setAdapter(new ColorCodedListItemAdapter(AssignmentSummaryListActivity.this, _loader.getList()));
+		        			
+		        			detailsListview.setSelectionFromTop(index, top);   // restore scroll position  
 		        		}
 		        	}
 		        	else {

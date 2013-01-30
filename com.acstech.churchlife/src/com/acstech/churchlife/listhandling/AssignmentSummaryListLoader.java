@@ -37,26 +37,19 @@ public class AssignmentSummaryListLoader extends ListLoaderBase<ColorCodedListIt
 		
 		// check for empty
 		if (_webServiceResults.Page.size() == 0) {    					    		
-			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));
-			
-			/*
-			//ZZZ test...remove
-			
-			CoreAssignmentSummary as = new CoreAssignmentSummary();
-			as.AssignmentTypeID = 5;
-			as.AssignmentType = "Hospital Visitz";
-			as.TotalConnections = 5;
-			as.AssignmentColor = "";
-			try {
-				as.EarliestDueDate = DateHelper.StringToDate("12/12/2012", "MM/dd/yyyy");
-			} catch (AppException e) {
-				e.printStackTrace();
-			}
-			_itemList.add(new ColorCodedListItem(as));
-			//_itemList.add(new ColorCodedListItem(as));
-			*/	
+			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));			
 		}	    			
-		else {		    				
+		else {		    					
+			DefaultListItem moreItem = new DefaultListItem(getNextResultsMessage());
+			
+			//zzz be nice to have base functionality help with this
+			
+			// Check for 'More Items' at the end of the existing itemList.  If it is there,
+			//  remove it as this search will add it if there are still more records.
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle() == moreItem.getTitle()) {
+				_itemList.remove(_itemList.size()-1);				
+			}
+			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreAssignmentSummary item : _webServiceResults.Page) {
 				_itemList.add(new ColorCodedListItem(item));

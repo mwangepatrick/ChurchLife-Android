@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.R;
 import com.acstech.churchlife.StringHelper;
@@ -27,6 +28,7 @@ public class CoreConnection  extends CoreObject {
 	public Date DateCreated;
 	public String Comment;
 	//OpenField
+	public String PermissionLevel;
 	public String ContactType;	
 	public Date DueDate;
 	public String DueDateLong;
@@ -93,6 +95,12 @@ public class CoreConnection  extends CoreObject {
     	return false;
     }
     
+    //NOTE:  Hardcoded string literal "ALL"
+    //  seems to be unique to this object (at present)  
+	public boolean hasChangePermission() {    	    	
+    	return (PermissionLevel.toUpperCase(Locale.US).equals("ALL"));
+    }
+    
     // Factory Method - parse json
     //
     // NOTE:  When using this object in a list of an individuals' recent connections, 
@@ -111,7 +119,8 @@ public class CoreConnection  extends CoreObject {
   		  obj.ConnectionTypeDescription = jo.getString("ConnectionTypeDescription");  		  
   		  obj.FamId = jo.optInt("FamId");
   		  obj.FamilyConnection = jo.optBoolean("FamilyConnection");
-  		
+  		  obj.PermissionLevel = jo.optString("PermissionLevel");
+  		  
   		  String createDate = jo.optString("DateCreated");
   		  if (!createDate.equals(""))  {  			  
   			  obj.DateCreated = DateHelper.StringToDate(createDate, "MM/dd/yyyy");

@@ -84,31 +84,31 @@ public class ColorCodedListItemAdapter extends BaseAdapter  {
 		ListViewHolder holder = null;
 		ColorCodedListItem currentItem = _items.get(position);			
 			
-		if (convertView == null) {
-			
-			 LayoutInflater inflater = LayoutInflater.from(_context);
-			 holder = new ListViewHolder();
-			 
-			 if (currentItem.isTitleOnlyItem())
-			 {
-				 convertView = inflater.inflate(R.layout.listitem_default, null);	 
-				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);				 				
-			 }
-			 else
-			 {
-				 convertView = inflater.inflate(R.layout.listitem_colorcoded, null);	 
+		// since title only items use a different layout, we have to rebuild the convertview
+		//  every time.  Otherwise, a non-title item may use a title layout and a title item
+		//  may use the other type of layout.  
+		//
+		// Performance could become an issue if we use this with 100s or 1000s or records.		
+		 LayoutInflater inflater = LayoutInflater.from(_context);
+		 holder = new ListViewHolder();
+		 
+		 if (currentItem.isTitleOnlyItem())
+		 {
+			 convertView = inflater.inflate(R.layout.listitem_default, null);	 
+			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);				 				
+		 }
+		 else
+		 {
+			 convertView = inflater.inflate(R.layout.listitem_colorcoded, null);	 
 
-				 holder.colorImageView = (ImageView) convertView.findViewById(R.id.colorImageView);
-				 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
-				 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
-				 holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
-			 }			 			  			 						 			 
-			 convertView.setTag(holder);
-		}
-		else {
-			 holder = (ListViewHolder) convertView.getTag();
-		}
-			
+			 holder.colorImageView = (ImageView) convertView.findViewById(R.id.colorImageView);
+			 holder.titleTextView = (TextView) convertView.findViewById(R.id.titleTextView);
+			 holder.descriptionTextView = (TextView) convertView.findViewById(R.id.descriptionTextView);
+			 holder.iconImageView = (ImageView) convertView.findViewById(R.id.iconImageView);
+		 }			 			  			 						 			 
+		 convertView.setTag(holder);
+	
+			 
 		//----------------------------------------------------
 		// set control values to this item's property values
 		//----------------------------------------------------

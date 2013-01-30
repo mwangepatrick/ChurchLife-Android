@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,8 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-
-//zzz lots of code from IndividualList activity ....revisit to see if we can combine some logic?
 
 public class AssignToPickerActivity extends Activity {
 
@@ -44,9 +43,7 @@ public class AssignToPickerActivity extends Activity {
 		 
 		 super.onCreate(savedInstanceState);
 	 				 
-		 try {		 		
-        	//zzzz _appPrefs = new AppPreferences(getApplicationContext());
-        	
+		 try {		 		        	
         	setTitle(R.string.Connection_ReassignDialogTitle); 			
 	 		setContentView(R.layout.assigntopicker);       
 	 		
@@ -89,7 +86,7 @@ public class AssignToPickerActivity extends Activity {
 	        default:
 	            return null;
 	        }
-	    }
+	 }
 
 	 
 	 /**
@@ -122,8 +119,7 @@ public class AssignToPickerActivity extends Activity {
            	 ItemSelected(item);                	                 	
             }
         }); 
-        
-			 		
+        			 	
 	}
 
 	 /**
@@ -161,12 +157,16 @@ public class AssignToPickerActivity extends Activity {
     	showDialog(DIALOG_PROGRESS);
     	
     	try
-    	{	
-    		
+    	{	    		
     		if (_loader == null) {
+    
+    			if (_assignToMode == 0) {			// individual
+    				_loader = new IndividualListLoader(this, txtSearch.getText().toString());
+           	 	}
+           	 	else {								// team
+           	 		_loader = new ConnectionTeamsListLoader(this, txtSearch.getText().toString());
+           	 	}    			
     			
-    			//_loader = new IndividualListLoader(this, txtSearch.getText().toString());
-    			_loader = new ConnectionTeamsListLoader(this, txtSearch.getText().toString());
     		}
     		else
     		{
@@ -240,8 +240,12 @@ public class AssignToPickerActivity extends Activity {
     			loadListWithProgressDialog(true);
        	 	}
        	 	else {
-       	 		// Route to the edit connection...zzzz
-       	 		
+       	 		// Close this activity (opened by the edit connection activity) passing the selection       	 		
+       	 		Intent result = new Intent();
+       	 		result.putExtra("id", item.getId());
+       	 		result.putExtra("description", item.getTitle());
+       	 		setResult(RESULT_OK, result);   
+       	 		finish();
        	 	}       	 	       	 	
     	}
         catch (Exception e) {
@@ -250,6 +254,5 @@ public class AssignToPickerActivity extends Activity {
 	    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
 		}  
     }
-	 
-	 
+	 	 
 }

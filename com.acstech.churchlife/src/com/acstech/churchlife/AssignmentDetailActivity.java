@@ -175,7 +175,13 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	  *   Sets control properties
 	 */
 	 private void bindData(){		 		 	
-		 assignmentTextView.setText(_connection.getDescription());		
+		 assignmentTextView.setText(_connection.getDescription());
+		 
+		 // Further security check - these may already be 'gone' due to login permissions
+		 if (_connection.hasChangePermission() == false) {
+			 reassignButton.setVisibility(View.GONE);
+			 enterButton.setVisibility(View.GONE);
+		 }			
 	 }
 	 
 	 
@@ -184,101 +190,99 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
      *   to retrieve a SINGLE connection. 
      *   
      */
-	    private void loadDataWithProgressDialog(final int connectionId)
-	    {               	    			   
-	    	showDialog(DIALOG_PROGRESS);
-	    	
-	    	// This handler is called once the lookup is complete.  It looks at the data returned from the
-	    	//  thread (in the Message) to determine success/failure.  If successful, the values are
-	    	//  bound to this activity's layout controls
-	    	final Handler handler = new Handler() {
-	    		public void handleMessage(Message msg) {
-	    		  
-	    			removeDialog(DIALOG_PROGRESS);
-	    			
-	    			try {
-		    			if (msg.what == 0) {	
-		    				
-		    				_connection = CoreConnection.GetCoreConnection(msg.getData().getString("connection"));
-		    				bindData();		    					    			
-		       			}
-		       			else if (msg.what < 0) {
-		       				// If < 0, the exception details are in the message bundle.  Throw it 
-		       				//  and let the exception handler (below) handle it	       				
-		       				Bundle b = msg.getData();
-		       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadDataWithProgressDialog.handleMessage");	       				
-		       			}	    				
-	    			} 			
-	    			catch (Exception e) {  				
-	    					ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
-	    	    			ExceptionHelper.notifyNonUsers(e);
-	    				}
-	    			}    			    		
-	    	};
-	    	
-	    	Thread searchThread = new Thread() {  
-	    		public void run() {
-	    			try {    				    				
-	    				GlobalState gs = GlobalState.getInstance(); 		
-	    			 	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
-
-	    			 	CoreConnection conn = apiCaller.connection(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), connectionId);
-
-		    	    	// Return the response object (as string) to the message handler above
-		    	    	Message msg = handler.obtainMessage();		
-		    	    	msg.what = 0;
-		    	    	
-		    	    	Bundle b = new Bundle();
-	    				b.putString("connection", conn.toJsonString());   
-	    				msg.setData(b);
-	    						    	    		    	    			    	  
-		    	    	handler.sendMessage(msg);	    	    	
-	    			}
-	    			catch (Exception e) {    				
-	    				ExceptionHelper.notifyNonUsers(e);			// Log the full error,     				
+    private void loadDataWithProgressDialog(final int connectionId)
+    {               	    			   
+    	showDialog(DIALOG_PROGRESS);
+    	
+    	// This handler is called once the lookup is complete.  It looks at the data returned from the
+    	//  thread (in the Message) to determine success/failure.  If successful, the values are
+    	//  bound to this activity's layout controls
+    	final Handler handler = new Handler() {
+    		public void handleMessage(Message msg) {
+    		  
+    			removeDialog(DIALOG_PROGRESS);
+    			
+    			try {
+	    			if (msg.what == 0) {	
 	    				
-	    				Message msg = handler.obtainMessage();
-	    				msg.what = -1;
-	    				msg.setData(ExceptionHelper.getBundleForException(e));	
-	    				handler.sendMessage(msg);    	    				
-	    			}    			       	    	    	    	
-	    		 }
-	    	};
-	    	searchThread.start();    	
-	    }
+	    				_connection = CoreConnection.GetCoreConnection(msg.getData().getString("connection"));
+	    				bindData();		    					    			
+	       			}
+	       			else if (msg.what < 0) {
+	       				// If < 0, the exception details are in the message bundle.  Throw it 
+	       				//  and let the exception handler (below) handle it	       				
+	       				Bundle b = msg.getData();
+	       				throw ExceptionHelper.getAppExceptionFromBundle(b, "loadDataWithProgressDialog.handleMessage");	       				
+	       			}	    				
+    			} 			
+    			catch (Exception e) {  				
+    					ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
+    	    			ExceptionHelper.notifyNonUsers(e);
+    				}
+    			}    			    		
+    	};
+    	
+    	Thread searchThread = new Thread() {  
+    		public void run() {
+    			try {    				    				
+    				GlobalState gs = GlobalState.getInstance(); 		
+    			 	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);		
 
-	    /**
-	     * Display the assignment screen
-	     * 
-	     * @throws AppException 
-	     */
-	    private void startAssignmentActivity(int assignTo) throws AppException {	    	
-	    	Intent intent = new Intent();
-	    	intent.setClass(this, AssignmentActivity.class);
-		 	intent.putExtra("assignment", _connection.toJsonString());
-		 	
-		 	// if we are re-assigning, tell the assignment activity
-		 	//  to open with the re-assign individual/team picker
-		 	if (assignTo >= 0) {
-		 		intent.putExtra("assignto", assignTo);
-		 	}
-		 	
-		 	startActivity(intent);	  		 			
-		 	finish();					// always close this activity		 			 		    
-	    }
-	    	    
-	    /**
-	     * Display a list of recent connections for an individual
-	     *  
-	     * @throws AppException
-	     */
-	    private void startConnectionListActivity() throws AppException {	    	
-	    	Intent intent = new Intent();
-	    	intent.setClass(this, IndividualConnectionListActivity.class);
-		 	intent.putExtra("id", _connection.ContactInformation.IndvId);
-		 	intent.putExtra("name", _connection.ContactInformation.getDisplayNameForList());
-		 	startActivity(intent);		 			 		    
-	    }
+    			 	CoreConnection conn = apiCaller.connection(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), connectionId);
 
-	    
+	    	    	// Return the response object (as string) to the message handler above
+	    	    	Message msg = handler.obtainMessage();		
+	    	    	msg.what = 0;
+	    	    	
+	    	    	Bundle b = new Bundle();
+    				b.putString("connection", conn.toJsonString());   
+    				msg.setData(b);
+    						    	    		    	    			    	  
+	    	    	handler.sendMessage(msg);	    	    	
+    			}
+    			catch (Exception e) {    				
+    				ExceptionHelper.notifyNonUsers(e);			// Log the full error,     				
+    				
+    				Message msg = handler.obtainMessage();
+    				msg.what = -1;
+    				msg.setData(ExceptionHelper.getBundleForException(e));	
+    				handler.sendMessage(msg);    	    				
+    			}    			       	    	    	    	
+    		 }
+    	};
+    	searchThread.start();    	
+    }
+
+    /**
+     * Display the assignment screen
+     * 
+     * @throws AppException 
+     */
+    private void startAssignmentActivity(int assignTo) throws AppException {	    	
+    	Intent intent = new Intent();
+    	intent.setClass(this, AssignmentActivity.class);
+	 	intent.putExtra("assignment", _connection.toJsonString());
+	 	
+	 	// if we are re-assigning, tell the assignment activity
+	 	//  to open with the re-assign individual/team picker
+	 	if (assignTo >= 0) {
+	 		intent.putExtra("assignto", assignTo);
+	 	}
+	 	
+	 	startActivity(intent);	  		 			
+	 	finish();					// always close this activity		 			 		    
+    }
+    	    
+    /**
+     * Display a list of recent connections for an individual
+     *  
+     * @throws AppException
+     */
+    private void startConnectionListActivity() throws AppException {	    	
+    	Intent intent = new Intent();
+    	intent.setClass(this, IndividualConnectionListActivity.class);
+	 	intent.putExtra("id", _connection.ContactInformation.IndvId);
+	 	intent.putExtra("name", _connection.ContactInformation.getDisplayNameForList());
+	 	startActivity(intent);		 			 		    
+    }	    
 }
