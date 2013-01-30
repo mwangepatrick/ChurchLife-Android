@@ -7,6 +7,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,6 +30,8 @@ import com.acstech.churchlife.webservice.CoreResponseType;
 
 public class AssignmentActivity  extends ChurchlifeBaseActivity {
 
+	int _orientation;
+	
 	//zzz revisit progress dialog to do with fragments
 	static final int DIALOG_PROGRESS_LOAD = 0;
 	static final int DIALOG_PROGRESS_SAVE = 1;
@@ -56,6 +60,18 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		 super.onCreate(savedInstanceState);
 	
+		 //test
+		 _orientation = getRequestedOrientation();
+		 if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		 } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		 } else {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+		 }
+		 
+		 
+		 
 		 try
 		 {
 			 _appPrefs = new AppPreferences(getApplicationContext());
