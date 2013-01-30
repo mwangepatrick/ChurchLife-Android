@@ -44,29 +44,35 @@
         android:inputType="textMultiLine"
         android:layout_below="@+id/reassignLayout">        
     </EditText>
-
-    <TextView
-	    android:id="@+id/responsesTitleTextView"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignBaseline="@+id/responsesButton"
-	    android:layout_alignBottom="@+id/responsesButton"
-	    android:layout_alignParentLeft="true"
-	    android:text="@string/Connection.Responses"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
-        
-    <Button
-        android:id="@+id/responsesButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollHorizontally="true"
-        android:lines="1"
-        android:ellipsize="end"
-        android:layout_alignParentRight="true"
-        android:text="@string/Connection.ResponseDefault"
-        android:layout_toRightOf="@+id/responsesTitleTextView"
-        android:layout_below="@+id/connectionEditText" />
-    	
+    
+	<LinearLayout android:id="@+id/responseLayout"
+        		  android:layout_width="match_parent"
+    			  android:layout_height="wrap_content"
+    			  android:orientation="horizontal"
+    			  android:gravity="center_vertical"
+    			  android:layout_below="@+id/connectionEditText">
+	        
+	    <TextView
+		    android:id="@+id/responsesTitleTextView"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"		   
+		    android:text="@string/Connection.Responses"		    
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+	    	    
+	    <Button
+	        android:id="@+id/responsesButton"
+	        android:layout_width="0dp"
+	        android:layout_weight="2"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:ellipsize="end"
+	        android:lines="1"
+	        android:scrollHorizontally="true"
+	        android:text="@string/Connection.ResponseDefault" />
+	    	
+    </LinearLayout>
+    
     <!-- close connection checkbox-->    
 	<TextView
 	    android:id="@+id/closeConnectionTextView"
@@ -86,7 +92,7 @@
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         	android:layout_alignParentRight="true" 
-        	android:layout_below="@+id/responsesButton">
+        	android:layout_below="@+id/responseLayout">
     </CheckBox>
 
 		</RelativeLayout>

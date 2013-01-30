@@ -33,9 +33,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	static final int DIALOG_PROGRESS_SAVE = 1;
 	
 	LinearLayout reassignLayout;
-	TextView reassignTextView;
-	
-	EditText connectionEditText;
+	TextView reassignTextView;	
+	EditText connectionEditText;	
+	LinearLayout responseLayout;
 	Button responsesButton;	
 	CheckBox closeCheckBox;
 	Button saveButton;
@@ -121,7 +121,8 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 private void bindControls(){
 		reassignLayout = (LinearLayout)this.findViewById(R.id.reassignLayout);	
 		reassignTextView = (TextView)this.findViewById(R.id.reassignTextView);					
-		connectionEditText = (EditText)this.findViewById(R.id.connectionEditText);		
+		connectionEditText = (EditText)this.findViewById(R.id.connectionEditText);	
+		responseLayout = (LinearLayout)this.findViewById(R.id.responseLayout);
 		responsesButton = (Button)this.findViewById(R.id.responsesButton);
 		closeCheckBox = (CheckBox)this.findViewById(R.id.closeCheckBox);
 		saveButton = (Button)this.findViewById(R.id.saveButton);
@@ -213,19 +214,25 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		        		//  this connection already has (now that we have a list
 		        		//  and can resolve the id to a position in the list)
 		        		ArrayList<CoreResponseType> responses = _responseTypeLoader.getList();
-		        		
 		        		_selectedResponses = new boolean[responses.size()];
-		        		for (int i=0; i < responses.size()-1; i++) {
 		        		
-		        			if (_connection.containsResponse(responses.get(i).RespID)) {
-			        			_selectedResponses[i] = true;		        				
-		        			}
-		        			else {
-			        			_selectedResponses[i] = false;
-		        			}		        			
-		        		}		        		
-		        		
-		        		setResponseButtonText();
+		        		// if there are 0 responses for this connection, hide the response area
+		        		if (_selectedResponses.length == 0) {
+		        			responseLayout.setVisibility(View.GONE);	
+		        		}
+		        		else
+		        		{			        	
+			        		for (int i=0; i < responses.size()-1; i++) {
+			        		
+			        			if (_connection.containsResponse(responses.get(i).RespID)) {
+				        			_selectedResponses[i] = true;		        				
+			        			}
+			        			else {
+				        			_selectedResponses[i] = false;
+			        			}		        			
+			        		}		        					        					        				        	
+		        			setResponseButtonText();
+		        		}
 		        		
 		        	}
 		        	else {
