@@ -264,8 +264,9 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 											 getResources().getDrawable(R.drawable.user)));			
 		}
 		
-		// Comments - add a 'Comments' button IF the user has permissions
-		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS)) {
+		// Comments - add a 'Comments' button IF the user has permissions		
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS) &&
+			gs.getUser().FamId != _individual.PrimFamily) {
 										
 			titleString = getResources().getString(R.string.Individual_CommentAction);		
 		

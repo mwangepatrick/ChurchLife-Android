@@ -43,13 +43,6 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	
     	super.onCreate(savedInstanceState);
     
-    	
-    	//est
-    	//TypedValue tv = new TypedValue();    	
-    	//this.getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
-    	//int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
-    	
-    	
     	//---------------------------------------
     	// show/hide title bar
     	//---------------------------------------
@@ -125,7 +118,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
     	
     	// My ToDos - check security
-    	if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true) {
+    	if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true && gs.getUser().IndvId > 0) {
         	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo));
     	}
     	

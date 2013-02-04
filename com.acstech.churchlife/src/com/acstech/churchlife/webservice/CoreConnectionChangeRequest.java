@@ -49,8 +49,17 @@ public class CoreConnectionChangeRequest extends CoreObject {
 	  		jo.put("ContactIndvId", ContactIndvId);
 	  		jo.put("OpenCategoryId", OpenCategoryId);
 	  		jo.put("Reassign", Reassign);
-	  		jo.put("NewCallerIndvId", NewCallerIndvId);
-	  		jo.put("NewTeamId", NewTeamId);
+	  		
+	  		// don't send 0 for caller indv id - optional
+	  		if (NewCallerIndvId > 0) {
+	  			jo.put("NewCallerIndvId", NewCallerIndvId);
+	  		}
+	  		
+	  		// don't send 0 for team id - optional
+	  		if (NewTeamId > 0) {
+	  			jo.put("NewTeamId", NewTeamId);
+	  		}
+	  			  			  	
 	  		jo.put("Comment", Comment);	  		
 	  		
 	  		// to keep from being enquoted, use JSONArray

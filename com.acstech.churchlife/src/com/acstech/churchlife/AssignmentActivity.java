@@ -272,7 +272,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		StringBuilder textBuilder = new StringBuilder();
 		 
-		for (int i=0; i < _selectedResponses.length-1; i++) {     		
+		for (int i=0; i <= _selectedResponses.length-1; i++) {     		
 			 if (_selectedResponses[i] == true) {				 
 				 if (textBuilder.length() > 0) { textBuilder.append(","); }
 				 
@@ -334,7 +334,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
     			req.Reassign = true;
     			
     			if (_assignToMode == 0) {				// _assignToId is an individual id
-    				req.NewCallerIndvId = _assignToId;
+    				req.NewCallerIndvId = _assignToId;    				
     			}
     			else {									// _assignToId is an team id
     				req.NewTeamId = _assignToId;
@@ -348,7 +348,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
     		
     		// Iterate over _selectedResponses and add all user selected responses
     		req.ResponseIdList = new ArrayList<Integer>();    		
-    		for (int i = 0; i < _selectedResponses.length-1; i++) {
+    		for (int i = 0; i <= _selectedResponses.length-1; i++) {
     			if (_selectedResponses[i] == true) {
     				int id = _responseTypeLoader.getList().get(i).RespID;
     				req.ResponseIdList.add(id);

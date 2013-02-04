@@ -2,6 +2,7 @@ package com.acstech.churchlife.listhandling;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 
@@ -47,7 +48,7 @@ public class ConnectionTeamsListLoader extends ListLoaderBase<DefaultListItem>{
 			// Add all items from the latest web service request to the adapter			
 			// ...if search text is provided, only add those team names that match!					
 			for (CoreConnectionTeam item : _webServiceResults) {				
-				if (getSearchText().length() == 0 || item.TeamName.contains(getSearchText())) {
+				if (getSearchText().length() == 0 || item.TeamName.toLowerCase(Locale.US).contains(getSearchText().toLowerCase(Locale.US))) {
 					_itemList.add(new DefaultListItem(Integer.toString(item.TeamId), "", item.TeamName));	
 				}
 			}		    					

@@ -29,6 +29,8 @@ public class CoreAcsUser extends CoreObject {
       public String SiteName;
       public String SecurityRole;
       public String UnifiedLoginID;    
+      public int IndvId;
+      public int FamId;
       public Map<String,String> Rights = new HashMap<String,String>();
 
       // Helper method for evaluating user rights
@@ -65,8 +67,10 @@ public class CoreAcsUser extends CoreObject {
 	    	  user.UserName = jo.optString("UserName");
 	    	  user.FullName = jo.optString("FullName");	 	    	  
 	    	  user.SecurityRole = jo.optString("SecurityRole");
-	    	  user.UnifiedLoginID = jo.optString("UnifiedLoginID");
-	    			
+	    	  user.UnifiedLoginID = jo.optString("UnifiedLoginID");	    			
+	    	  user.IndvId = jo.optInt("IndvId");
+	    	  user.FamId = jo.optInt("FamId");
+	    	  
 	    	  // Rights
 	    	  JSONObject rights = jo.optJSONObject("Rights");
 	    	  
