@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
-
+	
 	static final int DIALOG_PROGRESS = 0;
 	
 	ProgressDialog _progressD;	
@@ -119,7 +119,7 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 		        				        		
 		        		//If only 1 type, go directly to the detail list page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle(), true);      			
+		        			startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle());      			
 		        		}
 		        		else {
 		        			// save index and top position (preserve scroll location)
@@ -157,7 +157,7 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 	       	 		loadListWithProgressDialog(true);  
 	       	 	}
 	       	 	else {	 
-	       	 		startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle(), false);    		 		       	 	
+	       	 		startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
 	       	 	}       	 	       	 	
 	    	}
 	        catch (Exception e) {
@@ -174,17 +174,36 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 	     * @param individualName
 	     * @param commentTypeId
 	     */
-	    private void startAssignmentListActivity(int assignmentTypeId, String assignmentType, boolean closeThisActivity) {
-	    	
+	    private void startAssignmentListActivity(int assignmentTypeId, String assignmentType) {	    	
 	    	Intent intent = new Intent();
 		 	intent.setClass(this, AssignmentListActivity.class);
 		 	intent.putExtra("assignmenttypeid", assignmentTypeId);
 		 	intent.putExtra("assignmenttype", assignmentType);
-		 	startActivity(intent);	  
-		 	
-		 	if (closeThisActivity) {
-		 		finish();
-		 	}
+		 	startActivity(intent);	
 	    }
-	 
+
+		@Override
+		protected void onResume() {
+			super.onResume();
+			
+			try
+			{
+				// check global state for dirty list - if dirty, refresh and clear flag 
+				GlobalState gs = GlobalState.getInstance(); 
+				String dirtyFlag = getResources().getString(R.string.AssignmentListSummary_DirtyFlag);
+				if (gs.getDirtyFlagExists(dirtyFlag)) {
+					_loader.clear();
+					loadListWithProgressDialog(true);
+					gs.clearDirtyFlag(dirtyFlag);					
+				}
+			}
+			catch (Exception e) {
+		 		if(_progressD != null){
+		 			_progressD.cancel();
+		 		}	 		
+		 		ExceptionHelper.notifyUsers(e, AssignmentSummaryListActivity.this);
+		 		ExceptionHelper.notifyNonUsers(e);
+		 	}
+		}
+	 	   
 }

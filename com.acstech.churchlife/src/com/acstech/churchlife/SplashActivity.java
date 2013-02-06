@@ -3,6 +3,7 @@ package com.acstech.churchlife;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAccountMerchant;
 import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.R;
 
@@ -87,8 +88,13 @@ public class SplashActivity extends Activity {
         	Api apiCaller = new Api(prefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
            	
            	CoreAcsUser user = apiCaller.user(auth1, auth2, auth3);
-           	           	         	  
+           	       	          
            	if (user != null) {
+           		
+           		// get merchant data (add to user) for giving
+               	CoreAccountMerchant merchantInfo = apiCaller.accountmerchant(auth1, auth2, auth3);	
+           		user.setMerchantInfo(merchantInfo);
+           		           		
         		// set global application variables	    				
 				GlobalState gs = GlobalState.getInstance(); 			
 				gs.setUser(user);

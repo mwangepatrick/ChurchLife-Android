@@ -674,6 +674,43 @@ public class Api {
 		return users;
 	}
 	
+	// Account Merchant
+	public CoreAccountMerchant accountmerchant(String username, String password, String siteNumber) throws AppException {
+
+		isOnlineCheck();
+		
+		CoreAccountMerchant merchantInfo = null;
+    	RESTClient client = new RESTClient(String.format("%s/%s/account/merchant", _baseUrl, siteNumber));
+    	
+    	String auth = client.getB64Auth(username,password);     	
+		client.AddHeader("Authorization", auth);
+    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);    	
+    	       
+    	try	{
+    		client.Execute(RequestMethod.GET);    	
+    		
+    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
+    			merchantInfo = CoreAccountMerchant.GetCoreAccountMerchant(client.getResponse());
+    		}
+    		else if (client.getResponseCode() == HttpStatus.SC_NO_CONTENT) {
+    			// do nothing - return null (not an error as some accounts do NOT have merchant info)
+    		}
+    		else {
+    			handleExceptionalResponse(client);
+    		}
+    	}
+    	catch (AppException e)	{
+    		// Add some parameters to the error for logging
+    		ExceptionInfo info = e.addInfo();
+    		info.setContextId("Api.accountmerchant");
+    		info.getParameters().put("sitenumber", siteNumber);
+    		info.getParameters().put("username", username);
+    		throw e;
+    	}
+		return merchantInfo;	
+	}
+
+	
 	
 	/**
 	 * Used to handle responses that are not expected (exceptions mostly)

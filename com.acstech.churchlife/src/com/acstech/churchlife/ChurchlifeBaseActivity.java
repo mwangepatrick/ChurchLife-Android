@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.listhandling.DefaultListItem;
 import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
+import com.acstech.churchlife.webservice.CoreAccountMerchant;
 import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -111,21 +112,78 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      */
     private void loadMenuItems() {
     	    	
-		GlobalState gs = GlobalState.getInstance(); 		
-    	ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem>();
+		ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem>();
     	
     	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people)); 
     	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
     	
     	// My ToDos - check security
-    	if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true && gs.getUser().IndvId > 0) {
+    	if (showMyToDoMenu()) {
         	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo));
+    	}
+    	
+    	// Giving - check security    	    	
+    	if (showGivingMenu()) {
+        	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Giving), R.drawable.ic_action_giving));
     	}
     	
     	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_MyInfo), R.drawable.ic_action_info));
     	
     	menuListView.setAdapter(new DefaultListItemAdapter(this, itemList, R.layout.listitem_withicon));			   
     }
+    
+
+
+    /**
+     * Logic for displaying the My ToDos menu
+     * @return
+     */
+    private boolean showMyToDoMenu() {	
+    	GlobalState gs = GlobalState.getInstance();    	
+    	return (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true && gs.getUser().IndvId > 0);
+    }
+    
+    /**
+     * Logic for displaying the giving menu
+     * @return
+     */
+    private boolean showGivingMenu() {
+    	
+    	boolean result = true;    	
+    	GlobalState gs = GlobalState.getInstance(); 		
+    	CoreAccountMerchant merchantInfo = gs.getUser().getMerchantInfo();
+    	
+    	// must have valid merchant info
+    	if (merchantInfo == null) {
+    		result = false;
+    	}
+    	else {
+    		if (merchantInfo.AllowACH == false && merchantInfo.AllowCreditDebitCards == false && merchantInfo.AllowACH == false) {
+    			result = false;
+    		}	
+    	}
+    	
+    	// only check if result is not already false
+    	if (result == true) {		
+	    	// if user is staff or admin, they must have an indivdiual id
+	    	if (gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_STAFF) || gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_ADMINISTRATOR)) {
+	    		if (gs.getUser().IndvId <= 0) {
+	    			result = false;
+	    		}
+	    	}
+    	}
+    	    	
+    	// only check if result is not already false
+    	if (result == true) {
+    		// non-member roles must be allowed via merchant info
+    		if (gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) && merchantInfo.NonMemberGivingEnabled == false) {
+	    		result = false;
+	    	}
+    	}
+    	    	   
+    	return result;
+    }
+    
     
     /**
      * Operate on a seleted navigation item by loading the intent 
@@ -144,6 +202,9 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_Connections))) {
     		intent = new Intent().setClass(this, AssignmentSummaryListActivity.class);
     	}
+    	else if (item.getTitle().equals(getResources().getString(R.string.Menu_Giving))) {
+    		intent = new Intent().setClass(this, WebViewActivity.class);
+    	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_MyInfo))) {
     		intent = new Intent().setClass(this, MyInfoActivity.class);
     		// special case:  do not close the activity if this is the my info splash screen
@@ -152,7 +213,8 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	}    	
     	        	
     	if (closeCurrentActivity) {
-    		finish(); // ensures the user cannot use the 'back' to this activity
+    		// clear all open activities since we are starting with a new 'root' activity
+    		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     	}
 		startActivity(intent);	// launch intent    	
     }

@@ -32,6 +32,7 @@ import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAccountMerchant;
 import com.acstech.churchlife.webservice.CoreAcsUser;
 
 //FUTURE: 
@@ -541,12 +542,17 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 			_appPrefs.setOrganizationName(loggedInUser.SiteName); 
     	} 
 		
+		// get merchant data (add to user) for giving
+		Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+		CoreAccountMerchant merchantInfo = apiCaller.accountmerchant(loggedInUser.UserName, password, String.valueOf(loggedInUser.SiteNumber));	
+		loggedInUser.setMerchantInfo(merchantInfo);
+				
 		// Save login credentials to global state as they are needed for EVERY web service call
 		//  (keep in mind that these need to be in state regardless of the 'remember me' setting)
 		GlobalState gs = GlobalState.getInstance();
 		gs.setUser(loggedInUser);
 		gs.setPassword(password);
-					
+							
     	//start People
 		Intent intent = new Intent();		
 		intent.setClass(LoginActivity.this, IndividualListActivity.class);

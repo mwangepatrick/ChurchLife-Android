@@ -1,5 +1,7 @@
 package com.acstech.churchlife;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
@@ -18,7 +20,8 @@ public class GlobalState extends Application
 
 	private CoreAcsUser _user;			// currently logged in user
 	private String _password;
-		
+	private List<String> _dirtyFlags;	// used to communicate refreshes amongst activities
+	
 	// SiteName
 	public String getSiteName() {
 		if (_user != null) {
@@ -77,12 +80,36 @@ public class GlobalState extends Application
 		setSavedState();
 	}
 	
+	// Dirty flags
+	private List<String> getDirtyFlags() {
+		if (_dirtyFlags == null) {
+			_dirtyFlags = new ArrayList<String>();
+		}
+		return _dirtyFlags;
+	}
+		
+	// adds this flag to the 'dirty' list
+	public void setDirtyFlag(String flag) {
+		getDirtyFlags().add(flag);
+	}
+	
+	// removes this flag from the 'dirty' list
+	public void clearDirtyFlag(String flag) {		
+		getDirtyFlags().remove(flag);
+	}
+	
+	// checks for existence of a 'dirty' flag	
+	public boolean getDirtyFlagExists(String flag) {
+		return (getDirtyFlags().contains(flag));
+	}
+	
 	/**
 	 *  Used to clear all application set values
 	 */
 	public void clearApplicationSettings() throws AppException {	
 		_user = null;
-		_password = "";		
+		_password = "";
+		_dirtyFlags = null;
 		setSavedState();
 	}
 	
@@ -95,7 +122,7 @@ public class GlobalState extends Application
 		String state = "";		
 		String userJson = "";
 		if (_user != null) {
-			userJson = _user.toString();			
+			userJson = _user.toJsonString();			
 		}
 		
 		state = String.format("%s|%s", userJson, _password);

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.acstech.churchlife"
       android:versionCode="5"
-      android:versionName="2013.47"
+      android:versionName="2013.48"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -81,6 +81,8 @@
 		    	  android:theme="@android:style/Theme.Dialog">
 		</activity>
 		
+		<activity android:name="com.acstech.churchlife.WebViewActivity">
+		</activity>
 		
 		
 		<activity android:name="com.acstech.churchlife.IndividualConnectionListActivity">

@@ -38,7 +38,6 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	
 		 try
 		 {
-			//zzz get connection type from bundle setTitle(R.string.Menu_Connections);
 			 setContentView(R.layout.assignmentlist); 
 			 bindControls();
 			 
@@ -143,7 +142,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        				        	
 		        		//If only 1, go directly to the detail page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle(), true);      			
+		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());      			
 		        		}
 		        		else {
 		        			
@@ -197,7 +196,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	       	 		loadListWithProgressDialog(true);  
 	       	 	}
 	       	 	else {	 
-	       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle(), false);    		 		       	 	
+	       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
 	       	 	}       	 	       	 	
 	    	}
 	        catch (Exception e) {
@@ -212,17 +211,36 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	     * 
 	     * @param assignmentId	    
 	     */
-	    private void startAssignmentDetailActivity(int assignmentId, String assignmentName, boolean closeThisActivity) {
-	    	
+	    private void startAssignmentDetailActivity(int assignmentId, String assignmentName) {	    	
 	    	Intent intent = new Intent();
 	    	intent.setClass(this, AssignmentDetailActivity.class);
 		 	intent.putExtra("assignmentid", assignmentId);
 		 	intent.putExtra("assignmentname", assignmentName);
-		 	startActivity(intent);	  
-		 	
-		 	if (closeThisActivity) {
-		 		finish();
-		 	}		 		    	
+		 	startActivity(intent);	  	 		    	
 	    }
 	 
+		@Override
+		protected void onResume() {
+			super.onResume();
+			
+			try
+			{
+				// check global state for dirty list - if dirty, refresh and clear flag 
+				GlobalState gs = GlobalState.getInstance(); 
+				String dirtyFlag = getResources().getString(R.string.AssignmentList_DirtyFlag);
+				if (gs.getDirtyFlagExists(dirtyFlag)) {
+					_loader.clear();
+					loadListWithProgressDialog(true);
+					gs.clearDirtyFlag(dirtyFlag);					
+				}
+			}
+			catch (Exception e) {
+		 		if(_progressD != null){
+		 			_progressD.cancel();
+		 		}	 		
+		 		ExceptionHelper.notifyUsers(e, AssignmentListActivity.this);
+		 		ExceptionHelper.notifyNonUsers(e);
+		 	}
+		}
+		
 }

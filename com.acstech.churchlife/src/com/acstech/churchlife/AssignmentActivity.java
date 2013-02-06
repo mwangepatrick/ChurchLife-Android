@@ -362,6 +362,9 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
     		
     	   	apiCaller.connectionAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
     			    		
+    	   	gs.setDirtyFlag(getResources().getString(R.string.AssignmentListSummary_DirtyFlag));
+    	   	gs.setDirtyFlag(getResources().getString(R.string.AssignmentList_DirtyFlag));
+    	   	
     	   	removeDialog(DIALOG_PROGRESS_SAVE);
     	   	    	
     	   	Toast.makeText(AssignmentActivity.this, getString(R.string.Connection_Saved), Toast.LENGTH_LONG).show();	    	   	
