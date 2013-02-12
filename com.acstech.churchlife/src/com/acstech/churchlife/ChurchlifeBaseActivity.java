@@ -84,16 +84,21 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		getSupportActionBar().setHomeButtonEnabled(true);
     		getSupportActionBar().setIcon(R.drawable.ic_menu);
     		
-    		sm.setSlidingEnabled(true);    		
+    		sm.setSlidingEnabled(true);
     	}
     	else    		
     	{
     		setBehindContentView(R.layout.splashscreen);
     		getSlidingMenu().setSlidingEnabled(false);
-    	}
-    	
+    	}    	
     }
 
+    @Override
+	protected void onResume() {
+		super.onResume();
+		
+		getSlidingMenu().showContent();		
+    }
     
     //************************************************************************
     //						LIST MENU (sliding)
@@ -158,7 +163,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		result = false;
     	}
     	else {
-    		if (merchantInfo.AllowACH == false && merchantInfo.AllowCreditDebitCards == false && merchantInfo.AllowACH == false) {
+    		if (merchantInfo.AllowACH == false && merchantInfo.AllowCreditDebitCards == false && merchantInfo.DebitCardsOnly == false) {
     			result = false;
     		}	
     	}
@@ -214,7 +219,9 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	        	
     	if (closeCurrentActivity) {
     		// clear all open activities since we are starting with a new 'root' activity
-    		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    		
+    		//FLAG_ACTIVITY_CLEAR_TOP|FLAG_ACTIVITY_SINGLE_TOP
     	}
 		startActivity(intent);	// launch intent    	
     }
