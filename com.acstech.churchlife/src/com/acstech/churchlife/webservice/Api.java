@@ -25,14 +25,16 @@ import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
  * @author softwarearchitect
  * 
  */
-public class Api {
+public class Api extends ApiBase {
 
+	/*
 	static final String APPLICATION_ID_KEY = "ApplicationId";
 	
 	String _baseUrl = null;
 	String _applicationId = "";					// app-specific key that gets sent with every request	
 	ConnectivityManager _connectivityManager;	// not required (can be null)
-
+	 */
+	
 	
 	/************************************************************/
 	/*				 	Assignments (connections)				*/
@@ -711,84 +713,13 @@ public class Api {
 	}
 
 	
-	
-	/**
-	 * Used to handle responses that are not expected (exceptions mostly)
-	 * 
-	 * @param client
-	 */
-	public void handleExceptionalResponse(RESTClient client) throws AppException {
-		
-		String defaultMsg = String.format("%s %s", client.getResponseCode(), client.getErrorMessage());
-		// String.format("An error has occurred attempting this web service request.  The error code is %s.", client.getResponseCode()));			
-		
-		//status specific errors
-		switch (client.getResponseCode()) {
-			case HttpStatus.SC_FORBIDDEN:
-			case HttpStatus.SC_METHOD_NOT_ALLOWED:
-			case HttpStatus.SC_UNAUTHORIZED:
-				throw AppException.AppExceptionFactory(ExceptionInfo.TYPE.UNAUTHORIZED,
-						 							   ExceptionInfo.SEVERITY.HIGH, 
-						 							   "100",           												    
-						 							   "Api.connections",
-						 							   defaultMsg);		
-			default:	
-				throw AppException.AppExceptionFactory(ExceptionInfo.TYPE.UNEXPECTED,
-						   							   ExceptionInfo.SEVERITY.HIGH, 
-						   							   "100",           												    
-						   							   "Api.connections",
-						   							   defaultMsg);
-		}		
-	}
-	
-	
-	public void isOnlineCheck() throws AppException {
-		if (isOnline() == false){
-			throw AppException.AppExceptionFactory(
-					   ExceptionInfo.TYPE.NOCONNECTION,
-					   ExceptionInfo.SEVERITY.CRITICAL, 
-					   "100",           												    
-					   "WebServiceHandler.isOnlineCheck",
-					   "Unable to connect to the network.  Please check your connection and try again.");
-		}
-	}
-	
-    public boolean isOnline() {
-    	boolean result = true;		//default to true
-    	if (_connectivityManager != null) {
-		   	 
-		   	 NetworkInfo ni = _connectivityManager.getActiveNetworkInfo();
-		   	 
-		   	 if (ni != null) {
-		   		result = ni.isConnectedOrConnecting();  
-		   	 }
-		   	 else {
-		   		result = false;   		 
-		   	 }    	    	  
-    	}
-    	return result;
-   }
-	
-	// Constructor
-	public Api(String webServiceUrl, String applicationId)	{
-		_baseUrl = webServiceUrl;
-		_applicationId = applicationId;
-		
-		
-		// releasing url
+	// CTOR
+	public Api(String webServiceUrl, String applicationId) {
+		super(webServiceUrl, applicationId);
+				
+		//test urls
 		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
 		//_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
 	}
-	
-	public Api(String webServiceUrl, String applicationId, ConnectivityManager connManager)	{
-		_baseUrl = webServiceUrl;
-		_applicationId = applicationId;
-		_connectivityManager = connManager;
-		
-		//zzz temp
-		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
-		//_baseUrl = "https://releasing.accessacs.com/api_accessacs/v2";
-		//_baseUrl = "http://labs.acstechnologies.com/coreaccessacs/api_accessacs/v2";
-	}	
 	
 }

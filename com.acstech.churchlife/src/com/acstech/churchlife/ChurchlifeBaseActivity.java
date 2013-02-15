@@ -208,7 +208,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		intent = new Intent().setClass(this, AssignmentSummaryListActivity.class);
     	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_Giving))) {
-    		intent = new Intent().setClass(this, WebViewActivity.class);
+    		intent = new Intent().setClass(this, GivingActivity.class);
     	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_MyInfo))) {
     		intent = new Intent().setClass(this, MyInfoActivity.class);

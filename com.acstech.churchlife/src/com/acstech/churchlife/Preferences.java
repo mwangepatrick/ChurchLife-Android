@@ -12,8 +12,8 @@ import android.preference.PreferenceCategory;
    
 /**
  * This activity created from a selection of a menu item on the application
- *   options menu (see OptionsActivity).  This class exists to remove from
- *   preferences the 'remember me' authentication credentials so that the
+ *   options menu.  This class exists to remove from preferences the
+ *   'remember me' authentication credentials so that the
  *   user does not have access to see them (they are encrypted) on the preferences
  *   edit form.
  *   
@@ -53,10 +53,11 @@ public class Preferences extends PreferenceActivity {
             
         	if (preference.getKey().equals("developermode")) {
         		if (newValue.equals(Boolean.FALSE)) {
-        			
-        			// keep the logic for setting url in AppPreferences class
+        			// if developer mode is turned 'off'....reset to default        			
+        			// (keep the logic for setting url in AppPreferences class)
         			AppPreferences prefs = new AppPreferences(getApplicationContext());
-        			prefs.setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);        			
+        			prefs.setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);
+        			prefs.setGivingWebServiceUrl(config.GIVING_SERVICE_URL_VALUE);
         		}
         	}        	
             return true;

@@ -81,7 +81,7 @@
 		    	  android:theme="@android:style/Theme.Dialog">
 		</activity>
 		
-		<activity android:name="com.acstech.churchlife.WebViewActivity">
+		<activity android:name="com.acstech.churchlife.GivingActivity">
 		</activity>
 		
 		

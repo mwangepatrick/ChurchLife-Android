@@ -13,4 +13,6 @@ public class config {
 	
 	public static String SERVICE_URL_VALUE = "https://api.accessacs.com";									// old 
 	public static String CORE_SERVICE_URL_VALUE = "https://secure.accessacs.com/api_accessacs_mobile/v2"; 	// new
+	
+	public static String GIVING_SERVICE_URL_VALUE = "https://solutions.acstechnologies.com/mobile/"; 		
 }

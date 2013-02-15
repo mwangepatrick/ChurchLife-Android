@@ -64,10 +64,11 @@ public class AppPreferences {
     	 // when developer mode is turned off, set the url back to default
     	 if (mode == false) {
     		 setWebServiceUrl(config.CORE_SERVICE_URL_VALUE);
+    		 setGivingWebServiceUrl(config.GIVING_SERVICE_URL_VALUE);
     	 }
      }
      
-     // Web Service URI (base)
+     // Web Service URI 
      public String getWebServiceUrl() {    	
     	 
     	 String result = appSharedPrefs.getString("serviceurl", "");
@@ -81,6 +82,23 @@ public class AppPreferences {
      
      public void setWebServiceUrl(String url) {
     	 prefsEditor.putString("serviceurl", url);
+    	 prefsEditor.commit();
+     }
+
+     // Giving Web Service URI
+     public String getGivingWebServiceUrl() {    	
+    	 
+    	 String result = appSharedPrefs.getString("givingserviceurl", "");
+    	
+    	 // if missing, set to default    	 
+    	 if (result.equals("")) {
+    		 setGivingWebServiceUrl(config.GIVING_SERVICE_URL_VALUE);
+    	 }
+    	 return appSharedPrefs.getString("givingserviceurl", config.GIVING_SERVICE_URL_VALUE);
+     }
+     
+     public void setGivingWebServiceUrl(String url) {
+    	 prefsEditor.putString("givingserviceurl", url);
     	 prefsEditor.commit();
      }
      

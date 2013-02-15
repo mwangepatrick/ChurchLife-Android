@@ -22,12 +22,19 @@
                 android:key="auth3" android:name="Auth3Preference" android:enabled="false"/>                
 	 	
     	<EditTextPreference
-        	android:summary="This allows you to enter the service URL."
+        	android:summary="This allows you to enter the core service URL."
             android:defaultValue="https://api.accessacs.com"
             android:title="Service URL"
             android:key="serviceurl" 
             android:name="serviceurl"/>
-    	
+
+        <EditTextPreference
+        	android:summary="This allows you to enter the giving service URL."
+            android:defaultValue="https://solutions.acstechnologies.com/mobile/"
+            android:title="Giving Service URL"
+            android:key="givingserviceurl" 
+            android:name="givingserviceurl"/>
+    	    		
     	<CheckBoxPreference 
     	    android:key="developermode" 
     	    android:title="Developer Mode" 
