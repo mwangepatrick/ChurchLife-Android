@@ -19,6 +19,7 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.listhandling.ColorCodedListItem;
 import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
 import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
+import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
@@ -195,9 +196,15 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
 		        			startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), true);		        			
 		        		}
-		        		else {
-				     		// set items to list
-			        		lv1.setAdapter(new ColorCodedListItemAdapter(CommentSummaryListActivity.this, _loader.getList()));
+		        		else {		        			
+		        			// save index and top position (preserve scroll location)
+		    				int index = lv1.getFirstVisiblePosition();
+		    				View v = lv1.getChildAt(0);
+		    				int top = (v == null) ? 0 : v.getTop();
+		    				
+				     		// set items to list and restore scroll position
+			        		lv1.setAdapter(new ColorCodedListItemAdapter(CommentSummaryListActivity.this, _loader.getList()));			        		
+			        		lv1.setSelectionFromTop(index, top);   // restore scroll position 		        			
 		        		}
 		        	}
 		        	else {

@@ -158,10 +158,9 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 								@Override
 								public void onIconClick(Object id) {
 									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));									    		
-									if (asm.TeamMembers.size() > 0)
-									{										
+									if (asm.TeamMembers.size() > 0)	{										
 										DialogListViewFragment dlg = new DialogListViewFragment();
-										dlg.setTitle("Team Members");
+										dlg.setTitle(getString(R.string.Assignment_ViewTeam));
 										dlg.setItems(asm.getTeamMemberList());
 										dlg.show(getSupportFragmentManager(), "");
 									}

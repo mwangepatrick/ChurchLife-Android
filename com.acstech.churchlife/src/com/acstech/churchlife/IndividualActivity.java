@@ -16,10 +16,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -199,16 +199,13 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     	
     	GlobalState gs = GlobalState.getInstance(); 
     	
-    	// image - use family picture if individual picture is empty
+    	// image - use family picture if individual picture is empty (do in background)
     	String imageUrl = _individual.PictureUrl;
     	if (imageUrl.trim().length() == 0) {
     		imageUrl = _individual.FamilyPictureUrl;
-    	}    		
-    	Drawable image = ImageOperations(imageUrl);
-    	if (image != null) {
-    		individualImageView.setImageDrawable(image);	    	        
-    	}
-    	
+    	}    		    	
+    	new loadImageUrlTask().execute(imageUrl);
+    	  	
 		nameTextView.setText(_individual.getEntireName());
 
 		// Build a list of all individual details (one list) including phone numbers,
@@ -299,9 +296,44 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 					
     }
     
+    /**
+     * Handles loading the image of the person/family in the background
+     *  
+     * @author softwarearchitect
+     *
+     */
+    private class loadImageUrlTask extends AsyncTask<String, Void, Drawable> {    	
+        @Override
+        protected Drawable doInBackground(String... imageUrl) {        	
+        	return ImageOperations(imageUrl[0]);                              		        
+        }
+        @Override
+        protected void onPostExecute(Drawable image) {
+        	if (image != null) {
+        		individualImageView.setImageDrawable(image);	    	        
+        	}	
+        }
+      }
+
 
     /**
-     * gets a drawable for a given url
+     * Handles getting a byte array of the image of the person/family in the background
+     *  
+     * @author softwarearchitect
+     *
+     */
+    private class getImageUrlContentTask extends AsyncTask<String, Void, byte[]> {    	
+        @Override
+        protected byte[] doInBackground(String... imageUrl) {        	
+        	return ImageOperationsToByte(imageUrl[0]);                              		        
+        }
+      }
+
+    
+
+    /**
+     * -gets a drawable for a given url
+     * -called from asynchronous task
      * @param url
      * @return
      */
@@ -324,6 +356,12 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     	}
     }
     
+    /**
+     * -gets a byte array for a given url
+     * -called from asynchronous task
+     * @param url
+     * @return
+     */    
     private byte[] ImageOperationsToByte(String url) {
     	byte[] result = null;
     	try {	    		
@@ -556,8 +594,10 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     		}
     		
 	        // Picture
-	        byte[] pic = ImageOperationsToByte(_individual.PictureUrl);
-	        
+    		getImageUrlContentTask tsk = new getImageUrlContentTask();
+    		tsk.execute(_individual.PictureUrl);
+    		byte[] pic = tsk.get();						// blocks UI thread until image is returned
+    		    	   
 	        if (pic != null) {
 		        ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
 		        		.withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)

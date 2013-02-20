@@ -27,7 +27,8 @@
 					android:layout_height="40sp"
 					android:singleLine="true"			
 					android:inputType="textEmailAddress"					
-					android:background="@android:color/transparent">
+					android:background="@android:color/transparent"
+					android:textColor="@android:color/black">
 				</EditText>
 				
 				<ImageView
@@ -46,7 +47,8 @@
 					android:layout_height="40sp"
 					android:singleLine="true"
 					android:password="true" 
-					android:background="@android:color/transparent">
+					android:background="@android:color/transparent"
+					android:textColor="@android:color/black">
 				</EditText>										
 									
 			</LinearLayout>	
@@ -65,7 +67,8 @@
 					android:inputType="number"			
 					android:layout_width="fill_parent" 
 					android:layout_height="40sp"
-					android:background="@android:color/transparent">
+					android:background="@android:color/transparent"
+					android:textColor="@android:color/black">
 				</EditText>
 				
 				<ImageView
@@ -83,7 +86,8 @@
 					android:layout_height="40sp"
 					android:singleLine="true"			
 					android:inputType="textEmailAddress"					
-					android:background="@android:color/transparent">
+					android:background="@android:color/transparent"
+					android:textColor="@android:color/black">
 				</EditText>
 				
 				<ImageView
@@ -102,7 +106,8 @@
 					android:layout_height="40sp"
 					android:singleLine="true"
 					android:password="true" 
-					android:background="@android:color/transparent">
+					android:background="@android:color/transparent"
+					android:textColor="@android:color/black">
 				</EditText>				
 			</LinearLayout>	
 	

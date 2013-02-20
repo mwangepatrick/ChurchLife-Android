@@ -37,6 +37,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	static final int DIALOG_PROGRESS_SAVE = 1;
 	
 	LinearLayout reassignLayout;
+	LinearLayout closeLayout;
 	TextView reassignTextView;	
 	EditText connectionEditText;	
 	LinearLayout responseLayout;
@@ -60,7 +61,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 
 		 super.onCreate(savedInstanceState);
 	
-		 //test
+		 //restrict orientation changes - not sure this works on all devices
 		 _orientation = getRequestedOrientation();
 		 if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -69,8 +70,6 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 		 } else {
 		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 		 }
-		 
-		 
 		 
 		 try
 		 {
@@ -95,7 +94,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
             	 
             	 // check for re-assignment
             	 if (extraBundle.get("assignto") != null) {
-            		 _assignToMode = extraBundle.getInt("assignto");
+            		 _assignToMode = extraBundle.getInt("assignto");            		 
             		 startReAssignmentPickerActivity(_assignToMode);
             	 }            	 
              }		                         
@@ -136,6 +135,8 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 */
 	 private void bindControls(){
 		reassignLayout = (LinearLayout)this.findViewById(R.id.reassignLayout);	
+		closeLayout = (LinearLayout)this.findViewById(R.id.closeLayout);	
+		
 		reassignTextView = (TextView)this.findViewById(R.id.reassignTextView);					
 		connectionEditText = (EditText)this.findViewById(R.id.connectionEditText);	
 		responseLayout = (LinearLayout)this.findViewById(R.id.responseLayout);
@@ -397,8 +398,11 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
            _assignToId =  Integer.parseInt(data.getStringExtra("id"));
            
            reassignLayout.setVisibility(View.VISIBLE);           
-           reassignTextView.setText(data.getStringExtra("description")); 
+           reassignTextView.setText(data.getStringExtra("description"));
+           
+           // when reassigning, the assignment cannot be closed
            closeCheckBox.setChecked(false);
+           closeLayout.setVisibility(View.GONE);
         }        
     }
     

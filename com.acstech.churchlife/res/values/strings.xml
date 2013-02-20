@@ -98,6 +98,7 @@
 	<string name="AssignmentList.ProgressDialog">"Loading %s. Please wait."</string>
 	
 	<string name="Assignment.ViewRecent">History</string>
+	<string name="Assignment.ViewTeam">Team</string>
 	<string name="Assignment.EnterNotes">Enter Notes</string>
 	<string name="Assignment.Reassign">Reassign</string>
 			

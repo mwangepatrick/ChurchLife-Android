@@ -41,7 +41,15 @@ public class CommentSummaryListLoader extends ListLoaderBase<ColorCodedListItem>
 		if (_webServiceResults.Page.size() == 0) {    					    		
 			_itemList.add(new ColorCodedListItem(getNoResultsMessage()));	    				
 		}	    			
-		else {		    				
+		else {		    		
+			DefaultListItem moreItem = new DefaultListItem(getNextResultsMessage());
+
+			// Check for 'More Items' at the end of the existing itemList.  If it is there,
+			//  remove it as this search will add it if there are still more records.
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getTitle() == moreItem.getTitle()) {
+				_itemList.remove(_itemList.size()-1);				
+			}
+
 			// Add all items from the latest web service request to the adapter 
 			for (CoreCommentSummary item : _webServiceResults.Page) {
 				_itemList.add(new ColorCodedListItem(item));

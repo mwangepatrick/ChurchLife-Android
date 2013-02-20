@@ -1,12 +1,11 @@
 package com.acstech.churchlife;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
@@ -34,19 +33,9 @@ public class GivingActivity extends ChurchlifeBaseActivity {
         
         	 _progress = ProgressDialog.show(this, "", getString(R.string.Dialog_Loading), true);
         	 _progress.setCancelable(false);
-             
-        	 // Get an 'unlocked' web service url to go to do giving
-        	 GlobalState gs = GlobalState.getInstance();        	 
-        	 ApiGiving apiCaller = new ApiGiving(_appPrefs.getGivingWebServiceUrl(), config.APPLICATION_ID_VALUE);					
-        	 String url = apiCaller.givingUrl(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-        
-        	 webViewer.loadUrl(url);
+          
+        	 new loadGivingUrlTask().execute();	// login in background 
         }
-        catch (AppException e) {
-        	closeDialog();
-    		ExceptionHelper.notifyUsers(e, GivingActivity.this);
-    		ExceptionHelper.notifyNonUsers(e);    		
-    	}
     	catch (Exception e) {
     		closeDialog();
     		ExceptionHelper.notifyUsers(e, GivingActivity.this);
@@ -85,4 +74,37 @@ public class GivingActivity extends ChurchlifeBaseActivity {
     		_progress.dismiss();
     	}
     }
+    
+    private class loadGivingUrlTask extends AsyncTask<Void, Void, String> {
+    	
+        @Override
+        protected String doInBackground(Void... args) {
+        	String url = "";    		
+        	try {        		
+        		// Get an 'unlocked' web service url to go to give 
+       	 		GlobalState gs = GlobalState.getInstance();        	 
+        		AppPreferences prefs = new AppPreferences(getApplicationContext());
+
+       	 		ApiGiving apiCaller = new ApiGiving(prefs.getGivingWebServiceUrl(), config.APPLICATION_ID_VALUE);					
+       	 		url = apiCaller.givingUrl(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+        	}
+       	 	catch (AppException e) {
+       	 		closeDialog();
+       	 		ExceptionHelper.notifyNonUsers(e);    		
+       	 	}
+        	catch (Exception e) {
+        		closeDialog();
+        		ExceptionHelper.notifyNonUsers(e);
+        	}          
+        	return url;        		        	
+        }
+
+        @Override
+        protected void onPostExecute(String url) {
+        	if (url.length() > 0) {
+        		webViewer.loadUrl(url);
+        	}
+        }
+      }
+          
 }

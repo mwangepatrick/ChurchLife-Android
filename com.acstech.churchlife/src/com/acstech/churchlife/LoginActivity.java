@@ -76,6 +76,30 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 		return false;
 	}
 		
+	/* returns data based on view that is being displayed*/
+	public String getUsernameText() {		
+		if (vf.getCurrentView() == view1) {
+    		return (txtEmail.getText().toString()); 			    		 	
+    	}
+    	else { 											//vf.Currentview() == view2
+    		return (txtUserName.getText().toString());
+    	}
+	}
+	
+	public String getPasswordText() {
+		if (vf.getCurrentView() == view1) {
+    		return (txtEmailPassword.getText().toString()); 			    		 	
+    	}
+    	else { 											//vf.Currentview() == view2
+    		return (txtPassword.getText().toString());
+    	}		
+	}
+	
+	public String getSiteNumberText() {
+		return txtSiteNumber.getText().toString();		
+	}
+	
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -401,8 +425,11 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 			    	    	
 							if (_wsLogin.size() > 0) {        				
 								// In most cases, the return value is for a single site    
-								if (_wsLogin.size() == 1) {    					   		
-									navigateForward(_wsLogin.get(0));
+								if (_wsLogin.size() == 1) {   
+									// now that we have a single site, go get the merchant
+									//  account info for that site (append to login)
+									//  and continue
+									setAccountMerchantInfo(_wsLogin.get(0));																		
 								}
 								else {
 									// present a picklist of sites to the user
@@ -486,28 +513,80 @@ public class LoginActivity extends ChurchlifeBaseActivity {
     	List<CoreAcsUser> userList = new ArrayList<CoreAcsUser>();
     	 		
     	Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-    		   	
-	   	// If sitenumber view is complete..use it, otherwise use email address view
-		String usernameOrEmail = txtUserName.getText().toString();
-		String password = txtPassword.getText().toString();
-		String siteNumber = txtSiteNumber.getText().toString();
-	   	
-		if (usernameOrEmail.length()==0 || password.length() ==0 || siteNumber.length() ==0)
-		{
-			usernameOrEmail = txtEmail.getText().toString();
-			password = txtEmailPassword.getText().toString();			
-		}
-	   	
+    		   		   	
 		// If siteNumber was supplied, do a site-specific login; otherwise, do the normal login
-        if (siteNumber.length() > 0){        	
-        	CoreAcsUser user = apiCaller.user(usernameOrEmail, password, siteNumber);        	
+        if (getSiteNumberText().length() > 0){        	
+        	CoreAcsUser user = apiCaller.user(getUsernameText(), getPasswordText(), getSiteNumberText());        	
         	if (user != null) { userList.add(user); }        	
         }
         else {
-        	 userList = apiCaller.users(usernameOrEmail, password);        	
+        	 userList = apiCaller.users(getUsernameText(), getPasswordText());        	
         }  
         return userList;
     }
+    
+    /**
+     * Once a particular sitenumber is known, this gets that sitenumber's merchant information
+     *  (we need this to show/hide menu options) and adds it to the logged on user 
+     */
+    private void setAccountMerchantInfo(final CoreAcsUser user)
+    {           
+    	final Handler handler = new Handler() {
+    		public void handleMessage(Message msg) {    		  
+    			try {	  
+    				
+    				// check to see if an exception was raised on the background thread
+    				//  that performed the login web service call. 
+    				if (msg.what < 0) {
+	       				Bundle b = msg.getData();
+	       				throw ExceptionHelper.getAppExceptionFromBundle(b, "getAccountMerchantInfo.handleMessage");		       					  		       			
+    				}
+    				else if (msg.what == 1) {    					
+    					// not all logins have merchant info...check for null
+    					CoreAccountMerchant merchantInfo = CoreAccountMerchant.GetCoreAccountMerchant(msg.getData().getString("merchantinfo"));
+    					user.setMerchantInfo(merchantInfo);    					    				
+    				}	
+    				navigateForward(user); 	    				
+    			}
+    			catch (Exception e) {    	
+    				ExceptionHelper.notifyUsers(e, LoginActivity.this);
+    	    		ExceptionHelper.notifyNonUsers(e);    			
+    			}    	    			
+    		}
+    	};
+    	
+    	Thread searchThread = new Thread() {  
+    		public void run() {
+    			try {	        				
+    				// get merchant data (add to user) for giving (on background thread)    				
+    				Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+    	        	CoreAccountMerchant info = apiCaller.accountmerchant(getUsernameText(), getPasswordText(), getSiteNumberText());
+    				    					    				
+	    	    	// Return the object to the message handler above (if it exists)
+	    	    	Message msg = handler.obtainMessage();	
+	    	    	msg.what = 0;
+	    	    	
+	    	    	if (info != null) {
+	    	    		msg.what = 1;
+	    	    		Bundle b = new Bundle();		    	    	
+	    	    		b.putString("merchantinfo", info.toJsonString());
+    					msg.setData(b);	   
+	    	    	}
+    				handler.sendMessage(msg);	    				
+    			}
+    			catch (Exception e) {    				
+    				ExceptionHelper.notifyNonUsers(e);			// Log the full error, 
+    					    				
+    				Message msg = handler.obtainMessage();
+    				msg.what = -1;
+    				msg.setData(ExceptionHelper.getBundleForException(e));	
+    				handler.sendMessage(msg);    	    				  			
+    			}    			       	    	    	    	
+    		 }
+    	};
+    	searchThread.start();        	
+    }
+
     
     
     /**
@@ -541,12 +620,7 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 			_appPrefs.setAuth3(String.valueOf(loggedInUser.SiteNumber));	
 			_appPrefs.setOrganizationName(loggedInUser.SiteName); 
     	} 
-		
-		// get merchant data (add to user) for giving
-		Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-		CoreAccountMerchant merchantInfo = apiCaller.accountmerchant(loggedInUser.UserName, password, String.valueOf(loggedInUser.SiteNumber));	
-		loggedInUser.setMerchantInfo(merchantInfo);
-				
+
 		// Save login credentials to global state as they are needed for EVERY web service call
 		//  (keep in mind that these need to be in state regardless of the 'remember me' setting)
 		GlobalState gs = GlobalState.getInstance();
@@ -555,13 +629,14 @@ public class LoginActivity extends ChurchlifeBaseActivity {
 							
     	//start People
 		Intent intent = new Intent();		
-		intent.setClass(LoginActivity.this, IndividualListActivity.class);
+		intent.setClass(LoginActivity.this,  super.getHomeActivity()); 
 		
 		finish();				// ensures the user cannot use the 'back' to this activity
 		
 		startActivity(intent);												
     }
 
+    
     
     //***************************************************************************
     // View Flipping and Gesture handling

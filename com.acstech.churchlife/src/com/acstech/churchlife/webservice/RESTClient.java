@@ -39,6 +39,7 @@ import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
 import android.net.http.AndroidHttpClient;
+import android.os.NetworkOnMainThreadException;
 import android.util.Base64;
 
 public class RESTClient {
@@ -246,7 +247,7 @@ public class RESTClient {
 						   "100",           												    
 						   "RESTClient.executeRequest",
 						   e.getMessage()); 
-	        }
+	        }	      
 	    }
 	    
 	    

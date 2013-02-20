@@ -12,7 +12,7 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
 public class CoreEventDetail extends CoreObject {
 
-	public final static String EVENT_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss.SSS";
+	public final static String EVENT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
 	
     public String EventDateId;
     public boolean IsAllDay;

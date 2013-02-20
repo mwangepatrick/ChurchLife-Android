@@ -22,6 +22,7 @@ import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
 public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 	
+	CoreAcsUser _currentUser;		// lazy loaded
 	FrameLayout menuHeader;
 	ListView menuListView;
 	
@@ -35,6 +36,13 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 		return true;
 	}
 	
+	public CoreAcsUser getCurrentUser() {
+		if (_currentUser == null) {
+			GlobalState gs = GlobalState.getInstance();    	
+	    	_currentUser = gs.getUser();	
+		}
+		return _currentUser;
+	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,15 +127,22 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	    	
 		ArrayList<DefaultListItem> itemList = new ArrayList<DefaultListItem>();
     	
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people)); 
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
+		// People
+		if (showPeopleMenu()) {
+			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people)); 
+		}
     	
-    	// My ToDos - check security
+		// Calendar
+		if (showCalendarMenu()) {
+			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
+		}
+		
+    	// My ToDos 
     	if (showMyToDoMenu()) {
         	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo));
     	}
     	
-    	// Giving - check security    	    	
+    	// Giving    	    	
     	if (showGivingMenu()) {
         	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Giving), R.drawable.ic_action_giving));
     	}
@@ -138,14 +153,29 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     }
     
 
+    /**
+     * Logic for displaying the People menu
+     * @return
+     */
+    private boolean showPeopleMenu() {
+    	return (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) == false);
+    }
+    
+    /**
+     * Logic for displaying the Calendar menu
+     * @return
+     */
+    private boolean showCalendarMenu() {
+    	return (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) == false);
+    }
+    
 
     /**
      * Logic for displaying the My ToDos menu
      * @return
      */
-    private boolean showMyToDoMenu() {	
-    	GlobalState gs = GlobalState.getInstance();    	
-    	return (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true && gs.getUser().IndvId > 0);
+    private boolean showMyToDoMenu() {	    	
+    	return (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNEDCONTACTSONLY) == true && getCurrentUser().IndvId > 0);
     }
     
     /**
@@ -155,8 +185,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     private boolean showGivingMenu() {
     	
     	boolean result = true;    	
-    	GlobalState gs = GlobalState.getInstance(); 		
-    	CoreAccountMerchant merchantInfo = gs.getUser().getMerchantInfo();
+    	CoreAccountMerchant merchantInfo = getCurrentUser().getMerchantInfo();
     	
     	// must have valid merchant info
     	if (merchantInfo == null) {
@@ -171,8 +200,8 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	// only check if result is not already false
     	if (result == true) {		
 	    	// if user is staff or admin, they must have an indivdiual id
-	    	if (gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_STAFF) || gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_ADMINISTRATOR)) {
-	    		if (gs.getUser().IndvId <= 0) {
+	    	if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_STAFF) || getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_ADMINISTRATOR)) {
+	    		if (getCurrentUser().IndvId <= 0) {
 	    			result = false;
 	    		}
 	    	}
@@ -181,7 +210,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	// only check if result is not already false
     	if (result == true) {
     		// non-member roles must be allowed via merchant info
-    		if (gs.getUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) && merchantInfo.NonMemberGivingEnabled == false) {
+    		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) && merchantInfo.NonMemberGivingEnabled == false) {
 	    		result = false;
 	    	}
     	}
@@ -226,6 +255,23 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 		startActivity(intent);	// launch intent    	
     }
 
+    // return the root activity based on permissions, etc.
+    public Class<?> getHomeActivity() {
+
+    	if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER)) {
+    	
+    		// if a non-member, show Tasks or just info
+    		if (showMyToDoMenu()) {
+        		return AssignmentSummaryListActivity.class;    			
+    		}
+    		else {
+        		return MyInfoActivity.class;
+    		}
+    	}
+    	else {
+    		return IndividualListActivity.class;
+    	}    		
+    }
     
     //************************************************************************
     //							OPTIONS MENU

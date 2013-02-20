@@ -22,6 +22,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	//zzz revisit progress dialog to do with fragments
 	static final int DIALOG_PROGRESS = 0;
 	
+	Button viewTeamButton;
 	Button viewRecentButton;
 	TextView assignmentTextView;
 	Button enterButton;
@@ -90,6 +91,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	 private void bindControls(){	    			 		
 		assignmentTextView = (TextView)this.findViewById(R.id.assignmentTextView);
 		viewRecentButton = (Button)this.findViewById(R.id.viewRecentButton);
+		viewTeamButton = (Button)this.findViewById(R.id.viewTeamButton);
 		enterButton = (Button)this.findViewById(R.id.enterButton);
 		reassignButton = (Button)this.findViewById(R.id.reassignButton);
 				
@@ -120,6 +122,24 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 			});
 		}
 		
+		// View Team button (if this is a team connection it will be displayed)
+		viewTeamButton.setVisibility(View.GONE);
+		viewTeamButton.setOnClickListener(new OnClickListener() {				 
+			@Override
+			public void onClick(View view) {
+				 try {
+					 DialogListViewFragment dlg = new DialogListViewFragment();
+					 dlg.setTitle(getString(R.string.Assignment_ViewTeam));					 
+					 dlg.setItems(_connection.getTeamMemberList());
+					 dlg.show(getSupportFragmentManager(), "");
+				 }
+				 catch (Exception e) {
+					 ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
+					 ExceptionHelper.notifyNonUsers(e);
+				 }
+			}
+		});	
+			
 		// Enter (edit details) button click event
 		enterButton.setOnClickListener(new OnClickListener() {				 
 			 @Override
@@ -181,7 +201,12 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		 if (_connection.hasChangePermission() == false) {
 			 reassignButton.setVisibility(View.GONE);
 			 enterButton.setVisibility(View.GONE);
-		 }			
+		 }		
+		 
+		 // if this connection is assigned to a team, show the team button
+		 if (_connection.TeamMemberCount  > 1) {
+			 viewTeamButton.setVisibility(View.VISIBLE);
+		 }
 	 }
 	 
 	 

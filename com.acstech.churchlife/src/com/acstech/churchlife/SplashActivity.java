@@ -12,7 +12,17 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends ChurchlifeBaseActivity {
+		
+	@Override
+	public boolean showTitleBar() {
+		return false;
+	}
+	
+	@Override
+	public boolean showLeftMenu() {
+		return false;
+	}
 	
     /** Called when the activity is first created. */
     @Override
@@ -50,10 +60,11 @@ public class SplashActivity extends Activity {
         protected void onPostExecute(Boolean result) {
             	
           	Intent nextIntent = new Intent(SplashActivity.this, LoginActivity.class);
-            	
+   			Class<?> c = IndividualListActivity.class;
+
            	if (e == null) {			// no error
            		if (result == true)  	// if successful login, change the activity to which to navigate	        					
-    				nextIntent = new Intent(SplashActivity.this, IndividualListActivity.class); 
+    				nextIntent = new Intent(SplashActivity.this, getHomeActivity());           		
            	}
            	else {           		
            		ExceptionHelper.notifyNonUsers(e);
