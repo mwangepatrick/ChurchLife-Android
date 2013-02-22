@@ -3,15 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-		    android:id="@+id/viewTeamButton"
-		    android:layout_width="90dp"
-		    android:layout_height="35dp"		   
-			android:layout_marginTop="3dp"
-			android:layout_marginBottom="3dp"		
-			android:text="@string/Assignment.ViewTeam"
-		    android:textSize="12sp" />
-    	
+    <ImageView
+	    android:id="@+id/teamImageView"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+		android:layout_marginTop="3dp"
+		android:layout_marginBottom="3dp"
+		android:layout_marginLeft="5dp"
+	    android:src="@drawable/ic_action_team" />
+    	    
 	<Button
 		    android:id="@+id/viewRecentButton"
 		    android:layout_width="90dp"
@@ -70,5 +70,7 @@
         	android:text="@string/Assignment.Reassign" 
         	style="@style/ButtonBarButton" />
 	</LinearLayout>
+
+
 
 </RelativeLayout>

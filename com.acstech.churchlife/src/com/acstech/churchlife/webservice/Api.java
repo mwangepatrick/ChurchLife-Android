@@ -27,15 +27,6 @@ import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
  */
 public class Api extends ApiBase {
 
-	/*
-	static final String APPLICATION_ID_KEY = "ApplicationId";
-	
-	String _baseUrl = null;
-	String _applicationId = "";					// app-specific key that gets sent with every request	
-	ConnectivityManager _connectivityManager;	// not required (can be null)
-	 */
-	
-	
 	/************************************************************/
 	/*				 	Assignments (connections)				*/
 	/************************************************************/

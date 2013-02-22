@@ -42,7 +42,15 @@ public class CommentListLoader extends ListLoaderBase<CommentListItem>{
 		if (_webServiceResults.Page.size() == 0) {    					    		
 			_itemList.add(new CommentListItem(getNoResultsMessage()));	    				
 		}	    			
-		else {		    				
+		else {		    	
+			DefaultListItem moreItem = new DefaultListItem(getNextResultsMessage());
+
+			// Check for 'More Items' at the end of the existing itemList.  If it is there,
+			//  remove it as this search will add it if there are still more records.
+			if (_itemList.size() > 1 && _itemList.get(_itemList.size()-1).getCommentBody() == moreItem.getTitle()) {
+				_itemList.remove(_itemList.size()-1);				
+			}
+			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreComment item : _webServiceResults.Page) {
 				_itemList.add(new CommentListItem(item));
@@ -61,7 +69,7 @@ public class CommentListLoader extends ListLoaderBase<CommentListItem>{
 		_individualId = individualId;
 		_commentTypeId = commentTypeId;			
 		
-		super.setNextResultsMessage(R.string.CommentSummaryList_NoResults);
+		super.setNextResultsMessage(R.string.IndividualList_More);
 		super.setNoResultsMessage(R.string.CommentSummaryList_NoResults);
 	}
 	

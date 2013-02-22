@@ -57,7 +57,8 @@ public class CommentListItem {
 	 */
 	public CommentListItem(String titleOnlyText) {
 		_id = "-1";						
-		_commentBody = titleOnlyText;			
+		_commentBody = titleOnlyText;
+		_commentDate = "";
 	}
 	
 }

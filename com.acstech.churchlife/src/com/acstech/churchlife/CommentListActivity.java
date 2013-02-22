@@ -9,13 +9,18 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.ColorCodedListItem;
+import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
+import com.acstech.churchlife.listhandling.CommentListItem;
 import com.acstech.churchlife.listhandling.CommentListItemAdapter;
 import com.acstech.churchlife.listhandling.CommentListLoader;
 import com.acstech.churchlife.webservice.Api;
@@ -94,8 +99,16 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	     *  Links state variables to their respective form controls
 	     */
 	    private void bindControls(){	    	
-	    	lv1 = (ListView)this.findViewById(R.id.ListView01);	  
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
+	    	lv1 = (ListView)this.findViewById(R.id.ListView01);	  
+	    	
+            // Wire up list on click - display comment type activity
+            lv1.setOnItemClickListener(new OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 	                	                 	                	
+                	CommentListItem itemSelected = (CommentListItem)parent.getAdapter().getItem(position);
+               	 	ItemSelected(itemSelected);          	                	 
+                }
+            });	
 	    }
 	    
 	    private void setCanAddComments() throws AppException {
@@ -151,7 +164,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	        		
 		        	if (_loader.success())	{
 		        		
-		        		if (_loader.getList().size() > 0)
+		        		if (_loader.getList().size() > 0 && lv1.getHeaderViewsCount() == 0)
 		        		{
 		        			// create and format header
 		   	        	 	View header = View.inflate(CommentListActivity.this, R.layout.commenttypeheader, null);
@@ -167,9 +180,15 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 			        	 
 		   	        	 	lv1.addHeaderView(header);
 		        		}			        	 
-			     						     		
-			     		// set items to list
-			       		lv1.setAdapter(new CommentListItemAdapter(CommentListActivity.this, _loader.getList()));
+
+	        			// save index and top position (preserve scroll location)
+	    				int index = lv1.getFirstVisiblePosition();
+	    				View v = lv1.getChildAt(0);
+	    				int top = (v == null) ? 0 : v.getTop();
+	    				
+			     		// set items to list and restore scroll position
+	    				lv1.setAdapter(new CommentListItemAdapter(CommentListActivity.this, _loader.getList()));		        		
+		        		lv1.setSelectionFromTop(index, top);   // restore scroll position 			        				        	
 		          	}
 		        	else {
 		        		throw _loader.getException();
@@ -211,4 +230,20 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 		    }
 		}
 
+		// Occurs when a user selects an item on the listview.    
+	    private void ItemSelected(CommentListItem item)
+	    {    	    
+	    	try {
+	    		// Is this a 'more records' item.	    	
+	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
+	       	 		loadListWithProgressDialog(true); 
+	       	 	}	       	 	   	 	       	 
+	    	}
+	        catch (Exception e) {
+	        	// must NOT raise errors.  called by an event
+				ExceptionHelper.notifyUsers(e, CommentListActivity.this);
+		    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
+			}  
+	    }
+	    
 }

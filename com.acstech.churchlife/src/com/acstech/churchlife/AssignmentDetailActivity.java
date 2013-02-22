@@ -9,6 +9,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
@@ -22,7 +23,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	//zzz revisit progress dialog to do with fragments
 	static final int DIALOG_PROGRESS = 0;
 	
-	Button viewTeamButton;
+	ImageView teamImageView;
 	Button viewRecentButton;
 	TextView assignmentTextView;
 	Button enterButton;
@@ -91,7 +92,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	 private void bindControls(){	    			 		
 		assignmentTextView = (TextView)this.findViewById(R.id.assignmentTextView);
 		viewRecentButton = (Button)this.findViewById(R.id.viewRecentButton);
-		viewTeamButton = (Button)this.findViewById(R.id.viewTeamButton);
+		teamImageView = (ImageView) this.findViewById(R.id.teamImageView);
 		enterButton = (Button)this.findViewById(R.id.enterButton);
 		reassignButton = (Button)this.findViewById(R.id.reassignButton);
 				
@@ -123,8 +124,8 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		}
 		
 		// View Team button (if this is a team connection it will be displayed)
-		viewTeamButton.setVisibility(View.GONE);
-		viewTeamButton.setOnClickListener(new OnClickListener() {				 
+		teamImageView.setVisibility(View.GONE);
+		teamImageView.setOnClickListener(new OnClickListener() {				 
 			@Override
 			public void onClick(View view) {
 				 try {
@@ -205,7 +206,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		 
 		 // if this connection is assigned to a team, show the team button
 		 if (_connection.TeamMemberCount  > 1) {
-			 viewTeamButton.setVisibility(View.VISIBLE);
+			 teamImageView.setVisibility(View.VISIBLE);
 		 }
 	 }
 	 
