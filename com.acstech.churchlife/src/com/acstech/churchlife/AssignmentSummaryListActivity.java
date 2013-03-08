@@ -152,13 +152,17 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 	    private void ItemSelected(ColorCodedListItem item)
 	    {    	    
 	    	try {
-	    		// Is this a comment type that was selected or a 'more records' item.	    	
-	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
-	       	 		loadListWithProgressDialog(true);  
+	    		
+	    		if (!item.getTitle().equals(_loader.getNoResultsMessage()))
+	    		{
+		    		// Is this a comment type that was selected or a 'more records' item.	    	
+		       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
+		       	 		loadListWithProgressDialog(true);  
+		       	 	}
+		       	 	else {	 
+		       	 		startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
 	       	 	}
-	       	 	else {	 
-	       	 		startAssignmentListActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
-	       	 	}       	 	       	 	
+	    		}
 	    	}
 	        catch (Exception e) {
 	        	// must NOT raise errors.  called by an event

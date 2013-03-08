@@ -1,7 +1,10 @@
 package com.acstech.churchlife;
 
+import java.util.concurrent.ExecutionException;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,11 +74,18 @@ public class CommentActivity extends ChurchlifeBaseActivity  {
 	             
 	            // button click event handlers
 	            btnSave.setOnClickListener(new OnClickListener() {		
-	             	public void onClick(View v) {	     
-	             		if (inputIsValid()) {
-	             			saveComment();	
-	             			finish();	             			
+	             	public void onClick(View v) {	
+	             		try
+	             		{
+		             		if (inputIsValid()) {
+		             			saveComment();	
+		             			finish();	             			
+		             		}
 	             		}
+	        	    	catch (Exception e) {
+	        	    		ExceptionHelper.notifyUsers(e, CommentActivity.this);
+	        	    		ExceptionHelper.notifyNonUsers(e);
+	        	    	}  	        
 	             	}		
 	     		}); 
 
@@ -210,38 +220,57 @@ public class CommentActivity extends ChurchlifeBaseActivity  {
 	    
 	  
 	    // Input should have already been validated at this point!
-	    private void saveComment() {
-	    	try {	    		
-	    		showDialog(DIALOG_SAVE);   			// progress dialog
+	    private void saveComment() throws Exception {
+	    	
+	    	showDialog(DIALOG_SAVE);   			// progress dialog
 	    		
-	    		CoreCommentType ct = (CoreCommentType)commentTypeSpinner.getSelectedItem();
-	    		
-	    		CoreCommentChangeRequest req = new CoreCommentChangeRequest();
-	    		req.IndvID = _individualId;
-	    		req.Comment = commentText.getText().toString();
-	    		req.CommentTypeId = ct.CommentTypeID;
-	    		req.CommentType = ct.CommentTypeDesc;				// this should be type ID	    		
-	    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
-	    		
-	    		GlobalState gs = GlobalState.getInstance(); 
-	    		AppPreferences appPrefs = new AppPreferences(this.getApplicationContext());
-	    		
-	    		Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-	    		
-	    	   	apiCaller.commentAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
-	    		
-	    	   	removeDialog(DIALOG_PROGRESS);
-	    	   	
-	    	   	Toast.makeText(CommentActivity.this, getString(R.string.Comment_Saved), Toast.LENGTH_LONG).show();	    	   	
-	    	}
-	        catch (Exception e) {
-	        	
-	        	removeDialog(DIALOG_PROGRESS);
-	        	
-	        	// does NOT raise errors.  called by an event
-				ExceptionHelper.notifyUsers(e, CommentActivity.this);
-		    	ExceptionHelper.notifyNonUsers(e)  ; 	
-	        }
-	    }
+    		CoreCommentType ct = (CoreCommentType)commentTypeSpinner.getSelectedItem();
+    		
+    		CoreCommentChangeRequest req = new CoreCommentChangeRequest();
+    		req.IndvID = _individualId;
+    		req.Comment = commentText.getText().toString();
+    		req.CommentTypeId = ct.CommentTypeID;
+    		req.CommentType = ct.CommentTypeDesc;				// this should be type ID	    		
+    		req.FamilyComment = BooleanHelper.ParseBoolean(chkFamilyComment.isChecked());
+    		
+    		// send to web service (background thread)    		
+    		saveCommentTask tsk = new saveCommentTask();
+    		tsk.execute(req);
+    		boolean result = tsk.get();				//causes thread to block until result is returned
+    		
+    	   	removeDialog(DIALOG_SAVE);
+    	   	
+    		if (result) {
+	    	   	Toast.makeText(CommentActivity.this, getString(R.string.Comment_Saved), Toast.LENGTH_LONG).show();	
+    		}
+    		else {
+    			throw tsk._ex;
+    		}	  
+    	}
 
+	    // do webservice post in background
+		 private class saveCommentTask extends AsyncTask<CoreCommentChangeRequest, Void, Boolean> {
+			Exception _ex;
+	 		GlobalState _gs = GlobalState.getInstance(); 
+
+	 		@Override
+	        protected Boolean doInBackground(CoreCommentChangeRequest... args) {	        	
+	        	try	{
+			    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+					Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+			
+					apiCaller.commentAdd(_gs.getUserName(), _gs.getPassword(), _gs.getSiteNumber(), args[0]);		    					
+					return true; 				   				 
+	        	}
+		    	catch (Exception e) {
+		    		_ex = e;
+		    		return false;
+		    	}	        	                               		       
+	        }	        	        
+	 		
+	 		/* NOTE:  if our posts to comments are shown in the list, we need to use
+	 		 *  the global dirty flag for comment a comment type list.  See AssignmentActivity save task
+	 		 */
+		 }
+		 
 }

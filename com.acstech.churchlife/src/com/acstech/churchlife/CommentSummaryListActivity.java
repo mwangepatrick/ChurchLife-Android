@@ -5,10 +5,13 @@ import java.util.List;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
@@ -50,8 +53,12 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        	 setContentView(R.layout.commentlist);
 	        	 setTitle("Comments"); //zzz
 	        	 
-	        	 bindControls();							// Set state variables to their form controls	        	 	       
+	        	 bindControls();							// Set state variables to their form controls
 	        	 	        	 
+	        	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
+	        	 tsk.execute();	        	 
+	        	 tsk.get();									// suspends UI until done  
+	        	 
 	        	 // This activity MUST be passed data
 	        	 Bundle extraBundle = this.getIntent().getExtras();
 	             if (extraBundle == null) {
@@ -137,18 +144,32 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
-	    private void setCanAddComments() throws AppException {
-	    	
-	    	GlobalState gs = GlobalState.getInstance(); 
-	    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
-			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-			
-		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-		   	if (results != null) 	{
-		   		_canAddComments = (results.size() > 0);
-		   	}
+	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {    	
+	        @Override
+	        protected Boolean doInBackground(Void... args) {	        	
+	        	try	{
+		        	GlobalState gs = GlobalState.getInstance(); 
+			    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+					Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+					
+				   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+				   	if (results != null) {
+				   		return (results.size() > 0);
+				   	}				    				   				 
+	        	}
+		    	catch (Exception e) {
+		    		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
+		    		ExceptionHelper.notifyNonUsers(e);
+		    	}
+	        	return false;                               		        
+	        }
+	        
+	        @Override
+	        protected void onPostExecute(Boolean result) {
+	        	_canAddComments  = result;
+	        }
 	    }
-	    
+    	    
 	    
 	    /**
 	     * Displays a progress dialog and launches a background thread to connect to a web service
@@ -163,8 +184,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	{	
 	    		// if first time....
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentSummaryListLoader(this, _individualId);
-	    			setCanAddComments();
+	    			_loader = new CommentSummaryListLoader(this, _individualId);	    			
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)

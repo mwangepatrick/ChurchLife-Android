@@ -140,36 +140,35 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		        		
 		        		ColorCodedListItem item =(ColorCodedListItem)_loader.getList().get(0);
 		        				        	
-		        		//If only 1, go directly to the detail page	  
+	        			int index = detailsListview.getFirstVisiblePosition();
+	    				View v = detailsListview.getChildAt(0);
+	    				int top = (v == null) ? 0 : v.getTop();
+	    				
+	        			// Show the list of assignments
+	           			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
+	        			
+	           			// Add a 'click' listener to show team members in a dialog box		        			
+	        			lia.setOnIconClickListener(new OnIconClickListener() {
+							@Override
+							public void onIconClick(Object id) {
+								CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));									    		
+								if (asm.TeamMembers.size() > 0)	{										
+									DialogListViewFragment dlg = new DialogListViewFragment();
+									dlg.setTitle(getString(R.string.Assignment_TeamMembers));
+									dlg.setItems(asm.getTeamMemberList());
+									dlg.show(getSupportFragmentManager(), "");
+								}
+							}		        				
+	        			});	
+	        			
+	        			detailsListview.setAdapter(lia);
+	        			detailsListview.setSelectionFromTop(index, top);   // restore scroll position
+	        		
+	        			//If only 1, go directly to the detail page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());      			
+		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());		        			
 		        		}
-		        		else {
-		        			
-		        			int index = detailsListview.getFirstVisiblePosition();
-		    				View v = detailsListview.getChildAt(0);
-		    				int top = (v == null) ? 0 : v.getTop();
-		    				
-		        			// Show the list of assignments
-		           			ColorCodedListItemAdapter lia = new ColorCodedListItemAdapter(AssignmentListActivity.this, _loader.getList());
-		        			
-		           			// Add a 'click' listener to show team members in a dialog box		        			
-		        			lia.setOnIconClickListener(new OnIconClickListener() {
-								@Override
-								public void onIconClick(Object id) {
-									CoreAssignment asm = _loader.getAssignmentById(Integer.parseInt(id.toString()));									    		
-									if (asm.TeamMembers.size() > 0)	{										
-										DialogListViewFragment dlg = new DialogListViewFragment();
-										dlg.setTitle(getString(R.string.Assignment_ViewTeam));
-										dlg.setItems(asm.getTeamMemberList());
-										dlg.show(getSupportFragmentManager(), "");
-									}
-								}		        				
-		        			});	
-		        			
-		        			detailsListview.setAdapter(lia);
-		        			detailsListview.setSelectionFromTop(index, top);   // restore scroll position
-		        		}
+		        		
 		        	}
 		        	else {
 		        		throw _loader.getException();
@@ -190,13 +189,16 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	    private void ItemSelected(ColorCodedListItem item)
 	    {    	    
 	    	try {
-	    		// Is this a comment type that was selected or a 'more records' item.	    	
-	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
-	       	 		loadListWithProgressDialog(true);  
-	       	 	}
-	       	 	else {	 
-	       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
-	       	 	}       	 	       	 	
+	    		if (!item.getTitle().equals(_loader.getNoResultsMessage()))
+	    		{
+		    		// Is this a comment type that was selected or a 'more records' item.	    	
+		       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
+		       	 		loadListWithProgressDialog(true);  
+		       	 	}
+		       	 	else {	 
+		       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
+		       	 	}
+	    		}
 	    	}
 	        catch (Exception e) {
 	        	// must NOT raise errors.  called by an event
@@ -215,9 +217,10 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	    	intent.setClass(this, AssignmentDetailActivity.class);
 		 	intent.putExtra("assignmentid", assignmentId);
 		 	intent.putExtra("assignmentname", assignmentName);
-		 	startActivity(intent);	  	 		    	
+		 	startActivity(intent);			 	
 	    }
 	 
+
 		@Override
 		protected void onResume() {
 			super.onResume();

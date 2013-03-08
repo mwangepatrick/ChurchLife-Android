@@ -34,6 +34,7 @@ public class CoreAcsUser extends CoreObject {
       public String FullName;
       public String SiteName;
       public String SecurityRole;
+      public boolean CalendarDisabled;
       public String UnifiedLoginID;    
       public int IndvId;
       public int FamId;
@@ -118,6 +119,7 @@ public class CoreAcsUser extends CoreObject {
 	    	  user.UserName = jo.optString("UserName");
 	    	  user.FullName = jo.optString("FullName");	 	    	  
 	    	  user.SecurityRole = jo.optString("SecurityRole");
+	    	  user.CalendarDisabled = jo.optBoolean("CalendarDisabled");
 	    	  user.UnifiedLoginID = jo.optString("UnifiedLoginID");	    			
 	    	  user.IndvId = jo.optInt("IndvId");
 	    	  user.FamId = jo.optInt("FamId");

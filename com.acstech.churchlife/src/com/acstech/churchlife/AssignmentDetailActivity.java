@@ -130,7 +130,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 			public void onClick(View view) {
 				 try {
 					 DialogListViewFragment dlg = new DialogListViewFragment();
-					 dlg.setTitle(getString(R.string.Assignment_ViewTeam));					 
+					 dlg.setTitle(getString(R.string.Assignment_TeamMembers));					 
 					 dlg.setItems(_connection.getTeamMemberList());
 					 dlg.show(getSupportFragmentManager(), "");
 				 }

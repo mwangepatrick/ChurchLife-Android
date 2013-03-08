@@ -2,6 +2,7 @@ package com.acstech.churchlife;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +26,7 @@ import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 import com.acstech.churchlife.listhandling.ResponseTypeListLoader;
 import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreCommentType;
 import com.acstech.churchlife.webservice.CoreConnection;
 import com.acstech.churchlife.webservice.CoreConnectionChangeRequest;
 import com.acstech.churchlife.webservice.CoreResponseType;
@@ -171,8 +174,8 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 			public void onClick(View view) {
 				 try {					
 					 if (inputIsValid()) {          				          	
-	         			saveConnection();	
-	         			finish();	             			
+	         			saveConnection();		         			
+	         			AssignmentActivity.this.selectMenuItem(getResources().getString(R.string.Menu_Connections));	         			   	         				         	
 	         		 }
 				}
           		catch (Exception e) {    	        	    	        	
@@ -318,65 +321,93 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 }
 	    
 	 // Input should have already been validated at this point!
-	 private void saveConnection() throws AppException {
-    	try {
-    		showDialog(DIALOG_PROGRESS_SAVE);   			// progress dialog
+	 private void saveConnection() throws Exception {
+		 
+		showDialog(DIALOG_PROGRESS_SAVE);   			// progress dialog
    
-    		CoreConnectionChangeRequest req = new CoreConnectionChangeRequest();
-    		req.ConnectionId = _connection.ConnectionId;
-    		req.Complete = closeCheckBox.isChecked();
-    		req.ConnectionDate = new Date();
-    		req.ConnectionTypeId = _connection.ConnectionTypeId;
-    		req.FamilyConnection = _connection.FamilyConnection;
-    		req.ContactIndvId = _connection.ContactInformation.IndvId;
-    		
-    		// reassign
-    		if (_assignToId > 0) {
-    			req.Reassign = true;
-    			
-    			if (_assignToMode == 0) {				// _assignToId is an individual id
-    				req.NewCallerIndvId = _assignToId;    				
-    			}
-    			else {									// _assignToId is an team id
-    				req.NewTeamId = _assignToId;
-    			}
-    		}    		
-    		else {
-    			req.Reassign = false;
-    		}
-    		
-    		req.Comment = connectionEditText.getText().toString();
-    		
-    		// Iterate over _selectedResponses and add all user selected responses
-    		req.ResponseIdList = new ArrayList<Integer>();    		
-    		for (int i = 0; i <= _selectedResponses.length-1; i++) {
-    			if (_selectedResponses[i] == true) {
-    				int id = _responseTypeLoader.getList().get(i).RespID;
-    				req.ResponseIdList.add(id);
-    			}
-    		}
-    		
-    		// send to webservice
-    		GlobalState gs = GlobalState.getInstance(); 
-    		AppPreferences appPrefs = new AppPreferences(this.getApplicationContext());    		
-    		Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-    		
-    	   	apiCaller.connectionAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), req);
-    			    		
-    	   	gs.setDirtyFlag(getResources().getString(R.string.AssignmentListSummary_DirtyFlag));
-    	   	gs.setDirtyFlag(getResources().getString(R.string.AssignmentList_DirtyFlag));
-    	   	
-    	   	removeDialog(DIALOG_PROGRESS_SAVE);
-    	   	    	
-    	   	Toast.makeText(AssignmentActivity.this, getString(R.string.Connection_Saved), Toast.LENGTH_LONG).show();	    	   	
-    	}
-    	finally {
-    		removeDialog(DIALOG_PROGRESS_SAVE);
-    	}        
+		CoreConnectionChangeRequest req = new CoreConnectionChangeRequest();
+		req.ConnectionId = _connection.ConnectionId;
+		req.Complete = closeCheckBox.isChecked();
+		req.ConnectionDate = new Date();
+		req.ConnectionTypeId = _connection.ConnectionTypeId;
+		req.FamilyConnection = _connection.FamilyConnection;
+		req.ContactIndvId = _connection.ContactInformation.IndvId;
+		
+		// reassign
+		if (_assignToId > 0) {
+			req.Reassign = true;
+			
+			if (_assignToMode == 0) {				// _assignToId is an individual id
+				req.NewCallerIndvId = _assignToId;    				
+			}
+			else {									// _assignToId is an team id
+				req.NewTeamId = _assignToId;
+			}
+		}    		
+		else {
+			req.Reassign = false;
+		}
+		
+		req.Comment = connectionEditText.getText().toString();
+		
+		// Iterate over _selectedResponses and add all user selected responses
+		req.ResponseIdList = new ArrayList<Integer>();    		
+		for (int i = 0; i <= _selectedResponses.length-1; i++) {
+			if (_selectedResponses[i] == true) {
+				int id = _responseTypeLoader.getList().get(i).RespID;
+				req.ResponseIdList.add(id);
+			}
+		}
+		
+		// send to web service (background thread)    		
+		saveConnectionTask tsk = new saveConnectionTask();
+		tsk.execute(req);
+		boolean result = tsk.get();				//causes thread to block until result is returned
+		    	   	
+	   	removeDialog(DIALOG_PROGRESS_SAVE);
+	   	    
+	   	if (result) {
+	   		Toast.makeText(AssignmentActivity.this, getString(R.string.Connection_Saved), Toast.LENGTH_LONG).show();	
+		}
+		else {
+			throw tsk._ex;
+		}	   		        
 	 }
 
-	// "assign to" picker	    
-    /**
+	 // do webservice post in background
+	 private class saveConnectionTask extends AsyncTask<CoreConnectionChangeRequest, Void, Boolean> {    	
+		 Exception _ex;
+		 GlobalState gs = GlobalState.getInstance(); 
+
+ 		@Override
+        protected Boolean doInBackground(CoreConnectionChangeRequest... args) {	        	
+        	try	{
+		    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+				Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+		
+				apiCaller.connectionAdd(gs.getUserName(), gs.getPassword(), gs.getSiteNumber(), args[0]);				
+				return true; 				   				 
+        	}
+	    	catch (Exception e) {
+	    		_ex = e;
+	    		return false;
+	    	}	        	                               		       
+        }
+        	        
+        @Override
+        protected void onPostExecute(Boolean result) {
+    		// after save operation, we navigate back to top level (assignment summary list) 
+    		//  activity.  all other activities in the stack are removed
+        	if (result == true) {	        
+        		gs.setDirtyFlag(getResources().getString(R.string.AssignmentListSummary_DirtyFlag));
+        	}
+        }	        
+	 }
+	 
+	 
+	 
+	 
+	/**
      * Display the re-assignment picker screen
      * 
      * @throws AppException 

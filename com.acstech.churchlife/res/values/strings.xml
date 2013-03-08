@@ -6,7 +6,7 @@
     <string name="Menu.Calendar">Calendar</string>
     <string name="Menu.Connections">My Tasks</string>
     <string name="Menu.Giving">Giving</string>        
-    <string name="Menu.MyInfo">My Church</string>
+    <string name="Menu.MyInfo">Account</string>
                 
     <string name="Dialog.NoConnectionLine1">Unable to connect to the internet.</string>   
     <string name="Dialog.NoConnectionLine2">Please check your connection and try again.</string>          
@@ -98,7 +98,7 @@
 	<string name="AssignmentList.ProgressDialog">"Loading %s. Please wait."</string>
 	
 	<string name="Assignment.ViewRecent">History</string>
-	<string name="Assignment.ViewTeam">Team</string>
+	<string name="Assignment.TeamMembers">Team Members</string>
 	<string name="Assignment.EnterNotes">Enter Notes</string>
 	<string name="Assignment.Reassign">Reassign</string>
 			
@@ -120,7 +120,7 @@
 	<string name="Connection.ReassignHintIndividual">Search for individual</string>
 	<string name="Connection.ReassignHintTeam">Search for team</string>
 			
-	<string name="IndividualConnection.Title">View Recent Connections</string>	
+	<string name="IndividualConnection.Title">Recent Connections</string>	
 	<string name="IndividualConnection.LoadingWithTitle">Loading recent connections for %s.  Please wait.</string>
 	<string name="IndividualConnection.NoResults">Sorry, no recent connections found.</string>	
 	

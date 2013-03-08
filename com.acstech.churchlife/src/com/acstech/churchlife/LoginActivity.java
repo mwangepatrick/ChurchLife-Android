@@ -559,9 +559,9 @@ public class LoginActivity extends ChurchlifeBaseActivity {
     		public void run() {
     			try {	        				
     				// get merchant data (add to user) for giving (on background thread)    				
-    				Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-    	        	CoreAccountMerchant info = apiCaller.accountmerchant(getUsernameText(), getPasswordText(), getSiteNumberText());
-    				    					    				
+    				Api apiCaller = new Api(_appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);				
+    	        	CoreAccountMerchant info = apiCaller.accountmerchant(user.UserName, getPasswordText(), String.valueOf(user.SiteNumber));
+    	        	
 	    	    	// Return the object to the message handler above (if it exists)
 	    	    	Message msg = handler.obtainMessage();	
 	    	    	msg.what = 0;

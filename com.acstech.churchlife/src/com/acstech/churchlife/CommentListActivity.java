@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -72,6 +73,13 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	            	 
 	            	 headerTextView.setText(_individualName);
 	            	 
+	            	 // See if this user can add comments by making a web service call.
+	            	 //  We HAVE to block this thread so that the onCreateOptionsMenu does
+	            	 //   not get executed until we set the _canAddComments flag
+	            	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
+	            	 tsk.execute();
+	            	 _canAddComments = tsk.get();
+	            	 
 	            	 loadListWithProgressDialog(true);	        	 
 	             }	       
 	        }
@@ -111,16 +119,28 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
             });	
 	    }
 	    
-	    private void setCanAddComments() throws AppException {
-	    	
-	    	GlobalState gs = GlobalState.getInstance(); 
-	    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
-			Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+		 // do web service get in background
+		 private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {    	
+	 		GlobalState gs = GlobalState.getInstance(); 
+
+	 		@Override
+	        protected Boolean doInBackground(Void... args) {	        	
+	        	try	{
+			    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+					Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
 			
-		   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-	    	_canAddComments = (results.size() > 0);		   	
-	    }
-	    
+				   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+			    	return (results.size() > 0);		   				    				   				
+	        	}
+		    	catch (Exception e) {
+		    		ExceptionHelper.notifyUsers(e, CommentListActivity.this);
+		    		ExceptionHelper.notifyNonUsers(e);
+		    		return false;
+		    	}	        	                               		       
+	        }	        
+		 }
+
+		 
 	    /**
 	     * Displays a progress dialog and launches a background thread to connect to a web service
 	     *   to retrieve search results 
@@ -134,8 +154,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	    	{	
 	    		// first time...
 	    		if (_loader == null) {	    			
-	    			_loader = new CommentListLoader(this, _individualId, _commentTypeId);
-	    			 setCanAddComments();	 	            
+	    			_loader = new CommentListLoader(this, _individualId, _commentTypeId); 	            
 	    		}
 	    		
 	    		// see onListLoaded below for the next steps (after load is done)

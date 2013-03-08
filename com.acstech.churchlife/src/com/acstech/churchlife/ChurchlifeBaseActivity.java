@@ -166,7 +166,20 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      * @return
      */
     private boolean showCalendarMenu() {
-    	return (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) == false);
+    	
+    	boolean result = true;  //by default, show it
+    	
+    	// check 1 - user must NOT be a nonmember (user must be a member)
+    	if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER)) {
+    		result = false;    		
+    	}
+    	
+    	// check 2 - login must have calendar enabled (only check if previous checks passed) 
+    	if (result == true)	{
+    		result = !getCurrentUser().CalendarDisabled;
+    	}
+    	
+    	return result;
     }
     
 
@@ -220,6 +233,16 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     
     
     /**
+     * public interface for an activity to 'select' a main menu item
+     * 
+     */
+    public void selectMenuItem(String menuName) {
+    	listMenuItemSelected( new DefaultListItem(menuName));
+    }
+    
+    
+    
+    /**
      * Operate on a seleted navigation item by loading the intent 
      *   (and finishing the current intent)
      */
@@ -248,9 +271,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	        	
     	if (closeCurrentActivity) {
     		// clear all open activities since we are starting with a new 'root' activity
-    		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    		
-    		//FLAG_ACTIVITY_CLEAR_TOP|FLAG_ACTIVITY_SINGLE_TOP
+       		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
     	}
 		startActivity(intent);	// launch intent    	
     }

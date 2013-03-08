@@ -111,7 +111,7 @@ public class Api extends ApiBase {
 		isOnlineCheck();
 		
 		CoreConnection connection = null;
-    	RESTClient client = new RESTClient(String.format("%s/%s/connections/%s", _baseUrl, siteNumber, connectionId));
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/%s?includeSelf=true", _baseUrl, siteNumber, connectionId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
