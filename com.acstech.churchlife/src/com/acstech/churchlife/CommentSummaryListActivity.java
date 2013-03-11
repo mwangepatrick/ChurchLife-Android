@@ -24,6 +24,7 @@ import com.acstech.churchlife.listhandling.ColorCodedListItemAdapter;
 import com.acstech.churchlife.listhandling.CommentSummaryListLoader;
 import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
 import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
 public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
@@ -58,6 +59,10 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
 	        	 tsk.execute();	        	 
 	        	 tsk.get();									// suspends UI until done  
+	        	 
+	        	 if (tsk._ex != null ) {
+	        		 throw tsk._ex;	        		
+	        	 }
 	        	 
 	        	 // This activity MUST be passed data
 	        	 Bundle extraBundle = this.getIntent().getExtras();
@@ -113,7 +118,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	
 	    	if (_canAddComments) { 
 	    		com.actionbarsherlock.view.MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu); 
-				item.setIcon(R.drawable.ic_menu_add);
+				//item.setIcon(R.drawable.ic_menu_add);
 	    	}
 	    	return true;
 	    }
@@ -144,24 +149,30 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
-	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {    	
+	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {
+	    	 GlobalState gs = GlobalState.getInstance(); 
+	    	 Exception _ex;
+	    	
 	        @Override
 	        protected Boolean doInBackground(Void... args) {	        	
 	        	try	{
-		        	GlobalState gs = GlobalState.getInstance(); 
-			    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
-					Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-					
-				   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-				   	if (results != null) {
-				   		return (results.size() > 0);
-				   	}				    				   				 
+	        		// Only check api if the user has rights to comments already
+	        		if (gs.getUser().HasAddPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS)) {		        	
+			        	GlobalState gs = GlobalState.getInstance(); 
+				    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+						Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+						
+					   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+					   	if (results != null) {
+					   		return (results.size() > 0);
+					   	}
+	        		}
+				   	return false;
 	        	}
-		    	catch (Exception e) {
-		    		ExceptionHelper.notifyUsers(e, CommentSummaryListActivity.this);
-		    		ExceptionHelper.notifyNonUsers(e);
-		    	}
-	        	return false;                               		        
+	        	catch (Exception e) {
+		    		_ex = e;
+		    		return false;
+		    	}	                               		        
 	        }
 	        
 	        @Override

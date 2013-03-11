@@ -1,5 +1,7 @@
 package com.acstech.churchlife;
 
+import ly.count.android.api.Countly;
+
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.webservice.Api;
@@ -30,6 +32,8 @@ public class SplashActivity extends ChurchlifeBaseActivity {
     	super.onCreate(savedInstanceState);
         setContentView(R.layout.splashscreen);       
                        
+        super.initializeCountlyAnalytics();
+        
         new AutoLoginTask().execute();	// login in background                               
     }
         

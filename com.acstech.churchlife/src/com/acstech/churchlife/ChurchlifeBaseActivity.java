@@ -2,6 +2,8 @@ package com.acstech.churchlife;
 
 import java.util.ArrayList;
 
+import ly.count.android.api.Countly;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -101,11 +103,31 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	}    	
     }
 
+    /**
+     * Initialize the countly analytics - called once on app startup (splash screen) 
+     */
+    protected void initializeCountlyAnalytics() {
+    	//Countly.sharedInstance().init(this, config.COUNTLY_URL_VALUE, config.COUNTLY_APPLICATION_ID);
+    }
+    
+    @Override
+	protected void onStart() {
+		super.onStart();
+		
+		//Countly.sharedInstance().onStart();		
+    }
+    
     @Override
 	protected void onResume() {
 		super.onResume();
 		
 		getSlidingMenu().showContent();		
+    }
+    
+    protected void onStop() {
+    	super.onStop();
+    	
+    	//Countly.sharedInstance().onStop();
     }
     
     //************************************************************************
@@ -263,10 +285,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		intent = new Intent().setClass(this, GivingActivity.class);
     	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_MyInfo))) {
-    		intent = new Intent().setClass(this, MyInfoActivity.class);
-    		// special case:  do not close the activity if this is the my info splash screen
-        	//    as it does not have a title bar
-    		closeCurrentActivity = false;
+    		intent = new Intent().setClass(this, MyInfoActivity.class);    		
     	}    	
     	        	
     	if (closeCurrentActivity) {
@@ -276,6 +295,8 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 		startActivity(intent);	// launch intent    	
     }
 
+
+    
     // return the root activity based on permissions, etc.
     public Class<?> getHomeActivity() {
 

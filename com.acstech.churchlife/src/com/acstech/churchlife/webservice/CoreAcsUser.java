@@ -18,6 +18,9 @@ public class CoreAcsUser extends CoreObject {
 	 
 	  // security rights
 	  public static String PERMISSION_GRANTED = "A";
+	  public static String PERMISSION_VIEW = "V";
+	  public static String PERMISSION_DENIED = "D";
+	  
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
 	  public static String PERMISSION_REASSIGNCONNECTION = "ReassignConnection";
 	  public static String PERMISSION_ASSIGNEDCONTACTSONLY = "AssignedContactsOnly";
@@ -91,14 +94,39 @@ public class CoreAcsUser extends CoreObject {
     	  boolean result = false;
     	  
     	  if (Rights != null && Rights.size() > 0){
+    		  if (Rights.get(key) != null && Rights.get(key).equals(PERMISSION_DENIED) == false) {
+    			  result = true;
+    		  }   		  
+    	  }    	      	  
+    	  return result;    	      	 
+      }
+      
+      // Helper method for evaluating user rights
+      public boolean HasViewPermission(String key)
+      {    	      	  
+    	  boolean result = false;
+    	  
+    	  if (Rights != null && Rights.size() > 0){
+    		  if (Rights.get(key) != null && Rights.get(key).equals(PERMISSION_VIEW)) {
+    			  result = true;
+    		  }   		  
+    	  }    	      	  
+    	  return result;    	      	 
+      }
+      
+   // Helper method for evaluating user rights
+      public boolean HasAddPermission(String key)
+      {    	      	  
+    	  boolean result = false;
+    	  
+    	  if (Rights != null && Rights.size() > 0){
     		  if (Rights.get(key) != null && Rights.get(key).equals(PERMISSION_GRANTED)) {
     			  result = true;
     		  }   		  
     	  }    	      	  
     	  return result;    	      	 
       }
-    
-
+      
       // Factory Method - parse json
       //  NOTE:  This object is used as the return value for different calls.  Some of those
       //          calls may not have all of the values (and they aren't required to be there)

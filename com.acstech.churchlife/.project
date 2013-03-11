@@ -4,6 +4,9 @@
 	<comment></comment>
 	<projects>
 		<project>com_actionbarsherlock_library</project>
+		<project>com_handmark_pulltorefresh_library</project>
+		<project>com_slidingmenu_lib</project>
+		<project>CountlyActivity</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

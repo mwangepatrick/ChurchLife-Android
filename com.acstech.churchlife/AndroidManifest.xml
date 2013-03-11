@@ -12,7 +12,13 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name" 
     			 android:name="com.acstech.churchlife.GlobalState">
-    			     			     			 
+
+    	<service android:name="org.openudid.OpenUDID_service">
+    		<intent-filter>
+        		<action android:name="org.openudid.GETUDID" />
+    		</intent-filter>
+		</service>
+				     			     			 
         <activity android:name=".SplashActivity"
                   android:theme="@android:style/Theme.NoTitleBar">
                   

@@ -307,10 +307,13 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 {    	
 	    	String msg = "";
 	    	
+	    	/* 2013.03.11 MAS  currently not requiring comment text
+	    	 * 
     		if (connectionEditText.getText().length() == 0) {   
     			msg = (String)this.getResources().getText(R.string.Connection_CommentValidation);     		
     		}
-    		
+    		*/
+	    	
 	    	// If a validation message exists, show it
 	    	if (msg.length() > 0) {
 	    		Toast.makeText(AssignmentActivity.this, msg, Toast.LENGTH_LONG).show(); 

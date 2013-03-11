@@ -25,6 +25,7 @@ import com.acstech.churchlife.listhandling.CommentListItem;
 import com.acstech.churchlife.listhandling.CommentListItemAdapter;
 import com.acstech.churchlife.listhandling.CommentListLoader;
 import com.acstech.churchlife.webservice.Api;
+import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.webservice.CoreCommentType;
 
 public class CommentListActivity extends ChurchlifeBaseActivity {
@@ -76,10 +77,14 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	            	 // See if this user can add comments by making a web service call.
 	            	 //  We HAVE to block this thread so that the onCreateOptionsMenu does
 	            	 //   not get executed until we set the _canAddComments flag
-	            	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
-	            	 tsk.execute();
-	            	 _canAddComments = tsk.get();
-	            	 
+		        	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
+		        	 tsk.execute();	        	 
+		        	 tsk.get();									// suspends UI until done  
+		        	 
+		        	 if (tsk._ex != null ) {
+		        		 throw tsk._ex;	        		
+		        	 }
+		        	 
 	            	 loadListWithProgressDialog(true);	        	 
 	             }	       
 	        }
@@ -119,27 +124,37 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
             });	
 	    }
 	    
-		 // do web service get in background
-		 private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {    	
-	 		GlobalState gs = GlobalState.getInstance(); 
-
-	 		@Override
+	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {
+	    	 GlobalState gs = GlobalState.getInstance(); 
+	    	 Exception _ex;
+	    	
+	        @Override
 	        protected Boolean doInBackground(Void... args) {	        	
 	        	try	{
-			    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
-					Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
-			
-				   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
-			    	return (results.size() > 0);		   				    				   				
+	        		// Only check api if the user has rights to comments already
+	        		if (gs.getUser().HasAddPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS)) {		        	
+			        	GlobalState gs = GlobalState.getInstance(); 
+				    	AppPreferences appPrefs = new AppPreferences(getApplicationContext());
+						Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);	
+						
+					   	List<CoreCommentType> results = apiCaller.commenttypes(gs.getUserName(), gs.getPassword(), gs.getSiteNumber());
+					   	if (results != null) {
+					   		return (results.size() > 0);
+					   	}
+	        		}
+				   	return false;
 	        	}
-		    	catch (Exception e) {
-		    		ExceptionHelper.notifyUsers(e, CommentListActivity.this);
-		    		ExceptionHelper.notifyNonUsers(e);
+	        	catch (Exception e) {
+		    		_ex = e;
 		    		return false;
-		    	}	        	                               		       
-	        }	        
-		 }
-
+		    	}	                               		        
+	        }
+	        
+	        @Override
+	        protected void onPostExecute(Boolean result) {
+	        	_canAddComments  = result;
+	        }
+	    }
 		 
 	    /**
 	     * Displays a progress dialog and launches a background thread to connect to a web service
@@ -226,7 +241,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	    	
 	    	if(_canAddComments) {
 	    		com.actionbarsherlock.view.MenuItem item = menu.add(Menu.NONE, ADD_COMMENT, Menu.FIRST, R.string.Comment_AddMenu);
-				item.setIcon(R.drawable.ic_menu_add);
+				//item.setIcon(R.drawable.ic_menu_add);
 	    	}
 	    	return true;
 	    }
