@@ -136,7 +136,9 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	        	{	        		        	
 		        	if (_loader.success())	{		        		
 				     	// set items to list
-			        	lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList()));		        		
+			        	//lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList(), R.layout.listitem_withindent));
+			        	lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList(), R.layout.listitem_withtitle));
+			        	
 		        	}
 		        	else {
 		        		throw _loader.getException();

@@ -50,7 +50,7 @@ public class IndividualConnectionListLoader extends ListLoaderBase<DefaultListIt
 			
 			// Add all items from the latest web service request to the adapter 
 			for (CoreConnection item : _webServiceResults.Page) {
-				_itemList.add(new DefaultListItem(item.ConnectionId,"", item.getFullDescription()));
+				_itemList.add(new DefaultListItem(item.ConnectionId, item.Comment, item.getFullTitle()));
 			}
 			
   	    	// If the web service indicates more records...Add the 'More Records' item

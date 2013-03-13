@@ -19,7 +19,7 @@ public class CoreAcsUser extends CoreObject {
 	  // security rights
 	  public static String PERMISSION_GRANTED = "A";
 	  public static String PERMISSION_VIEW = "V";
-	  public static String PERMISSION_DENIED = "D";
+	  public static String PERMISSION_DENIED = "N";
 	  
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
 	  public static String PERMISSION_REASSIGNCONNECTION = "ReassignConnection";

@@ -41,10 +41,11 @@ public class CoreConnection  extends CoreObject {
     public String getDescription() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);		
-		return String.format("%s %s", sdf.format(DueDate), Comment);
+		return String.format("Due date: %s \n%s", sdf.format(DueDate), Comment);
     }
 
-    public String getFullDescription() {
+    
+    public String getFullTitle() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);		
 		String result = String.format("%s %s", sdf.format(DueDate), ConnectionTypeDescription);
@@ -59,11 +60,12 @@ public class CoreConnection  extends CoreObject {
 		if (authorList.length() > 0) {
 			result = String.format("%s by %s", result, authorList);
 		}
-				
+	
+		/*
 		if (Comment.trim().length() > 0) {
 			result = String.format("%s \n%s", result, Comment);
 		}
-				
+		*/	
 		return result;
     }
     

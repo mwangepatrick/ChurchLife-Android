@@ -186,6 +186,11 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 		 	startActivity(intent);	
 	    }
 
+	    /*
+	     * This NOT currently used as this intent is restarted completely after an assignment
+	     *   change is made (which causes a fresh reload).
+	     *   
+	     *   Left this in here to demonstrate how to use and respond to dirty flag 
 		@Override
 		protected void onResume() {
 			super.onResume();
@@ -197,6 +202,7 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 				String dirtyFlag = getResources().getString(R.string.AssignmentListSummary_DirtyFlag);
 				if (gs.getDirtyFlagExists(dirtyFlag)) {
 					_loader.clear();
+					detailsListview.setAdapter(null);
 					loadListWithProgressDialog(true);
 					gs.clearDirtyFlag(dirtyFlag);					
 				}
@@ -209,5 +215,7 @@ public class AssignmentSummaryListActivity extends ChurchlifeBaseActivity {
 		 		ExceptionHelper.notifyNonUsers(e);
 		 	}
 		}
+		*/
+	    
 	 	   
 }
