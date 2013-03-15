@@ -17,7 +17,7 @@ public class config {
 	public static String GIVING_SERVICE_URL_VALUE = "https://solutions.acstechnologies.com/mobile/";
 	
 	// countly analytics
-	public static String COUNTLY_APPLICATION_ID = "9bdc7ffd03c712ef6e6b2fb669d24be53ed83e9c"; 
-	public static String COUNTLY_URL_VALUE = "http://countly.acs.tech";
+	public static String COUNTLY_APPLICATION_ID = "cf13c8043e37f2472171fb76163959ef65ec30ff"; 
+	public static String COUNTLY_URL_VALUE = "http://ctly.acstechnologies.com";
 	
 }

@@ -71,7 +71,7 @@ public class CoreConnection  extends CoreObject {
     
     public int getIconResourceId() {
     	if (TeamMembers.size() > 1) {
-  			return R.drawable.ic_team;
+  			return R.drawable.ic_action_team;
   		}
   		else {
   			return 0;

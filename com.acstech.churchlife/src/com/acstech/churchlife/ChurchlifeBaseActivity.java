@@ -107,14 +107,14 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      * Initialize the countly analytics - called once on app startup (splash screen) 
      */
     protected void initializeCountlyAnalytics() {
-    	//Countly.sharedInstance().init(this, config.COUNTLY_URL_VALUE, config.COUNTLY_APPLICATION_ID);
+    	Countly.sharedInstance().init(this, config.COUNTLY_URL_VALUE, config.COUNTLY_APPLICATION_ID);
     }
     
     @Override
 	protected void onStart() {
 		super.onStart();
 		
-		//Countly.sharedInstance().onStart();		
+		Countly.sharedInstance().onStart();		
     }
     
     @Override
@@ -127,7 +127,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     protected void onStop() {
     	super.onStop();
     	
-    	//Countly.sharedInstance().onStop();
+    	Countly.sharedInstance().onStop();
     }
     
     //************************************************************************
@@ -151,25 +151,25 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	
 		// People
 		if (showPeopleMenu()) {
-			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people)); 
+			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people_color)); 
 		}
     	
 		// Calendar
 		if (showCalendarMenu()) {
-			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar));
+			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar_color));
 		}
 		
     	// My ToDos 
     	if (showMyToDoMenu()) {
-        	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo));
+        	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Connections), R.drawable.ic_action_todo_color));
     	}
     	
     	// Giving    	    	
     	if (showGivingMenu()) {
-        	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Giving), R.drawable.ic_action_giving));
+        	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Giving), R.drawable.ic_action_giving_color));
     	}
     	
-    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_MyInfo), R.drawable.ic_action_info));
+    	itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_MyInfo), R.drawable.ic_action_info_color));
     	
     	menuListView.setAdapter(new DefaultListItemAdapter(this, itemList, R.layout.listitem_withicon));			   
     }

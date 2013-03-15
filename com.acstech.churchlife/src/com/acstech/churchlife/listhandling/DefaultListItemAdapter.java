@@ -118,8 +118,8 @@ public class DefaultListItemAdapter extends BaseAdapter {
 		}
 		
 		// icon
-		if (holder.iconImageView != null){			
-			holder.iconImageView.setBackgroundResource(currentItem.getIconResourceId());
+		if (holder.iconImageView != null){						
+			holder.iconImageView.setImageResource(currentItem.getIconResourceId());
 		}
 		
 		return convertView;				
