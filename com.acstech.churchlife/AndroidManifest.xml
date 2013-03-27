@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.acstech.churchlife"
       android:versionCode="6"
-      android:versionName="2013.50"
+      android:versionName="2013.51"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />
 	<uses-permission android:name="android.permission.INTERNET" />
