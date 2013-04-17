@@ -143,11 +143,11 @@ public class GlobalState extends Application
 		AppPreferences prefs = new AppPreferences(getApplicationContext());
 		String state = prefs.getApplicationState();
 		
-		if (state.length() > 0 && state.indexOf("|") > 0) {
+		if (state.length() > 1 && state.indexOf("|") > 0) {
 			
-			String[] stateValues = state.split("|");					
+			String[] stateValues = state.split("\\|");					
 			if (stateValues[0].length() > 0) {
-				_user = CoreAcsUser.GetCoreAcsUser(stateValues[4]);
+				_user = CoreAcsUser.GetCoreAcsUser(stateValues[0]);
 			}			
 			_password = stateValues[1];
 			
