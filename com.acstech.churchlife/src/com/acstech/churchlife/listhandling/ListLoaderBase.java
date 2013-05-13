@@ -33,7 +33,7 @@ public abstract class ListLoaderBase<T> {
 	private String _noResultsMessage = "Sorry, no record found.";
 	private String _nextResultsMessage = "More Results";
 	
-	private Context _context;
+	protected Context _context;
 	protected ArrayList<T> _itemList;
 	
 	private String _searchText = "";			// some consumers use this...others don't	

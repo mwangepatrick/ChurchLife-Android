@@ -180,7 +180,16 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
      * @return
      */
     private boolean showPeopleMenu() {
-    	return (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) == false);
+    	boolean result = true;  //by default, show it
+    	
+    	//user must NOT be a nonmember / user must be a member and must have certain security bits
+    	if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER) == true ||
+    		getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_MEMBERSEARCH) == false ||
+    		getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_LOCATEPERSON) == false) {
+    			
+    		result = false;    		
+    	}
+    	return result;    	
     }
     
     /**
@@ -191,7 +200,7 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	
     	boolean result = true;  //by default, show it
     	
-    	// check 1 - user must NOT be a nonmember (user must be a member)
+    	// check 1 - user must NOT be a nonmember / user must be a member
     	if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_NONMEMBER)) {
     		result = false;    		
     	}

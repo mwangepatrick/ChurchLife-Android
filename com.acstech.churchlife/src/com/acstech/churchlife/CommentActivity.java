@@ -1,7 +1,5 @@
 package com.acstech.churchlife;
 
-import java.util.concurrent.ExecutionException;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;

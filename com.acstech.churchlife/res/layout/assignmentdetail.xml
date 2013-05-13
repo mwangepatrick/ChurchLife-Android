@@ -29,14 +29,55 @@
 	    android:layout_alignParentLeft="true"
 	    android:layout_below="@+id/viewRecentButton"
 	    android:layout_above="@+id/footer" >
+		
+	    <LinearLayout android:layout_width="match_parent"
+		    		  android:layout_height="wrap_content"
+		    		  android:orientation="vertical">	        	   
+	    <TextView
+	        android:id="@+id/contactTextView"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"	
+	        android:paddingLeft="5dp"        
+	        android:textColor="@android:color/white" />
 
+	    <TextView
+	        android:id="@+id/addressTextView"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"	
+	        android:paddingLeft="5dp"        
+	      	android:linksClickable="true"
+	      	android:lines="2"
+	        android:textColor="@android:color/white" />
+
+	    <TextView
+	        android:id="@+id/phoneTextView"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"	
+	        android:paddingLeft="5dp"        
+	        android:linksClickable="true"
+	        android:textColor="@android:color/white" />
+
+		<TextView
+	        android:id="@+id/emailTextView"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"	
+	        android:paddingLeft="5dp"
+	      	android:linksClickable="true"        
+	        android:textColor="@android:color/white" />
+	    	    	    	    
 	    <TextView
 	        android:id="@+id/assignmentTextView"
 	        style="@android:style/TextAppearance.Medium"
-	        android:layout_width="wrap_content"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:padding="5dp"
 	        android:textColor="@android:color/white" />
+	    
+	    </LinearLayout>
 	</ScrollView>
 	   		   	
 	   	
@@ -70,7 +111,5 @@
         	android:text="@string/Assignment.Reassign" 
         	style="@style/ButtonBarButton" />
 	</LinearLayout>
-
-
 
 </RelativeLayout>

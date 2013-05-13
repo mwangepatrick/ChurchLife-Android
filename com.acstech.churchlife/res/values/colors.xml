@@ -15,8 +15,8 @@
 	
 	
 	<!--  new scheme  -->
-	<color name="primary">#3f5487</color>
-	<color name="secondary">#a6c0d3</color>
-	<color name="tertiary">#ffcb4a</color>
+	<color name="primary">#3f5487</color>			<!-- royal blue -->
+	<color name="secondary">#a6c0d3</color>			<!-- light blue -->
+	<color name="tertiary">#ffcb4a</color>			<!-- mustard -->
 	
 </resources>

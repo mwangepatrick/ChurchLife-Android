@@ -166,7 +166,7 @@ public class IndividualListActivity extends ChurchlifeBaseActivity {
     	try
     	{	
     		if (_loader == null) {    			
-    			_loader = new IndividualListLoader(this, txtSearch.getText().toString());	       		
+    			_loader = new IndividualListLoader(this, txtSearch.getText().toString().trim());	       		
     		}
     		else
     		{
@@ -198,20 +198,7 @@ public class IndividualListActivity extends ChurchlifeBaseActivity {
         	
         	try
         	{	        		        	
-	        	if (_loader.success())	{	        			        			        
-	        		/*
-	        		//If only 1 individual, go directly to the detail page
-	        		DefaultListItem item =(DefaultListItem)_loader.getList().get(0);
-	        			  
-	        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-	        			//startCommentListActivity(_individualId, _individualName, Integer.parseInt(item.getId()), true);		        			
-	        		}
-	        		else {
-			     		// set items to list
-		        		// ... see below
-		        	}
-	        		*/
-	        		
+	        	if (_loader.success())	{	        			        			        	        		
 		     		// set items to list
     				// save index and top position (preserve scroll location)
     				int index = lv1.getFirstVisiblePosition();

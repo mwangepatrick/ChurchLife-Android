@@ -1,10 +1,16 @@
 package com.acstech.churchlife;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
@@ -12,9 +18,12 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
+import com.acstech.churchlife.listhandling.ConnectionTeamsListLoader;
 import com.acstech.churchlife.listhandling.DefaultListItem;
 import com.acstech.churchlife.listhandling.DefaultListItemAdapter;
 import com.acstech.churchlife.listhandling.IndividualConnectionListLoader;
+import com.acstech.churchlife.webservice.CoreAcsUser;
+
 
 public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 
@@ -29,6 +38,7 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	
 	TextView headerTextView;
 	ListView lv1;
+	Button addButton;
 	
 	 @Override
 	 public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +65,8 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	            	 _individualId = extraBundle.getInt("id");
 	            	 _individualName = extraBundle.getString("name");
 	            	 
-	            	 headerTextView.setText(_individualName);	            	 
+	            	 headerTextView.setText(_individualName);
+	            	 
 	            	 loadListWithProgressDialog(true);
 	             }		             
 	        	 	             
@@ -73,6 +84,18 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    		ExceptionHelper.notifyNonUsers(e);
 	    	}  	        
 	    }
+	 
+	 
+	 	private void startAssignmentActivity(int assignTo, int indvId, String indvName) throws AppException {
+	    	Intent intent = new Intent();
+	    	intent.setClass(this, AssignmentActivity.class);
+		 	intent.putExtra("assignment", "");  					//new
+		 	intent.putExtra("assignto", assignTo);		 	
+		 	intent.putExtra("id", indvId);
+		 	intent.putExtra("name", indvName);
+		 			 	
+		 	startActivity(intent);
+	 	}
 	 
 	    protected Dialog onCreateDialog(int id) {
 	        switch(id) {
@@ -95,6 +118,83 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    private void bindControls(){	    	
 	    	lv1 = (ListView)this.findViewById(R.id.ListView01);
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
+	    	addButton = (Button)this.findViewById(R.id.addButton);
+	    		    		    
+	    	// 'Add' button
+	 		addButton.setOnClickListener(new OnClickListener() {				 
+				@Override
+				public void onClick(View view) {
+					 try {
+						 DialogListSingleSelectFragment dlg = new DialogListSingleSelectFragment();
+						 dlg.setTitle(getResources().getString(R.string.Connection_AssignDialogTitle));	
+						 
+						 //-------------------------------------------------------------------
+						 // Add Assignment items and their values  						 
+						 // ...if login has an individual id - add the 'Assign to Me' option					 
+						 // ...if no teams exist - do not show the 'team' assign option						 
+						 //-------------------------------------------------------------------
+						 List<String> itemList = new ArrayList<String>();
+						 List<Integer> valueList = new ArrayList<Integer>();
+						 					
+						 // get the team count
+						 ConnectionTeamsListLoader teams = new ConnectionTeamsListLoader(IndividualConnectionListActivity.this, "");						 
+						 int teamCount = teams.getTeamCount();
+						 
+						 boolean hasIndividualId = (getCurrentUser().IndvId > 0);
+						 
+						 // Assign to Me
+						 if (hasIndividualId) {
+							 itemList.add(getResources().getString(R.string.Connection_AssignDialogMe));
+							 valueList.add(AssignmentActivity.ASSIGNMODE_ME);
+						 }
+						 
+						 // Assign to Individual (always available)
+						 itemList.add(getResources().getString(R.string.Connection_AssignDialogIndividual));
+						 valueList.add(AssignmentActivity.ASSIGNMODE_INDIVIDUAL);
+						 
+						 // Assign to Team (only if teams)
+						 if (teamCount > 0) {
+							 itemList.add(getResources().getString(R.string.Connection_AssignDialogTeam));
+							 valueList.add(AssignmentActivity.ASSIGNMODE_TEAM);
+						 }
+						 
+						 // convert item list to string array
+						 String[] items = itemList.toArray(new String[itemList.size()]);
+						 
+						 // converting item values (int array) a bit more work to do
+						 int[] itemValues = new int[valueList.size()];
+						 for (int i=0; i < itemValues.length; i++)  {
+							 itemValues[i] = valueList.get(i).intValue();
+						 }
+						 
+						 dlg.setItems(items);
+						 dlg.setItemValues(itemValues);						
+						 dlg.show(getSupportFragmentManager(), "assignpicker");
+						 dlg.setOnDimissListener(new DialogListSingleSelectFragment.OnDismissListener() {					
+							@Override
+							public void onDismiss(int selectedValue) {
+								try {					
+									startAssignmentActivity(selectedValue, _individualId, _individualName);
+								 }
+								 catch (Exception e) {
+								 		ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
+								 		ExceptionHelper.notifyNonUsers(e);
+								 }	
+							}
+						});						 
+					 }
+					 catch (Exception e) {
+					 		ExceptionHelper.notifyUsers(e, IndividualConnectionListActivity.this);
+					 		ExceptionHelper.notifyNonUsers(e);
+					 }				 
+				}			
+			}); 
+
+	 		// Hide add button if the user doesn't have permissions
+	 		if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNCONTACTS) == false) {
+	    		addButton.setVisibility(View.GONE);	    		
+	    	}
+	 		
 	    }
 	    
 	    
@@ -160,7 +260,7 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 	    {    	    
 	    	try {
 	    		
-	    		// Is this a comment type that was selected or a 'more records' item.	    	
+	    		// Is this a connection type that was selected or a 'more records' item.	    	
 	       	 	if (item.isTitleOnlyItem()) {         	 		       	 		
 	       	 		loadListWithProgressDialog(true);  
 	       	 	}
@@ -176,5 +276,4 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 			}  
 	    }
 
-	    	    
 }

@@ -3,10 +3,8 @@ package com.acstech.churchlife;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
@@ -15,7 +13,6 @@ import android.content.ContentProviderOperation;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -83,7 +80,7 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 	        	 setTitle(R.string.Menu_People);
 	        	 
 	        	 bindControls();							// Set state variables to their form controls	        	 	       
-	        	 
+	        	 	        	
 	        	 // This activity MUST be passed the individual object (as json string)
 	        	 Bundle extraBundle = this.getIntent().getExtras();
 	             if (extraBundle == null) {
@@ -102,16 +99,21 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 	             // If user selects the picture OR the name...ask them if they wish
 	             //  to add this user to their local phone contacts
 	             individualImageView.setOnClickListener(new OnClickListener() {		
-	             	public void onClick(View v) {	   
-	             		showDialog(DIALOG_ADD_CONTACT);	             		
+	             	public void onClick(View v) {	             		
+	             		if (_individual.getPictureUrl() != null && _individual.getPictureUrl().length() > 0) {
+		             		Bundle b = new Bundle();
+		    	        	b.putString("imageurl", _individual.getPictureUrl());
+		             		DialogImageViewFragment imgFragment = new DialogImageViewFragment();
+		             		imgFragment.setArguments(b);	   
+		            	    imgFragment.show(getSupportFragmentManager(), "ImageViewer");	               	
+	             		}
 	             	}		
 	     		 });  
 	             nameTextView.setOnClickListener(new OnClickListener() {		
 	             	public void onClick(View v) {	   
 	             		showDialog(DIALOG_ADD_CONTACT);	             	
 	             	}		
-	     		 });  
-	             
+	     		 });  	    	           
 	        }
 	    	catch (Exception e) {
 	    		ExceptionHelper.notifyUsers(e, IndividualActivity.this);
@@ -138,12 +140,13 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 			 AlertDialog.Builder b = new AlertDialog.Builder(IndividualActivity.this);	        	         	        
 		     b.setTitle(phoneNumber);           
 		     b.setItems(items, new DialogInterface.OnClickListener() {
-		    	 public void onClick(DialogInterface dialog, int which) {		              		    				    			 
+		    	 public void onClick(DialogInterface dialog, int which) {
+		    		 ExternalActivityHelper activityLauncher = new ExternalActivityHelper(IndividualActivity.this);
 		    		 if (which == 0) {
-		    			 callPhoneNumber(phoneNumber);
+		    			 activityLauncher.callPhoneNumber(phoneNumber);		    			 
 		    		 }
 		    		 else {
-		    			 sendTextMessage(phoneNumber);		
+		    			 activityLauncher.sendTextMessage(phoneNumber);		
 		    		 }		    		 
 		    	 }
 		     });
@@ -189,23 +192,20 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     	detailsListview = (ListView)this.findViewById(R.id.detailsListview);    	
     }
     
-    
+        
     /**
      *  Sets the control values to the individual record that was passed to this activity.
      *  
      * @throws AppException
      */
     private void bindData() throws AppException {
+
+    	// add the list footer view here (must be added before setting list adapter)
+    	addFooterView();
     	
-    	GlobalState gs = GlobalState.getInstance(); 
-    	
-    	// image - use family picture if individual picture is empty (do in background)
-    	String imageUrl = _individual.PictureUrl;
-    	if (imageUrl.trim().length() == 0) {
-    		imageUrl = _individual.FamilyPictureUrl;
-    	}    		    	
-    	new loadImageUrlTask().execute(imageUrl);
-    	  	
+    	// image - uses family picture if individual picture is empty (do in background)    	    		    
+    	new loadImageUrlTask().execute(_individual.getPictureUrl());
+    	    	  	
 		nameTextView.setText(_individual.getEntireName());
 
 		// Build a list of all individual details (one list) including phone numbers,
@@ -215,7 +215,18 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 		//  tag of the image button MUST be set by setting the actionTags in the 
 		//  CustomListItem object.
 		ArrayList<IndividualListItem> listItems = new ArrayList<IndividualListItem>();
-				
+		
+		// General Demographics - but only for Staff/Admin
+		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_STAFF) || getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_ADMINISTRATOR)) {
+			if (_individual.DateOfBirth.trim().length() > 0) {
+				listItems.add(new IndividualListItem("Birthday", _individual.DateOfBirth, "", "", null));
+			}
+		
+			if (_individual.MemberStatus.trim().length() > 0) {
+				listItems.add(new IndividualListItem("Member Status", _individual.MemberStatus, "", "", null));			
+			}	
+		}
+		
 		// Phone Numbers - add to listitems
 		String titleString = getResources().getString(R.string.Individual_PhoneAction);
 		for (CoreIndividualPhone phone : _individual.Phones) {
@@ -260,23 +271,9 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 											 "individual:" + Integer.toString(member.IndvId),
 											 getResources().getDrawable(R.drawable.user)));			
 		}
-		
-		// Comments - add a 'Comments' button IF the user has permissions		
-		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS) &&
-			gs.getUser().FamId != _individual.PrimFamily) {
-										
-			titleString = getResources().getString(R.string.Individual_CommentAction);		
-		
-			// comments needs id and name...so it just gets those from the currently
-			//  loaded individual (rather than passing a delimited argument)
-			listItems.add(new IndividualListItem(titleString,
-					 "", "", 											
-					 "comments:",
-					 null));				
-		}
-		
+			
 		detailsListview.setAdapter(new IndividualListItemAdapter(this, listItems));		
-		
+									
 		// store off the last x touch (in percent of the total width) so that we know what to do 
 		//  on a phone entry (call the number of text the number) based on the touch position.
 		detailsListview.setOnTouchListener(new OnTouchListener() {
@@ -295,6 +292,54 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
         });  
 					
     }
+    
+    private void addFooterView() {	
+    	
+    	View footerView = this.getLayoutInflater().inflate(R.layout.individualfooter, null);
+   
+		// Comments
+    	TextView commentsTextView=(TextView)footerView.findViewById(R.id.commentsTextView);            
+    	commentsTextView.setOnClickListener(new OnClickListener() {		
+        	public void onClick(View v) {	        		             	
+        		loadComments();	        		        	
+        	}		
+		}); 
+
+		if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_VIEWADDCOMMENTS) &&
+			getCurrentUser().FamId != _individual.PrimFamily) {
+			commentsTextView.setVisibility(View.VISIBLE);						
+		}
+		else {
+			commentsTextView.setVisibility(View.GONE);
+			// remove separator line too
+			footerView.findViewById(R.id.separatorView).setVisibility(View.GONE);  	
+		}
+		
+		// Connections button
+		TextView connectionsTextView=(TextView)footerView.findViewById(R.id.connectionsTextView);     
+		connectionsTextView.setOnClickListener(new OnClickListener() {		
+        	public void onClick(View v) {	        		             	
+        		loadConnections();        		        	
+        	}		
+		});
+		
+		// hide connections button by default (will be made visible if permissions allow)
+		connectionsTextView.setVisibility(View.GONE);		
+		footerView.findViewById(R.id.separatorView).setVisibility(View.GONE);  // remove separator line too  	
+		
+		// if user is not a member or layleader, check permissions to determine if connections button is available
+		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_MEMBER) == false ||
+			getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_LAYLEADER) == false) {
+		
+			if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_VIEWOUTREACHHISTORY) || getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNCONTACTS)) {
+				connectionsTextView.setVisibility(View.VISIBLE);
+				footerView.findViewById(R.id.separatorView).setVisibility(View.VISIBLE);  	
+			}
+		}
+		
+        detailsListview.addFooterView(footerView);    	
+    }
+
     
     /**
      * Handles loading the image of the person/family in the background
@@ -401,106 +446,53 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
      * @param actionTag
      */
     private void doAction(String actionTag) {
-    	
-    	// get the command
-    	String command = actionTag.substring(0, actionTag.indexOf(":"));
-    	String argument = actionTag.substring(actionTag.indexOf(":")+1);
-    	
-    	if (command.equals("phone")) {
-    		
-    		/* not currently used.
-    		 * 
-    		// ask user to text or dial the number
-        	Bundle args = new Bundle();
-        	args.putString("phonenumber", argument);      
-        	showDialog(DIALOG_PHONE_SELECT, args); 
-    		*/
-    		
-    		// if the user touched the first 85% of the item dial 
-    		//  the phone number; otherwise, do text messaging
-    		if (_lastXpercent <= .85) {
-    			callPhoneNumber(argument);
-    		}
-    		else {
-    			sendTextMessage(argument);
-    		}    		
-        	        	        	    		    		    		
-    	}else if (command.equals("phonedial")) {    		
-    		callPhoneNumber(argument);
-    		
-    	}else if (command.equals("phonesms")) {
-    		sendTextMessage(argument);
-    		
-    	}else if (command.equals("email")) {
-    		sendEmail(argument);
-    		
-    	}else if (command.equals("map")) {
-    		mapAddress(argument);
-    		
-    	}else if (command.equals("individual")) {
-    		loadIndividual(argument);  
-    		
-		}else if (command.equals("comments")) {
-			loadComments(); 	
-		}
-    	//else do nothing...command is not known
+    
+    	if (actionTag != null && actionTag.trim().length() > 0)
+    	{	    		   
+	    	ExternalActivityHelper activityLauncher = new ExternalActivityHelper(IndividualActivity.this);
+	    	
+	    	// get the command
+	    	String command = actionTag.substring(0, actionTag.indexOf(":"));
+	    	String argument = actionTag.substring(actionTag.indexOf(":")+1);
+	    	
+	    	if (command.equals("phone")) {
+	    		
+	    		/* not currently used.
+	    		 * 
+	    		// ask user to text or dial the number
+	        	Bundle args = new Bundle();
+	        	args.putString("phonenumber", argument);      
+	        	showDialog(DIALOG_PHONE_SELECT, args); 
+	    		*/
+	    		
+	    		// if the user touched the first 85% of the item dial 
+	    		//  the phone number; otherwise, do text messaging
+	    		if (_lastXpercent <= .85) {
+	    			activityLauncher.callPhoneNumber(argument);
+	    		}
+	    		else {
+	    			activityLauncher.sendTextMessage(argument);
+	    		}    		
+	        	        	        	    		    		    		
+	    	}else if (command.equals("phonedial")) {    		    		
+	    		activityLauncher.callPhoneNumber(argument);
+	    		
+	    	}else if (command.equals("phonesms")) {
+	    		activityLauncher.sendTextMessage(argument);
+	    		
+	    	}else if (command.equals("email")) {
+	    		activityLauncher.sendEmail(argument);
+	    		
+	    	}else if (command.equals("map")) {
+	    		activityLauncher.mapAddress(argument);
+	    		
+	    	}else if (command.equals("individual")) {
+	    		loadIndividual(argument);  
+	    		
+			}    	
+	    	//else do nothing...command is not known
+    	}
     }
-    
-    
-    private void callPhoneNumber(String phoneNumber) {    	
-    	Intent dialIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + phoneNumber));
-		startActivity(dialIntent);
-		
-		//To dial the number automatically you could have used this intent 
-		//  Intent.ACTION_CALL
-		//but this requires adding the following permission to the manifest file:	
-		//  <uses-permission android:name="android.permission.CALL_PHONE">			
-    }
-    
-    private void sendTextMessage(String numberToText) {
-      	 Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-      	 smsIntent.setType("vnd.android-dir/mms-sms");
-      	 smsIntent.putExtra("address", numberToText);		 
-      	 startActivity(smsIntent);
-    }
-    
-    public void sendEmail(String address) {
-	
-		// Start intent to do email action 		
-		final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-
-		// Add email data to the intent
-		emailIntent.setType("plain/text");
-		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{ address });
-		//emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject");
-		//emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "Text");
-
-		// Send it off to the Activity-Chooser
-		startActivity(Intent.createChooser(emailIntent, "Send mail..."));		
-	}
-
-    
-	public void mapAddress(String addressString) {					
-		try {
-			//geo:0,0?q=my+street+address
-			String geoUriString = String.format("geo:0,0?q=%s",  URLEncoder.encode(addressString, "utf-8"));
-			Uri geoUri = Uri.parse(geoUriString);  
-			Intent mapCall = new Intent(Intent.ACTION_VIEW, geoUri);  
-			startActivity(mapCall);
-			
-		} catch (UnsupportedEncodingException e) {
-			ExceptionHelper.notifyNonUsers(e);
-			
-			AppException ae = AppException.AppExceptionFactory(
- 					  ExceptionInfo.TYPE.APPLICATION,
-					   ExceptionInfo.SEVERITY.LOW, 
-					   "100",           												    
-					   "AddressListAdapter.doAction2",
-					   "Unable to launch map application.");
-			
-			ExceptionHelper.notifyUsers(ae, this);
-		}	
-	}
     
 
 	public void loadIndividual(String individualId) {					
@@ -656,7 +648,32 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 		}	
 	}
 	
+	
+	public void loadConnections() {			
+		try
+		{
+			Intent intent = new Intent();
+	    	intent.setClass(this, IndividualConnectionListActivity.class);
+		 	intent.putExtra("id", _individual.IndvId);
+		 	intent.putExtra("name", _individual.getDisplayNameForList());
+		 	startActivity(intent);		
+			
+		} catch (Exception e) {
+	        
+			ExceptionHelper.notifyNonUsers(e);
+     	
+	     	AppException ae = AppException.AppExceptionFactory(
+	     			TYPE.APPLICATION, 
+	     			SEVERITY.MODERATE, 
+	     			"100", 
+	     			"IndividualActivity.loadConnections",
+	     			"Unable to load recent connections.");
+	     	
+	     	ExceptionHelper.notifyUsers(ae, this);
+		}	
+	}
 
+	
 	@Override
 	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {		
 		menu.add(Menu.NONE, ADD_CONTACT, Menu.FIRST, R.string.Individual_ContactCreateMenu);  				

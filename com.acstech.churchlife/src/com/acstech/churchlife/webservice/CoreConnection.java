@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import com.acstech.churchlife.DateHelper;
 import com.acstech.churchlife.R;
 import com.acstech.churchlife.StringHelper;
@@ -38,6 +37,47 @@ public class CoreConnection  extends CoreObject {
     public List<CoreIndividual> TeamMembers;
     public List<CoreResponseType> Responses;
     
+    /*
+    @Override
+    public JSONObject toJsonObject() throws AppException
+    {
+    	JSONObject jo = null;
+    	try
+    	{
+	  	  	jo = new JSONObject();
+	  	  	
+	  	  	jo.put("ConnectionId", ConnectionId);    		    		 
+	  	  	jo.put("ConnectionTypeId", ConnectionTypeId);
+	  	  	jo.put("ConnectionTypeDescription", ConnectionTypeDescription);
+	  	  	jo.put("FamId", FamId);
+	  	  	jo.put("FamilyConnection", FamilyConnection);
+	  	  	jo.put("PermissionLevel", PermissionLevel);
+	  	  	jo.put("Comment", Comment);
+	  	  	jo.put("ContactType", "ContactType");
+	  	  	jo.put("DueDate", DueDate);
+	  	  	jo.put("DueDateLong", DueDateLong);
+	  	  	jo.put("Completed", "Completed");
+	  	  	jo.put("TeamMemberCount", TeamMemberCount);
+	  	  	
+	  	  	// ContactInformation (GetCoreIndividual)
+	  	  	
+	  	 
+	  	  	
+    	}
+    	catch (JSONException e) {  		
+  			ExceptionInfo i = ExceptionInfo.ExceptionInfoFactory(
+  								ExceptionInfo.TYPE.UNEXPECTED,
+  							  	ExceptionInfo.SEVERITY.MODERATE, 
+  							  	"100", 
+  							  	"CoreCommentChangeRequest.toJsonObject", 
+  							  	"Error creating JSONObject.");
+
+  		    throw AppException.AppExceptionFactory(e, i); 
+    	}
+    	return jo;
+    }
+    */
+   
     public String getDescription() {
     	String DATE_FORMAT = "MM/dd/yyyy";		
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);		
@@ -89,10 +129,12 @@ public class CoreConnection  extends CoreObject {
     }
         
     public boolean containsResponse(int responseTypeId) {
-    	for (CoreResponseType r : Responses) {
-    		if (r.RespID == responseTypeId) {
-    			return true;
-    		}
+    	if (Responses != null) {
+	    	for (CoreResponseType r : Responses) {
+	    		if (r.RespID == responseTypeId) {
+	    			return true;
+	    		}
+	    	}
     	}
     	return false;
     }
@@ -103,6 +145,7 @@ public class CoreConnection  extends CoreObject {
     	return (PermissionLevel.toUpperCase(Locale.US).equals("ALL"));
     }
     
+	
     // Factory Method - parse json
     //
     // NOTE:  When using this object in a list of an individuals' recent connections, 

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.acstech.churchlife"
       android:versionCode="7"
-      android:versionName="2013.52"
+      android:versionName="2013.53"
       android:installLocation="auto">
     <uses-sdk android:minSdkVersion="8" android:targetSdkVersion="16" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -87,6 +87,12 @@
 		    	  android:theme="@android:style/Theme.Dialog">
 		</activity>
 		
+		<activity android:name="com.acstech.churchlife.WebViewActivity"
+		    	  android:theme="@android:style/Theme.Dialog"
+		    	  android:noHistory="true"
+		    	  android:excludeFromRecents="true">
+		</activity>
+						
 		<activity android:name="com.acstech.churchlife.GivingActivity">
 		</activity>
 		

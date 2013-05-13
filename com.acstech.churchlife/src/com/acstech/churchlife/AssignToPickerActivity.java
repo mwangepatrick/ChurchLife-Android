@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class AssignToPickerActivity extends Activity {
 
-	private int _assignToMode = 0;		// 0 = individual, 1 = team
+	private int _assignToMode = AssignmentActivity.ASSIGNMODE_INDIVIDUAL;
 	
 	static final int DIALOG_PROGRESS = 0;	
 	private ProgressDialog _progressD;
@@ -44,7 +44,7 @@ public class AssignToPickerActivity extends Activity {
 		 super.onCreate(savedInstanceState);
 	 				 
 		 try {		 		        	
-        	setTitle(R.string.Connection_ReassignDialogTitle); 			
+        	setTitle(R.string.Connection_AssignDialogTitle); 			
 	 		setContentView(R.layout.assigntopicker);       
 	 		
 	 		bindControls();
@@ -60,12 +60,13 @@ public class AssignToPickerActivity extends Activity {
 						 "No assignment was passed to the AssignToPicker activity.");
              }
              else {          
-            	 _assignToMode = extraBundle.getInt("assignto");            	 
-            	 if (_assignToMode == 0) {			// individual
-            		 txtSearch.setHint(R.string.Connection_ReassignHintIndividual);
+            	 _assignToMode = extraBundle.getInt("assignto");
+            	 
+            	 if (_assignToMode == AssignmentActivity.ASSIGNMODE_TEAM) {			// team
+            		 txtSearch.setHint(R.string.Connection_AssignHintTeam);      
             	 }
-            	 else {								// team
-            		 txtSearch.setHint(R.string.Connection_ReassignHintTeam);            		 
+            	 else {																// individual
+            		 txtSearch.setHint(R.string.Connection_AssignHintIndividual);      		 
             	 }            	                 	             	   
              }		                         
 		 }
@@ -160,11 +161,11 @@ public class AssignToPickerActivity extends Activity {
     	{	    		
     		if (_loader == null) {
     
-    			if (_assignToMode == 0) {			// individual
-    				_loader = new IndividualListLoader(this, txtSearch.getText().toString());
+    			if (_assignToMode == AssignmentActivity.ASSIGNMODE_TEAM) {			
+    				_loader = new ConnectionTeamsListLoader(this, txtSearch.getText().toString().trim());
            	 	}
-           	 	else {								// team
-           	 		_loader = new ConnectionTeamsListLoader(this, txtSearch.getText().toString());
+           	 	else {								
+    				_loader = new IndividualListLoader(this, txtSearch.getText().toString().trim());           	 		
            	 	}    			
     			
     		}

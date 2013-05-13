@@ -1,5 +1,6 @@
 package com.acstech.churchlife.webservice;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +34,12 @@ public class CoreConnectionChangeRequest extends CoreObject {
 		return sdf.format(ConnectionDate);
     }
 	
+	public void setConnectionDate(String value) throws ParseException {
+		String DATE_FORMAT = "MM/dd/yyyy";		
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+		ConnectionDate = sdf.parse(value);		
+	}
+	
     @Override
     public JSONObject toJsonObject() throws AppException
     {
@@ -41,7 +48,11 @@ public class CoreConnectionChangeRequest extends CoreObject {
     	{
 	  	  	jo = new JSONObject();
 	  	  	
-	  	  	jo.put("ConnectionId", ConnectionId);
+	  	  	// don't send if 0
+	  	  	if (ConnectionId > 0) {
+	  	  		jo.put("ConnectionId", ConnectionId);
+	  	  	}
+	  	  	
 	  	  	jo.put("Complete", Complete);
 	  	  	jo.put("ConnectionDate", getConnectionDateString());
 	  	  	jo.put("ConnectionTypeId", ConnectionTypeId);
