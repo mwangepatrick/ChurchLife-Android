@@ -12,19 +12,13 @@
         android:text="@string/Dialog.JustLoading"
         android:textAppearance="?android:attr/textAppearanceMedium" 
         android:background="@android:color/transparent" />
-   
-   	<ScrollView android:layout_width="match_parent"			
-		   		android:layout_height="wrap_content"
-		   		android:background="@android:color/transparent">
-   	    	   	   
-   	       	<ImageView
-   	       	    android:id="@+id/imageToView"
-   	       	    android:layout_width="wrap_content"
-   	       	    android:layout_height="wrap_content"
-   	       	    android:background="@android:color/transparent" />
-   	       	       	    	   	
-   	</ScrollView>
-		  
+    
+    <ImageView
+        android:id="@+id/imageToView"
+   	    android:layout_width="wrap_content"
+   	    android:layout_height="wrap_content"
+   	    android:background="@android:color/transparent" />
+   	       	       	    	   			  
 </LinearLayout>
 		   		
 		   		 

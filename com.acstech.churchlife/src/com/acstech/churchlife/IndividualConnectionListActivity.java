@@ -237,11 +237,29 @@ public class IndividualConnectionListActivity extends ChurchlifeBaseActivity {
 		        	if (_loader.success())	{		        		
 				     	// set items to list
 			        	//lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList(), R.layout.listitem_withindent));
-			        	lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList(), R.layout.listitem_withtitle));
-			        	
+			        	lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, _loader.getList(), R.layout.listitem_withtitle));			        	
 		        	}
 		        	else {
-		        		throw _loader.getException();
+		        		
+		        		//Special case:  The exception may be due to a lack of security (insufficient permissions). 
+		        		//  If so, change the message to be more friendl
+		        		Throwable e = _loader.getException();
+		        		
+		        		if(e instanceof AppException) {
+		        			if(((AppException)e).getErrorType() == ExceptionInfo.TYPE.UNAUTHORIZED) {
+		        				ArrayList<DefaultListItem> l = new ArrayList<DefaultListItem>();
+		        				l.add(new DefaultListItem("You do not have permissions to view connections for this individual."));
+		        				lv1.setAdapter(new DefaultListItemAdapter(IndividualConnectionListActivity.this, l, R.layout.listitem_withtitle));
+		        			}
+		        			else
+		        			{
+		        				throw e;
+		        			}
+		        		}
+		        		else
+		        		{
+		        			throw e;
+		        		}
 		        	}
 	        	}
 	        	catch (Throwable e) {

@@ -4,13 +4,17 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +50,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	
 	TextView headerTextView;
 	ListView lv1;
+	Button addButton;
 	
 	 @Override
 	 public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,6 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	        {      	 
 	        	 setContentView(R.layout.commentlist);
 	        	 setTitle(R.string.Comments); 
-	        	 bindControls();							// Set state variables to their form controls
 	        	 
 	        	 // This activity MUST be passed the individual id object
 	        	 Bundle extraBundle = this.getIntent().getExtras();
@@ -71,9 +75,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	            	 _individualId = extraBundle.getInt("id");
 	            	 _individualName = extraBundle.getString("name");
 	            	 _commentTypeId = extraBundle.getInt("commenttypeid");
-	            	 
-	            	 headerTextView.setText(_individualName);
-	            	 
+	            	            		            	
 	            	 // See if this user can add comments by making a web service call.
 	            	 //  We HAVE to block this thread so that the onCreateOptionsMenu does
 	            	 //   not get executed until we set the _canAddComments flag
@@ -84,7 +86,11 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 		        	 if (tsk._ex != null ) {
 		        		 throw tsk._ex;	        		
 		        	 }
+		        
+		        	 bindControls();							// Set state variables to their form controls
 		        	 
+	            	 headerTextView.setText(_individualName);
+	            	 
 	            	 loadListWithProgressDialog(true);	        	 
 	             }	       
 	        }
@@ -114,7 +120,8 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	    private void bindControls(){	    	
 	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    	lv1 = (ListView)this.findViewById(R.id.ListView01);	  
-	    	
+            addButton = (Button)this.findViewById(R.id.addButton);
+            
             // Wire up list on click - display comment type activity
             lv1.setOnItemClickListener(new OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) { 	                	                 	                	
@@ -122,6 +129,15 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
                	 	ItemSelected(itemSelected);          	                	 
                 }
             });	
+                                    
+	    	// add button shown/hidden by background task
+        	addButton.setVisibility(View.GONE);
+        	addButton.setOnClickListener(new OnClickListener() {		
+            	public void onClick(View v) {	  
+            		startCommentAddActivity();
+            	}		
+    		});	
+        	
 	    }
 	    
 	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {
@@ -153,6 +169,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	        @Override
 	        protected void onPostExecute(Boolean result) {
 	        	_canAddComments  = result;
+	        	addButton.setVisibility(View.VISIBLE); // update UI
 	        }
 	    }
 		 
@@ -235,6 +252,7 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 	        }
 	    };
 	    
+	    /*
 	    @Override
 	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
 	    	super.onCreateOptionsMenu(menu);
@@ -263,7 +281,8 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 		        return super.onOptionsItemSelected(item);
 		    }
 		}
-
+	     */
+		
 		// Occurs when a user selects an item on the listview.    
 	    private void ItemSelected(CommentListItem item)
 	    {    	    
@@ -278,6 +297,15 @@ public class CommentListActivity extends ChurchlifeBaseActivity {
 				ExceptionHelper.notifyUsers(e, CommentListActivity.this);
 		    	ExceptionHelper.notifyNonUsers(e)  ; 				    				
 			}  
+	    }
+	    
+	    private void startCommentAddActivity()
+	    {
+	    	Intent settingsIntent = new Intent(getBaseContext(), CommentActivity.class);		    							    	 		        	
+	    	settingsIntent.putExtra("id", _individualId);
+	    	settingsIntent.putExtra("name", _individualName);
+	    	settingsIntent.putExtra("commenttypeid", _commentTypeId);	   		 	
+   		 	startActivity(settingsIntent);		    			    
 	    }
 	    
 }

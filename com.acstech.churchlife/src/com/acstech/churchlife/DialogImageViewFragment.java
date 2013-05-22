@@ -7,6 +7,9 @@ import java.net.URL;
 
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +18,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DialogImageViewFragment extends DialogFragment {
 	
@@ -44,8 +49,7 @@ public class DialogImageViewFragment extends DialogFragment {
 		 
 		 return myFragmentView;
 	 }
-	 
-	
+		
 	 
      /**
       * Handles loading the image of the person/family in the background
@@ -60,8 +64,18 @@ public class DialogImageViewFragment extends DialogFragment {
         }
         @Override
         protected void onPostExecute(Drawable image) {
-        	if (image != null) {
-        		_imageToView.setImageDrawable(image);
+        	if (image != null) {        		
+        		int width = image.getIntrinsicWidth();
+        		int height = image.getIntrinsicHeight();        		
+        		//String message = String.format("%s(w) - %s(h)", width, height);		 
+       		 	//Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+       		 	        	        		    		  
+       		 	_imageToView.setImageDrawable(image);     		
+       		 	_imageToView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+    				 													   LinearLayout.LayoutParams.WRAP_CONTENT));
+    		 	_imageToView.getLayoutParams().width = width;
+    		 	_imageToView.getLayoutParams().height = height;
+        		       		 	
         		_loadingTextView.setVisibility(View.GONE);
         	}	 
         	else
@@ -83,8 +97,13 @@ public class DialogImageViewFragment extends DialogFragment {
 	    	try {	    		
 	    		if (url.length() > 0) {
 	    			URL imageUrl = new URL(url);
-	    			InputStream is = (InputStream) imageUrl.getContent();    			
-	    			d = Drawable.createFromStream(is, "src");    	
+	    			InputStream is = (InputStream) imageUrl.getContent();
+	    			
+	    			
+	    			Bitmap b = BitmapFactory.decodeStream(is);
+	    			b.setDensity(Bitmap.DENSITY_NONE);
+	    			d = new BitmapDrawable(getResources(), b);
+	    			//d = Drawable.createFromStream(is, "src");    	
 	    		}
 	    	   return d;	    	   
 	    	} 

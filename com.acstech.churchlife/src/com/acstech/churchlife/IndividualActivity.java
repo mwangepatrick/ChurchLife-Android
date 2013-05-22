@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
@@ -41,6 +43,7 @@ import com.acstech.churchlife.webservice.CoreIndividualAddress;
 import com.acstech.churchlife.webservice.CoreIndividualDetail;
 import com.acstech.churchlife.webservice.CoreIndividualEmail;
 import com.acstech.churchlife.webservice.CoreIndividualPhone;
+import com.acstech.churchlife.webservice.TrustingURLConnection;
 
 
 /**
@@ -328,7 +331,7 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 		footerView.findViewById(R.id.separatorView).setVisibility(View.GONE);  // remove separator line too  	
 		
 		// if user is not a member or layleader, check permissions to determine if connections button is available
-		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_MEMBER) == false ||
+		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_MEMBER) == false &&
 			getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_LAYLEADER) == false) {
 		
 			if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_VIEWOUTREACHHISTORY) || getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_ASSIGNCONTACTS)) {
@@ -386,9 +389,20 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     	Drawable d = null;
     	try {	    		
     		if (url.length() > 0) {
-    			URL imageUrl = new URL(url);
-    			InputStream is = (InputStream) imageUrl.getContent();    			
-    			d = Drawable.createFromStream(is, "src");    	
+    			
+    			// existing - works but not for ssl
+    			//URL imageUrl = new URL(url);    			
+    			//InputStream is = (InputStream) imageUrl.getContent();    			
+    			   	    			
+    			//new - test
+    			String[] args = new String[3];
+    			args[0] = "username";
+    			args[1] = "password";
+    			args[2] = url;    			
+    			InputStream is = TrustingURLConnection.getContent(args);
+    			// end new - test
+    			
+    			d = Drawable.createFromStream(is, "src"); 
     		}
     	   return d;	    	   
     	} 
@@ -398,7 +412,13 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
     	} catch (IOException e) {
     		ExceptionHelper.notifyNonUsers(e);
     		return null;
-    	}
+    	} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block  //zzz
+			return null;
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block  //zzz
+			return null;
+		}
     }
     
     /**

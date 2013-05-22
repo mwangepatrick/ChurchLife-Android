@@ -1,6 +1,8 @@
 package com.acstech.churchlife;
 
 import android.app.ProgressDialog;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.webkit.WebSettings;
@@ -21,7 +23,8 @@ public class GivingActivity extends ChurchlifeBaseActivity {
     public void onCreate(Bundle savedInstanceState) {
     	    	
         super.onCreate(savedInstanceState);
-        
+		disableOrientationChange();
+		 
         try
         {    
         	_appPrefs = new AppPreferences(getApplicationContext());
@@ -43,6 +46,16 @@ public class GivingActivity extends ChurchlifeBaseActivity {
     	}          
     }
 
+	 private void disableOrientationChange() {
+		 if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		 } else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		 } else {
+		     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
+		 }		 
+	 }
+	 
     /**
      *  Links state variables to their respective form controls
      */

@@ -269,7 +269,20 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 				 try {					
 					 if (inputIsValid()) {          				          	
 	         			saveConnection();		         			
-	         			AssignmentActivity.this.selectMenuItem(getResources().getString(R.string.Menu_Connections));	         			   	         				         	
+	         			
+	         			if (_connection.ConnectionId > 0) {
+	         				// When editing, go to main Tasks menu item
+	         				AssignmentActivity.this.selectMenuItem(getResources().getString(R.string.Menu_Connections));	
+	         			}
+	         			else {
+	         				// When adding, return to connection history
+	         				Intent intent = new Intent();
+	         		    	intent.setClass(AssignmentActivity.this, IndividualConnectionListActivity.class);
+	         			 	intent.putExtra("id", _individualId);
+	         			 	intent.putExtra("name", _individualName);
+	         			 	startActivity(intent);		
+	         			 	AssignmentActivity.this.finish();
+	         			}	         				         				         		
 	         		 }
 				}
           		catch (Exception e) {    	        	    	        	
@@ -551,11 +564,13 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	 {    	
 	    	String msg = "";
 	    	
+	    	/* 2013.05.22 MAS disabled - allow empty comment text 	    	 
 	    	// Comment text is required when editing
     		if (connectionEditText.getText().length() == 0 && _connection.ConnectionId > 0) {   
     			msg = (String)this.getResources().getText(R.string.Connection_CommentValidation);     		
     		}
-    			    	
+    		*/
+	    	
 	    	// If a validation message exists, show it
 	    	if (msg.length() > 0) {
 	    		Toast.makeText(AssignmentActivity.this, msg, Toast.LENGTH_LONG).show(); 

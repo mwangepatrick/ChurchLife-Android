@@ -84,15 +84,15 @@ public class CoreIndividual extends CoreObject {
    			//  2013.04.22 - new for Connection detail
    			indv.Country = jo.optString("Country");
    			indv.Company = jo.optString("Company");
-   			indv.Address = jo.optString("Address");
+   			indv.Address = StringHelper.NullOrEmpty(jo.optString("Address"));
    			indv.Address2 = jo.optString("Address2");
    			indv.City = jo.optString("City");
    			indv.State = jo.optString("State");
    			indv.Zipcode = jo.optString("Zipcode");
-   			indv.CityStateZip = jo.optString("CityStateZip");
-   			indv.Email = jo.optString("Email");
+   			indv.CityStateZip = StringHelper.NullOrEmpty(jo.optString("CityStateZip"));
+   			indv.Email = StringHelper.NullOrEmpty(jo.optString("Email"));
    			indv.EmailListed = jo.optBoolean("EmailListed");
-   		    indv.PhoneNumber = jo.optString("PhoneNumber");
+   		    indv.PhoneNumber = StringHelper.NullOrEmpty(jo.optString("PhoneNumber"));
    		    indv.PhoneListed = jo.optBoolean("PhoneListed");   		    
    		}
    	  	catch (JSONException e) {

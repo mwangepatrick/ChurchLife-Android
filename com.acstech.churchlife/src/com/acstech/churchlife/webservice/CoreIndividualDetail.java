@@ -51,6 +51,8 @@ public class CoreIndividualDetail extends CoreObject  {
     	if (imageUrl.trim().length() == 0) {
     		imageUrl = FamilyPictureUrl;
     	}   
+    	//testing
+    	//imageUrl = "https://secure.accessacs.com/accesspict/14447/acsThumb55.jpg";
     	return imageUrl;
     }
     
