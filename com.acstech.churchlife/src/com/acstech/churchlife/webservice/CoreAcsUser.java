@@ -21,22 +21,16 @@ public class CoreAcsUser extends CoreObject {
 	  public static String PERMISSION_VIEW = "V";
 	  public static String PERMISSION_DENIED = "N";
 	  
-	  public static String PERMISSION_MEMBERSEARCH = "MemberSearch";
-	  public static String PERMISSION_LOCATEPERSON = "LocatePerson";
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
 	  public static String PERMISSION_REASSIGNCONNECTION = "ReassignConnection";
 	  public static String PERMISSION_ASSIGNEDCONTACTSONLY = "AssignedContactsOnly";
-	  public static String PERMISSION_ASSIGNCONTACTS = "AssignContacts";	  
 	  public static String PERMISSION_VIEWOUTREACHHISTORY = "ViewOutreachHistory";
-	  
-	  
+	                                                       
 	  // security roles
 	  public static String SECURITYROLE_STAFF = "Staff";
 	  public static String SECURITYROLE_ADMINISTRATOR = "Administrator";
-	  public static String SECURITYROLE_NONMEMBER = "Nonmember";	 
-	  public static String SECURITYROLE_MEMBER = "Member";
-	  public static String SECURITYROLE_LAYLEADER = "Layleader";
-	  
+	  public static String SECURITYROLE_NONMEMBER = "Nonmember";
+	  	  	 
 	  public int SiteNumber;
       public String Email;
       public String UserName;

@@ -1,190 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-   	<ScrollView android:layout_width="match_parent"			
-		   		android:layout_height="wrap_content"
-		   		android:layout_above="@+id/footer"
-		   		android:layout_alignParentTop="true"> 
-	    		
-		<LinearLayout android:layout_width="match_parent"
-		    		  android:layout_height="wrap_content"
-		    		  android:orientation="vertical"
-		    		  android:padding="5dp">
-    			    	
-		    <!--  assign to -->
-		    <LinearLayout android:id="@+id/assignLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="horizontal">
-		        
-		        <TextView
-			    	android:layout_weight="1"
-			    	android:layout_width="0dp"
-			    	android:layout_height="wrap_content"
-			    	android:text="@string/Connection.AssignTitle" 
-			    	android:textAppearance="?android:attr/textAppearanceMedium"
-			    	android:paddingRight="5dp"/>  
-			    	      		        			    
-		        <EditText
-				    android:id="@+id/assignEditText"
-				    android:layout_weight="2"
-			    	android:layout_width="0dp"
-				    android:layout_height="wrap_content"
-				    android:focusable="false"
-				    android:gravity="right"
-				    android:inputType="text" />				
-		    </LinearLayout>
-		    
-		    <!-- due date -->    
-		    <LinearLayout android:id="@+id/dueDateLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="horizontal">        
-		        <TextView
-			    	android:layout_weight="1"
-			    	android:layout_width="0dp"
-			    	android:layout_height="wrap_content"
-			    	android:text="@string/Connection.DueDate" 
-			    	android:textAppearance="?android:attr/textAppearanceMedium"
-			    	android:paddingRight="5dp"/>        	    
-				<EditText
-				    android:id="@+id/dueDateEditText"
-				    android:layout_weight="2"
-			    	android:layout_width="0dp"
-				    android:layout_height="wrap_content"
-				    android:focusable="false"
-				    android:gravity="right"
-				    android:inputType="date" >
-				</EditText>
-			</LinearLayout>
-			
-		    
-		    <!-- contact type -->    
-		    <LinearLayout android:id="@+id/contactTypeLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="vertical">        
-		        <TextView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:text="@string/Connection.ContactType"
-			    	android:textAppearance="?android:attr/textAppearanceMedium" />        	    		
-		        <Spinner
-		            android:id="@+id/contactTypeTypeSpinner"
-		            android:layout_width="match_parent"
-		            android:layout_height="wrap_content" />					  
-			</LinearLayout>
-		
-		    <!-- connection type -->    
-		    <LinearLayout android:id="@+id/connectionTypeLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="vertical">        
-		        <TextView
-			    	android:layout_width="match_parent"
-			    	android:layout_height="wrap_content"
-			    	android:text="@string/Connection.ConnectionType" 
-			    	android:textAppearance="?android:attr/textAppearanceMedium"/>        	    
-		
-		        <Spinner
-			        android:id="@+id/connectionTypeSpinner"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content">
-			    </Spinner>		   
-			</LinearLayout>
-
-		    <LinearLayout android:id="@+id/notesLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="vertical">
-			 	<TextView
-			    	android:layout_width="wrap_content"
-			    	android:layout_height="wrap_content"
-			    	android:text="@string/Connection.Notes" 
-			    	android:textAppearance="?android:attr/textAppearanceMedium"/>        	
-			    	 	
-			    <EditText
-			        android:id="@+id/connectionEditText"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			 		android:gravity="top"
-			 		android:text="line 2 goes here and some more comment data here."
-			 		android:lines="5"
-			        android:inputType="textMultiLine">        
-			    </EditText>
-			</LinearLayout>
-		
-		    <LinearLayout android:id="@+id/responseLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content"
-		    			  android:orientation="vertical">	        
-			    <TextView
-				    android:id="@+id/responsesTitleTextView"
-				    android:layout_width="match_parent"
-				    android:layout_height="wrap_content"		   
-				    android:text="@string/Connection.Responses" 
-				    android:textAppearance="?android:attr/textAppearanceMedium"/>
-			    	    
-			    <Button
-			        android:id="@+id/responsesButton"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:ellipsize="end"
-			        android:lines="1"
-			        android:scrollHorizontally="true"
-			        android:text="@string/Connection.ResponseDefault" />	    	
-		    </LinearLayout>
-		
-			<!-- family checkbox -->
-		    <RelativeLayout android:id="@+id/familyLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content">
-			                  
-					<TextView
-				    	android:layout_width="wrap_content"
-				    	android:layout_height="wrap_content"
-				    	android:layout_alignParentLeft="true"
-				    	android:layout_centerVertical="true"
-				    	android:text="@string/Connection.Family" 
-				    	android:textAppearance="?android:attr/textAppearanceMedium"/>							   
-
-					<CheckBox
-				        android:id="@+id/familyCheckBox"
-				        android:layout_width="wrap_content"
-			        	android:layout_height="wrap_content"
-			        	android:layout_alignParentRight="true"
-			        	android:layout_centerVertical="true" />
-				    		    		    			      
-		    </RelativeLayout>		  
-		    
-		    <!-- close connection checkbox--> 
-		    <RelativeLayout android:id="@+id/closeLayout"
-		        		  android:layout_width="match_parent"
-		    			  android:layout_height="wrap_content">
-			                  
-					<TextView
-					    android:id="@+id/closeConnectionTextView"
-						android:layout_width="wrap_content"
-				    	android:layout_height="wrap_content"
-				    	android:layout_alignParentLeft="true"
-				    	android:layout_centerVertical="true"
-					    android:text="@string/Connection.Close"
-					    android:textAppearance="?android:attr/textAppearanceMedium"/>
-									   
-					<CheckBox
-				        android:id="@+id/closeCheckBox"
-				        android:layout_width="wrap_content"
-			        	android:layout_height="wrap_content"
-			        	android:layout_alignParentRight="true"
-			        	android:layout_centerVertical="true">
-				    </CheckBox>		    		    			      
-		    </RelativeLayout>
-		
-		</LinearLayout>
-    </ScrollView>
+    android:layout_height="match_parent"  
+    android:padding="5dp">
+     
+    <LinearLayout android:id="@+id/reassignLayout"
+        		  android:layout_width="match_parent"
+    			  android:layout_height="wrap_content"
+    			  android:orientation="horizontal"
+    			  android:gravity="center"
+    			  android:padding="5dp">
+        
+        <TextView
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:text="@string/Connection.ReassignTitle" 
+	    	android:textAppearance="?android:attr/textAppearanceMedium" 
+	    	android:paddingRight="5dp"/>        
+        <TextView
+            android:id="@+id/reassignTextView"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:text="Reassign Target" 
+	    	android:textAppearance="?android:attr/textAppearanceMedium" />
+               
+    </LinearLayout>
     
+    <EditText
+        android:id="@+id/connectionEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+ 		android:gravity="top"
+ 		android:text="line 2 goes here and some more comment data here."
+ 		android:lines="9"
+        android:inputType="textMultiLine"
+        android:layout_below="@+id/reassignLayout">        
+    </EditText>
+
+    <LinearLayout android:id="@+id/responseLayout"
+        		  android:layout_width="match_parent"
+    			  android:layout_height="wrap_content"
+    			  android:orientation="horizontal"
+    			  android:gravity="center_vertical"
+    			  android:layout_below="@+id/connectionEditText">
+	        
+	    <TextView
+		    android:id="@+id/responsesTitleTextView"
+		    android:layout_width="0dp"
+		    android:layout_weight="1"
+		    android:layout_height="wrap_content"		   
+		    android:text="@string/Connection.Responses"		    
+		    android:textAppearance="?android:attr/textAppearanceMedium" />
+	    	    
+	    <Button
+	        android:id="@+id/responsesButton"
+	        android:layout_width="0dp"
+	        android:layout_weight="2"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="right"
+	        android:ellipsize="end"
+	        android:lines="1"
+	        android:scrollHorizontally="true"
+	        android:text="@string/Connection.ResponseDefault" />
+	    	
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/closeLayout"
+        		  android:layout_width="match_parent"
+    			  android:layout_height="wrap_content"
+    			  android:orientation="horizontal"
+    			  android:gravity="center_vertical"
+    			  android:layout_below="@+id/responseLayout">
+	    
+            <!-- close connection checkbox-->    
+			<TextView
+			    android:id="@+id/closeConnectionTextView"
+				android:layout_width="0dp"
+				android:layout_weight="2"
+		    	android:layout_height="wrap_content"
+			    android:text="@string/Connection.Close"
+			    android:textAppearance="?android:attr/textAppearanceMedium" />
+							   
+			<CheckBox
+		        android:id="@+id/closeCheckBox"
+		        android:layout_width="0dp"
+	        	android:layout_weight="1"
+	        	android:layout_height="wrap_content"
+	        	android:layout_gravity="right">
+		    </CheckBox>
+		    		    			       
+    </LinearLayout>
+
     <!-- button bar -->
 	<LinearLayout 
 		android:id="@+id/footer" 		

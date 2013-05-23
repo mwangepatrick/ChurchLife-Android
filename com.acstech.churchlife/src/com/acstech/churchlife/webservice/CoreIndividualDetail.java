@@ -24,38 +24,13 @@ public class CoreIndividualDetail extends CoreObject  {
 	public String FullName;
 	public String FriendlyName;
 	public String PictureUrl;
-	public String FamilyPictureUrl;	
-	public String DateOfBirth;
-	public String MemberStatus;
-	
+	public String FamilyPictureUrl;
 	
 	public List<CoreIndividualAddress> Addresses;	
 	public List<CoreIndividualEmail> Emails;	
 	public List<CoreIndividualPhone> Phones;	
 	public List<CoreIndividual> FamilyMembers;
 	
-    public String getDisplayNameForList()
-    {
-    	String name = "";
-        if (StringHelper.NullOrEmpty(FirstName) != "")   { name = FirstName; }
-        if (StringHelper.NullOrEmpty(LastName) != "")    { name = name + " " + LastName; }
-        if (StringHelper.NullOrEmpty(Suffix) != "")      { name = name + ", " + Suffix; }
-        if (StringHelper.NullOrEmpty(GoesbyName) != "")  { name = name + " (" + GoesbyName + ")"; }
-          
-        return name;        
-    }
-
-    public String getPictureUrl() 
-    {
-    	String imageUrl = PictureUrl;
-    	if (imageUrl.trim().length() == 0) {
-    		imageUrl = FamilyPictureUrl;
-    	}   
-    	//testing
-    	//imageUrl = "https://secure.accessacs.com/accesspict/14447/acsThumb55.jpg";
-    	return imageUrl;
-    }
-    
     //Helper
     public String getEntireName()
     {
@@ -90,10 +65,8 @@ public class CoreIndividualDetail extends CoreObject  {
   		  individual.FullName = jo.getString("FullName");
   		  individual.FriendlyName = jo.getString("FriendlyName");
   		  individual.PictureUrl = jo.getString("PictureUrl");
-  		  individual.FamilyPictureUrl = jo.getString("FamilyPictureUrl");   		  
-  		  individual.DateOfBirth = StringHelper.NullOrEmpty(jo.getString("DateOfBirth"));
-  		  individual.MemberStatus = StringHelper.NullOrEmpty(jo.getString("MemberStatus"));
- 		  
+  		  individual.FamilyPictureUrl = jo.getString("FamilyPictureUrl");
+   		  
   		  //Addresses   	  		
   		  JSONArray ja = jo.getJSONArray("Addresses");	
   		  individual.Addresses = new ArrayList<CoreIndividualAddress>();

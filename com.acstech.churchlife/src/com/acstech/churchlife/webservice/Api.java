@@ -172,12 +172,12 @@ public class Api extends ApiBase {
     	}		
 	}
 
-	public List<CoreResponseType> responsetypes(String username, String password, String siteNumber, int connectionTypeId) throws AppException {
+	public List<CoreResponseType> responsetypes(String username, String password, String siteNumber, int connectionId) throws AppException {
 
 		isOnlineCheck();
 		
 		List<CoreResponseType> list = null;
-    	RESTClient client = new RESTClient(String.format("%s/%s/types/responses/%s", _baseUrl, siteNumber, connectionTypeId));
+    	RESTClient client = new RESTClient(String.format("%s/%s/connections/%s/responses", _baseUrl, siteNumber, connectionId));
     	
     	String auth = client.getB64Auth(username,password);     	
 		client.AddHeader("Authorization", auth);
@@ -203,39 +203,6 @@ public class Api extends ApiBase {
 		return list;
 	}
 
-	
-	public List<CoreConnectionType> connectiontypes(String username, String password, String siteNumber) throws AppException {
-
-		isOnlineCheck();
-		
-		List<CoreConnectionType> list = null;
-    	RESTClient client = new RESTClient(String.format("%s/%s/types/connections", _baseUrl, siteNumber));
-    	
-    	String auth = client.getB64Auth(username,password);     	
-		client.AddHeader("Authorization", auth);
-    	client.AddHeader(APPLICATION_ID_KEY, _applicationId);
-    	    	
-    	try	{
-    		client.Execute(RequestMethod.GET);    	
-    		    	
-    		if (client.getResponseCode() == HttpStatus.SC_OK) {    			
-    			list = CoreConnectionType.GetCoreConnectionTypeList(client.getResponse());
-    		}
-    		else {    			
-    			handleExceptionalResponse(client);
-    		}
-    	}
-    	catch (AppException e)	{
-    		// Add some parameters to the error for logging
-    		ExceptionInfo info = e.addInfo();
-    		info.setContextId("Api.connectiontypes");
-    		info.getParameters().put("sitenumber", siteNumber);
-    		throw e;
-    	}
-		return list;
-	}
-
-	
 	// connections teams
 	public List<CoreConnectionTeam> connectionteams(String username, String password, String siteNumber) throws AppException {
 

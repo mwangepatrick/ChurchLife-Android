@@ -13,7 +13,6 @@ import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 
 public class CoreIndividual extends CoreObject {
 
-	// these are filled/skipped depending on the api called  
 	public int IndvId;
 	public int FamId;
 	public String FamilyPosition;	
@@ -24,21 +23,7 @@ public class CoreIndividual extends CoreObject {
     public String GoesByName; 
     public String Suffix;    
 	public String PictureUrl;
-	
-	public String Country;
-    public String Company;
-    public String Address;
-    public String Address2;
-    public String City;
-    public String State;
-    public String Zipcode;
-    public String CityStateZip;
-    public String Email;
-    public Boolean EmailListed;
-    public String PhoneNumber;
-    public Boolean PhoneListed;
-    	
-	
+		
     public String getDisplayNameForList()
     {
     	String name = "";
@@ -48,17 +33,6 @@ public class CoreIndividual extends CoreObject {
         if (StringHelper.NullOrEmpty(GoesByName) != "")  { name = name + " (" + GoesByName + ")"; }
           
         return name;        
-    }
-    
-    public String getContactAddress() {
-    	if (StringHelper.NullOrEmpty(Address) != ""  && StringHelper.NullOrEmpty(CityStateZip) != "")  
-    	{ 
-    		return String.format("%s \n %s", Address, CityStateZip);
-    	}
-    	else
-    	{
-    		return "";
-    	}
     }
     
 	 public static CoreIndividual GetCoreIndividual(String json) throws AppException
@@ -79,21 +53,7 @@ public class CoreIndividual extends CoreObject {
    	  		indv.MiddleName = jo.optString("MiddleName");
    	  		indv.GoesByName = jo.optString("GoesByName");   	  	
    	  		indv.Suffix = jo.optString("Suffix");
-   			indv.PictureUrl = jo.optString("PictureUrl");
-   			
-   			//  2013.04.22 - new for Connection detail
-   			indv.Country = jo.optString("Country");
-   			indv.Company = jo.optString("Company");
-   			indv.Address = StringHelper.NullOrEmpty(jo.optString("Address"));
-   			indv.Address2 = jo.optString("Address2");
-   			indv.City = jo.optString("City");
-   			indv.State = jo.optString("State");
-   			indv.Zipcode = jo.optString("Zipcode");
-   			indv.CityStateZip = StringHelper.NullOrEmpty(jo.optString("CityStateZip"));
-   			indv.Email = StringHelper.NullOrEmpty(jo.optString("Email"));
-   			indv.EmailListed = jo.optBoolean("EmailListed");
-   		    indv.PhoneNumber = StringHelper.NullOrEmpty(jo.optString("PhoneNumber"));
-   		    indv.PhoneListed = jo.optBoolean("PhoneListed");   		    
+   			indv.PictureUrl = jo.optString("PictureUrl");   		
    		}
    	  	catch (JSONException e) {
 			

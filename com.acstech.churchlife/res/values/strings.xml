@@ -18,14 +18,11 @@
     <string name="Dialog.No">No</string>
     <string name="Dialog.Loading">Loading.  Please wait.</string>
     <string name="Dialog.LoadingWithTitle">Loading %s.  Please wait.</string>
-    <string name="Dialog.JustLoading">Loading...</string>
-    <string name="Dialog.UnableToLoadImage">Unable to load image.</string>
     
     <string name="Save">Save</string>
     <string name="Cancel">Cancel</string>
     <string name="EmptyString"></string>
     
-    <string name="Add">Add</string>    
     
     <string name="Login.Email">Email</string>   
     <string name="Login.Password">Password</string>
@@ -60,9 +57,7 @@
 	<string name="Individual_FamilyMemberAction">View family member</string>	
 	<string name="Individual.PhoneNumberDial">Call This Number</string>
 	<string name="Individual.PhoneNumberText">Send Text Message</string>		
-	<string name="Individual.CommentAction">Comments</string>
-	<string name="Individual.ConnectionAction">Connections</string>
-	
+	<string name="Individual.CommentAction">View Comments</string>
 	
 	<string name="Individual.ContactCreateConfirm">Add this person to your Contacts?</string>
 	<string name="Individual.ContactCreateMenu">Add to Contacts</string>	
@@ -109,34 +104,22 @@
 			
 	<string name="Connection.LoadingWithTitle">Loading connection for %s.  Please wait.</string>
 	
-	<string name="Connection.DueDate">Due Date</string>
-	<string name="Connection.ContactType">Connection is</string>
-	<string name="Connection.ConnectionType">Description</string>
-	<string name="Connection.Notes">Notes</string>
 	<string name="Connection.Responses">Responses</string>
 	<string name="Connection.ResponseDefault">Click here to Add</string>
-	<string name="Connection.Family">Family Connection</string>
 	<string name="Connection.Close">Close Connection</string>
-	
-	<string name="Connection.Contacting">contacting</string>
-	<string name="Connection.Contacted">contacted</string>
 	
 	<string name="Connection.CommentValidation">The comment cannot be blank.</string>
 	<string name="Connection.SaveDialog">Submitting Connection for Approval.  Please wait.</string>
-	<string name="Connection.Saved">Connection has been saved.</string>
+	<string name="Connection.Saved">Connection has been submitted for approval.</string>
 	
-	<string name="Connection.AssignDialogTitle">Assign To</string>
-	<string name="Connection.AssignTitle">Assign To </string>
-	<string name="Connection.AssignDialogIndividual">Individual</string>
-	<string name="Connection.AssignDialogTeam">Team</string>
-	<string name="Connection.AssignDialogMe">Me</string>
+	<string name="Connection.ReassignDialogTitle">Reassign To</string>
+	<string name="Connection.ReassignTitle">Reassign to </string>
+	<string name="Connection.ReassignDialogIndividual">Individual</string>
+	<string name="Connection.ReassignDialogTeam">Team</string>
 
-	<string name="Connection.AssignHintIndividual">Search for individual</string>
-	<string name="Connection.AssignHintTeam">Search for team</string>
+	<string name="Connection.ReassignHintIndividual">Search for individual</string>
+	<string name="Connection.ReassignHintTeam">Search for team</string>
 			
-	<string name="Connection.ProgressDialogConnectionType">Loading Connection Types.  Please wait.</string>
-	<string name="Connection.ProgressDialogResponses">Loading Responses.  Please wait.</string>
-	
 	<string name="IndividualConnection.Title">Recent Connections</string>	
 	<string name="IndividualConnection.LoadingWithTitle">Loading recent connections for %s.  Please wait.</string>
 	<string name="IndividualConnection.NoResults">Sorry, no recent connections found.</string>	

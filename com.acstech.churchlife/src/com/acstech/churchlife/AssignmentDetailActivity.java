@@ -1,15 +1,11 @@
 package com.acstech.churchlife;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,7 +14,6 @@ import android.widget.TextView;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionHelper;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
-import com.acstech.churchlife.listhandling.ConnectionTeamsListLoader;
 import com.acstech.churchlife.webservice.Api;
 import com.acstech.churchlife.webservice.CoreAcsUser;
 import com.acstech.churchlife.webservice.CoreConnection;
@@ -30,12 +25,6 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	
 	ImageView teamImageView;
 	Button viewRecentButton;
-	
-	TextView contactTextView;
-	TextView addressTextView;
-	TextView phoneTextView;
-	TextView emailTextView;
-	
 	TextView assignmentTextView;
 	Button enterButton;
 	Button reassignButton;
@@ -70,7 +59,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
              }
              else {            	
             	 int assignmentId = extraBundle.getInt("assignmentid");            	 
-            	 _title = extraBundle.getString("title");     
+            	 _title = extraBundle.getString("assignmentname");     
             	 setTitle(_title);
             	 loadDataWithProgressDialog(assignmentId);            	    
              }		                         
@@ -101,59 +90,6 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	 *  Links state variables to their respective form controls
 	 */
 	 private void bindControls(){	    			 		
-		 
-		contactTextView = (TextView)this.findViewById(R.id.contactTextView);	
-		
-		addressTextView = (TextView)this.findViewById(R.id.addressTextView);
-		addressTextView.setOnClickListener(new OnClickListener() {				 
-			@Override
-			public void onClick(View view) {
-				 try {
-					 // call or text
-					 ExternalActivityHelper activityLauncher = new ExternalActivityHelper(AssignmentDetailActivity.this);
-					 String addressString = (String)view.getTag();
-		    		 activityLauncher.mapAddress(addressString);		  
-				 }
-				 catch (Exception e) {
-				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
-				 		ExceptionHelper.notifyNonUsers(e);
-				 }  
-			}			
-		});
-		phoneTextView = (TextView)this.findViewById(R.id.phoneTextView);
-		phoneTextView.setOnClickListener(new OnClickListener() {				 
-			@Override
-			public void onClick(View view) {
-				 try {
-					 // call or text
-					 ExternalActivityHelper activityLauncher = new ExternalActivityHelper(AssignmentDetailActivity.this);
-					 String phoneNumber = (String)view.getTag();
-		    		 activityLauncher.callPhoneNumber(phoneNumber);		  
-				 }
-				 catch (Exception e) {
-				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
-				 		ExceptionHelper.notifyNonUsers(e);
-				 }  
-			}			
-		});
-		
-		emailTextView = (TextView)this.findViewById(R.id.emailTextView);
-		emailTextView.setOnClickListener(new OnClickListener() {				 
-			@Override
-			public void onClick(View view) {
-				 try {
-					 // call or text
-					 ExternalActivityHelper activityLauncher = new ExternalActivityHelper(AssignmentDetailActivity.this);
-					 String emailAddress = (String)view.getTag();
-		    		 activityLauncher.sendEmail(emailAddress);		  
-				 }
-				 catch (Exception e) {
-				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
-				 		ExceptionHelper.notifyNonUsers(e);
-				 }  
-			}			
-		});
-				
 		assignmentTextView = (TextView)this.findViewById(R.id.assignmentTextView);
 		viewRecentButton = (Button)this.findViewById(R.id.viewRecentButton);
 		teamImageView = (ImageView) this.findViewById(R.id.teamImageView);
@@ -161,12 +97,13 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 		reassignButton = (Button)this.findViewById(R.id.reassignButton);
 				
 		// Reassign - check permission and hide button IF the user does NOT have permission
-		if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_REASSIGNCONNECTION) == false) {
+		GlobalState gs = GlobalState.getInstance(); 
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_REASSIGNCONNECTION) == false) {
 			reassignButton.setVisibility(View.GONE);
 		}
 		
 		// View Recent History button - check permission and hide button
-		if (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_VIEWOUTREACHHISTORY) == false) {
+		if (gs.getUser().HasPermission(CoreAcsUser.PERMISSION_VIEWOUTREACHHISTORY) == false) {
 			viewRecentButton.setVisibility(View.INVISIBLE);
 		}
 		else
@@ -209,7 +146,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 			 @Override
 			public void onClick(View view) {
 				 try {
-					 startAssignmentActivity(AssignmentActivity.ASSIGNMODE_NONE, _connection.ContactInformation.IndvId, _connection.ContactInformation.getDisplayNameForList());
+					 startAssignmentActivity(-1);
 				 }
 				 catch (Exception e) {
 				 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
@@ -224,45 +161,20 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 			public void onClick(View view) {
 				 try {
 					 DialogListSingleSelectFragment dlg = new DialogListSingleSelectFragment();
-					 dlg.setTitle(getResources().getString(R.string.Connection_AssignDialogTitle));	
-		
-					 //-------------------------------------------------------------------
-					 // Add Assignment items and their values  						 
-					 // ...if no teams exist - do not show the 'team' assign option						 
-					 //-------------------------------------------------------------------
-					 List<String> itemList = new ArrayList<String>();
-					 List<Integer> valueList = new ArrayList<Integer>();
-					 					 
-					 ConnectionTeamsListLoader teams = new ConnectionTeamsListLoader(AssignmentDetailActivity.this, "");
-					 int teamCount = teams.getTeamCount();
+					 dlg.setTitle(getResources().getString(R.string.Connection_ReassignDialogTitle));	
 					 
-					 // Assign to Individual (always available)
-					 itemList.add(getResources().getString(R.string.Connection_AssignDialogIndividual));
-					 valueList.add(AssignmentActivity.ASSIGNMODE_INDIVIDUAL);
+					 String individualOption = getResources().getString(R.string.Connection_ReassignDialogIndividual);
+					 String teamOption = getResources().getString(R.string.Connection_ReassignDialogTeam);
 					 
-					 // Assign to Team (only if teams)
-					 if (teamCount > 0) {
-						 itemList.add(getResources().getString(R.string.Connection_AssignDialogTeam));
-						 valueList.add(AssignmentActivity.ASSIGNMODE_TEAM);
-					 }
-					 										 					 			
-					 // convert item list to string array
-					 String[] items = itemList.toArray(new String[itemList.size()]);
+					 dlg.setItems(new String[] { individualOption, teamOption});		
 					 
-					 // converting item values (int array) a bit more work to do
-					 int[] itemValues = new int[valueList.size()];
-					 for (int i=0; i < itemValues.length; i++)  {
-						 itemValues[i] = valueList.get(i).intValue();
-					 }
-					 
-					 dlg.setItems(items);
-					 dlg.setItemValues(itemValues);					 
 					 dlg.show(getSupportFragmentManager(), "reassignpicker");
 					 dlg.setOnDimissListener(new DialogListSingleSelectFragment.OnDismissListener() {					
 						@Override
-						public void onDismiss(int selectedValue) {
-							try {													
-								startAssignmentActivity(selectedValue, _connection.ContactInformation.IndvId, _connection.ContactInformation.getDisplayNameForList());
+						public void onDismiss(int selection) {
+							try {					
+								// route to the 'team' or 'individual' picker activity (pass connection)
+								startAssignmentActivity(selection);
 							 }
 							 catch (Exception e) {
 							 		ExceptionHelper.notifyUsers(e, AssignmentDetailActivity.this);
@@ -283,48 +195,7 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	  * Called after webservice retrieves the connection (class level variable) object.  
 	  *   Sets control properties
 	 */
-	 private void bindData(){
-		 
-		 String linkText = "";
-		 String actionTag = "";
-		 
-		 contactTextView.setText(_connection.ContactInformation.getDisplayNameForList());
-		
-		 // Address
-		 if (_connection.ContactInformation.getContactAddress().length() > 0) {
-			 linkText = String.format("<a href='#'>%s <br /> %s</a>", _connection.ContactInformation.Address, _connection.ContactInformation.CityStateZip);			 			 
-			 actionTag = String.format("%s %s, %s %s", _connection.ContactInformation.Address, 					 										 
-					 								   _connection.ContactInformation.City, 
-					 								   _connection.ContactInformation.State, 
-					 								   _connection.ContactInformation.Zipcode);
-			 addressTextView.setText(Html.fromHtml(linkText));
-			 addressTextView.setTag(actionTag);
-		 }
-		 else {
-			 addressTextView.setVisibility(View.GONE);
-		 }
-
-		 // Phone
-		 if (_connection.ContactInformation.PhoneNumber.length() > 0) {
-			 linkText = "<a href='tel:" + _connection.ContactInformation.PhoneNumber + "'>" + _connection.ContactInformation.PhoneNumber + "</a>";
-			 phoneTextView.setText(Html.fromHtml(linkText));
-			 phoneTextView.setTag(_connection.ContactInformation.PhoneNumber);
-		 }
-		 else {
-			 phoneTextView.setVisibility(View.GONE);
-		 }
-
-		 // Email
-		 if (_connection.ContactInformation.Email.length() > 0) {
-			 linkText = String.format("<a href='#'>%s</a>", _connection.ContactInformation.Email);			 			 
-			 actionTag = _connection.ContactInformation.Email;					 
-			 emailTextView.setText(Html.fromHtml(linkText));
-			 emailTextView.setTag(actionTag);
-		 }
-		 else {
-			 emailTextView.setVisibility(View.GONE);
-		 }
-				 		
+	 private void bindData(){		 		 	
 		 assignmentTextView.setText(_connection.getDescription());
 		 
 		 // Further security check - these may already be 'gone' due to login permissions
@@ -361,7 +232,6 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
 	    			if (msg.what == 0) {	
 	    				
 	    				_connection = CoreConnection.GetCoreConnection(msg.getData().getString("connection"));
-	    					    				
 	    				bindData();		    					    			
 	       			}
 	       			else if (msg.what < 0) {
@@ -414,13 +284,16 @@ public class AssignmentDetailActivity  extends ChurchlifeBaseActivity {
      * 
      * @throws AppException 
      */
-    private void startAssignmentActivity(int assignToMode, int indvId, String indvName) throws AppException {	    	
+    private void startAssignmentActivity(int assignTo) throws AppException {	    	
     	Intent intent = new Intent();
     	intent.setClass(this, AssignmentActivity.class);
 	 	intent.putExtra("assignment", _connection.toJsonString());
-	 	intent.putExtra("assignto", assignToMode);
-	 	intent.putExtra("id", indvId);
-	 	intent.putExtra("name", indvName);
+	 	
+	 	// if we are re-assigning, tell the assignment activity
+	 	//  to open with the re-assign individual/team picker
+	 	if (assignTo >= 0) {
+	 		intent.putExtra("assignto", assignTo);
+	 	}
 	 	
 	 	startActivity(intent);	  		 			
 	 	finish();					// always close this activity		 			 		    

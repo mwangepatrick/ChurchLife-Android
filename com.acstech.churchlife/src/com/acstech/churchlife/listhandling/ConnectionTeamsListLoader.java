@@ -3,38 +3,16 @@ package com.acstech.churchlife.listhandling;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
-import com.acstech.churchlife.AppPreferences;
 import com.acstech.churchlife.GlobalState;
 import com.acstech.churchlife.R;
-import com.acstech.churchlife.config;
 import com.acstech.churchlife.exceptionhandling.AppException;
-import com.acstech.churchlife.webservice.Api;
-import com.acstech.churchlife.webservice.CoreCommentChangeRequest;
 import com.acstech.churchlife.webservice.CoreConnectionTeam;
 
 
 public class ConnectionTeamsListLoader extends ListLoaderBase<DefaultListItem>{
-	
-	// Helper Method for team counting 
-	public int getTeamCount() 
-	{
-		TeamCountTask tsk = new TeamCountTask(); 
-		tsk.execute();
-    	int numberTeams;
-    	
-		try {
-			numberTeams = tsk.get();
-		} catch (Exception e) {
-			return -1;
-		}
-    	return numberTeams;
-	}
-	
 	
 	private List<CoreConnectionTeam> _webServiceResults;		// results from webservice call	
 	
@@ -84,28 +62,4 @@ public class ConnectionTeamsListLoader extends ListLoaderBase<DefaultListItem>{
 		super.setNextResultsMessage(R.string.IndividualList_More);
 		super.setNoResultsMessage(R.string.IndividualList_NoResults);
 	}
-
-    // task to load teams and block until loaded     
- 	private class TeamCountTask extends AsyncTask<Void, Void, Integer> {
-		Exception _ex;
-		
-		@Override
-	    protected Integer doInBackground(Void... args) {	        	
-	    	try	{
-	    		GlobalState gs = GlobalState.getInstance(); 
-		    	AppPreferences appPrefs = new AppPreferences(_context);
-				Api apiCaller = new Api(appPrefs.getWebServiceUrl(), config.APPLICATION_ID_VALUE);
-				
-	    		List<CoreConnectionTeam> _results = apiCaller.connectionteams(gs.getUserName(), gs.getPassword(), gs.getSiteNumber()); 	        		
-				return _results.size(); 				   				 
-	    	}
-	    	catch (Exception e) {
-	    		_ex = e;
-	    		return -1;
-	    	}	        	                               		       
-	    }	        	        
- 	}
- 	
 }
-
-

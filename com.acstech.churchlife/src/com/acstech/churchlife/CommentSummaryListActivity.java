@@ -10,10 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
@@ -46,7 +44,6 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	
 	TextView headerTextView;
 	ListView lv1;
-	Button addButton;
 	
 	 @Override
 	 public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +53,9 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        {      	 
 	        	 setContentView(R.layout.commentlist);
 	        	 setTitle("Comments"); //zzz
-	        	 	        		        	 	        	
+	        	 
+	        	 bindControls();							// Set state variables to their form controls
+	        	 	        	 
 	        	 setCanAddCommentsTask tsk = new setCanAddCommentsTask();
 	        	 tsk.execute();	        	 
 	        	 tsk.get();									// suspends UI until done  
@@ -64,8 +63,6 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        	 if (tsk._ex != null ) {
 	        		 throw tsk._ex;	        		
 	        	 }
-	        	 
-	        	 bindControls();							// Set state variables to their form controls
 	        	 
 	        	 // This activity MUST be passed data
 	        	 Bundle extraBundle = this.getIntent().getExtras();
@@ -115,7 +112,6 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        }
 	    }
 
-	    /*
 	    @Override
 	    public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {	
 	    	super.onCreateOptionsMenu(menu);
@@ -143,25 +139,14 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 		    default:
 		        return super.onOptionsItemSelected(item);
 		    }
-		}		
-		*/
-	    
+		}
+		
 	    /**
 	     *  Links state variables to their respective form controls
 	     */
 	    private void bindControls(){	    	
 	    	lv1 = (ListView)this.findViewById(R.id.ListView01);
-	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);	    	
-	    	addButton = (Button)this.findViewById(R.id.addButton);
-	    	     
-	    	// add button shown/hidden by background task
-        	addButton.setVisibility(View.GONE);
-        	addButton.setOnClickListener(new OnClickListener() {		
-            	public void onClick(View v) {	  
-            		startCommentAddActivity();
-            	}		
-    		});	            	
-            
+	    	headerTextView = (TextView)this.findViewById(R.id.headerTextView);
 	    }
 	    
 	    private class setCanAddCommentsTask extends AsyncTask<Void, Void, Boolean> {
@@ -192,8 +177,7 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
 	        
 	        @Override
 	        protected void onPostExecute(Boolean result) {
-	        	_canAddComments  = result;	        	 
-	        	addButton.setVisibility(View.VISIBLE); // update UI	        	
+	        	_canAddComments  = result;
 	        }
 	    }
     	    
@@ -308,12 +292,4 @@ public class CommentSummaryListActivity extends ChurchlifeBaseActivity {
    		 	}
 	    }
 	    
-	    private void startCommentAddActivity()
-	    {
-	    	Intent settingsIntent = new Intent(getBaseContext(), CommentActivity.class);		    							    	 		        	
-	    	settingsIntent.putExtra("id", _individualId);
-	    	settingsIntent.putExtra("name", _individualName);
-	    	settingsIntent.putExtra("commenttypeid", 0);	   		 	
-   		 	startActivity(settingsIntent);			    	
-	    }
 }

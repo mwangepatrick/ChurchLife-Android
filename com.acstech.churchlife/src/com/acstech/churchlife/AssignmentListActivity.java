@@ -166,7 +166,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	        		
 	        			//If only 1, go directly to the detail page	  
 		        		if (_loader.getList().size() == 1 && item.isTitleOnlyItem() == false) {	    					  				
-		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), _assignmentType);		        			
+		        			startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());		        			
 		        		}
 		        		
 		        	}
@@ -196,7 +196,7 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 		       	 		loadListWithProgressDialog(true);  
 		       	 	}
 		       	 	else {	 
-		       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), _assignmentType);    		 		       	 	
+		       	 		startAssignmentDetailActivity(Integer.parseInt(item.getId()), item.getTitle());    		 		       	 	
 		       	 	}
 	    		}
 	    	}
@@ -212,11 +212,11 @@ public class AssignmentListActivity extends ChurchlifeBaseActivity {
 	     * 
 	     * @param assignmentId	    
 	     */
-	    private void startAssignmentDetailActivity(int assignmentId, String title) {	    	
+	    private void startAssignmentDetailActivity(int assignmentId, String assignmentName) {	    	
 	    	Intent intent = new Intent();
 	    	intent.setClass(this, AssignmentDetailActivity.class);
 		 	intent.putExtra("assignmentid", assignmentId);
-		 	intent.putExtra("title", title);
+		 	intent.putExtra("assignmentname", assignmentName);
 		 	startActivity(intent);			 	
 	    }
 	 
