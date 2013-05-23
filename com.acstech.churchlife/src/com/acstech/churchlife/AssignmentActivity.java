@@ -565,6 +565,7 @@ public class AssignmentActivity  extends ChurchlifeBaseActivity {
 	    	String msg = "";
 	    	
 	    	/* 2013.05.22 MAS disabled - allow empty comment text 	    	 
+	    	 * 
 	    	// Comment text is required when editing
     		if (connectionEditText.getText().length() == 0 && _connection.ConnectionId > 0) {   
     			msg = (String)this.getResources().getText(R.string.Connection_CommentValidation);     		
