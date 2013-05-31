@@ -24,7 +24,9 @@ public class ApiBase {
 	protected ConnectivityManager _connectivityManager;		// lazy loaded
 
 	// Helper method to return a REST client object - consumer must use the new CTOR (see below)
-	public RESTClient getRESTClient(String urlToAppend) {
+	public RESTClient getRESTClient(String urlToAppend) throws AppException {
+		
+		isOnlineCheck();		
 		
 		RESTClient client = null;
 		

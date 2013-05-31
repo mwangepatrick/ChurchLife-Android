@@ -11,6 +11,7 @@ import com.acstech.churchlife.R;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -297,15 +298,13 @@ public class OrganizationListActivity extends ChurchlifeBaseActivity {
     		if (item.getId().equals("")) {    			
     			loadListWithProgressDialog(true);
        	 	}
-       	 	else {
-       	 		/*
-       	 		// Show the selected organizations detail
-       	 		String name = item.getTitle().trim();
-       	 		String dialogText = String.format(getString(R.string.Individual_ProgressDialog), name); 
- 
-       	 		IndividualActivityLoader loader = new IndividualActivityLoader(this, dialogText);
-       	 		loader.loadIndividualWithProgressWindow(Integer.parseInt(item.getId()));
-       	 		*/            	 		
+       	 	else {       	 	
+       	 		// Show the selected organizations detail       
+       	 		Intent intent = new Intent();
+       	 		intent.setClass(this, OrganizationActivity.class); 		           	 	
+       	 		intent.putExtra("orgname", item.getTitle().trim());
+       	 		intent.putExtra("orgid", Integer.parseInt(item.getId()));   	 		
+       	 		startActivity(intent);       	 		   	 		
        	 	}       	 	       	 	
     	}
         catch (Exception e) {

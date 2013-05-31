@@ -7,7 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.acstech.churchlife.StringHelper;
 import com.acstech.churchlife.exceptionhandling.AppException;
 import com.acstech.churchlife.exceptionhandling.ExceptionInfo;
 

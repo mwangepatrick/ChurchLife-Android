@@ -72,6 +72,7 @@
 		
 	<string name="OrganizationList.NoResults">Sorry, no organizations found with that name.</string>
 	<string name="OrganizationList.AllTypes">All Organizations</string>
+	<string name="Organization.Title">Organization Detail</string>
 	
 	<string name="EventList.NoResults">Sorry, no events found.</string>
 	<string name="EventList.ProgressDialog">"Loading events. Please wait."</string>

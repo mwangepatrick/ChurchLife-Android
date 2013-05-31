@@ -222,52 +222,31 @@ public class IndividualActivity extends ChurchlifeBaseActivity {
 		// General Demographics - but only for Staff/Admin
 		if (getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_STAFF) || getCurrentUser().SecurityRole.equals(CoreAcsUser.SECURITYROLE_ADMINISTRATOR)) {
 			if (_individual.DateOfBirth.trim().length() > 0) {
-				listItems.add(new IndividualListItem("Birthday", _individual.DateOfBirth, "", "", null));
+				listItems.add(IndividualListItem.NewSimpleItem("Birthday", _individual.DateOfBirth));
 			}
 		
 			if (_individual.MemberStatus.trim().length() > 0) {
-				listItems.add(new IndividualListItem("Member Status", _individual.MemberStatus, "", "", null));			
+				listItems.add(IndividualListItem.NewSimpleItem("Member Status", _individual.MemberStatus));			
 			}	
 		}
 		
-		// Phone Numbers - add to listitems
-		String titleString = getResources().getString(R.string.Individual_PhoneAction);
-		for (CoreIndividualPhone phone : _individual.Phones) {
-			
-			String defaultAction = "phone:" + phone.getPhoneNumberToDial();
-						
-			listItems.add(new IndividualListItem(String.format(titleString, phone.PhoneType),
-											 phone.getPhoneNumberToDisplay(), "", defaultAction, getResources().getDrawable(R.drawable.call_sms_w)));			
+		// Phone Numbers
+		for (CoreIndividualPhone phone : _individual.Phones) {			
+			listItems.add(IndividualListItem.NewPhoneItem(IndividualActivity.this, phone));					
 		}
 				
-		// Email addresses - add to listitems
-		titleString = getResources().getString(R.string.Individual_EmailAction);					
+		// Email addresses
 		for (CoreIndividualEmail email : _individual.Emails) {
-			listItems.add(new IndividualListItem(String.format(titleString, email.EmailType),
-											 email.Email, "",											
-											 "email:" + email.Email,
-											 getResources().getDrawable(R.drawable.sym_action_email)));			
+			listItems.add(IndividualListItem.NewEmailItem(IndividualActivity.this, email));
 		}
 				
-		// Physical addresses - add to listitems
-		titleString = getResources().getString(R.string.Individual_AddressAction);				
+		// Physical addresses
 		for (CoreIndividualAddress address : _individual.Addresses) {
-			
-			String cityStateZip = "";
-	        if (address.City.trim().length() > 0 && address.State.trim().length() > 0) {
-	        	cityStateZip = String.format("%s, %s  %s", address.City.trim(), address.State.trim(), address.Zipcode.trim());
-	        }
-	            			
-			String actionTag = String.format("map:%s %s %s, %s %s", address.Address, address.Address2, address.City, address.State, address.Zipcode);
-			
-			listItems.add(new IndividualListItem(String.format(titleString, address.AddrType),
-											 address.Address, address.Address2, cityStateZip,											
-											 actionTag,
-											 getResources().getDrawable(R.drawable.ic_menu_compass)));			
+			listItems.add(IndividualListItem.NewAddressItem(IndividualActivity.this, address));
 		}
 			
 		// Family members - add to listitems
-		titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
+		String titleString = getResources().getString(R.string.Individual_FamilyMemberAction);		
 		for (CoreIndividual member : _individual.FamilyMembers) {
 			listItems.add(new IndividualListItem(titleString,
 											 member.getDisplayNameForList(), "", 											

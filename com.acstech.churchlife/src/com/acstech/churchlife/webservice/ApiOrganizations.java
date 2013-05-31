@@ -14,9 +14,7 @@ public class ApiOrganizations extends ApiBase {
 	 * Return a list of organizations by search text and type
 	 */
 	public CorePagedResult<List<CoreOrganization>> organizations(int orgLevel, String searchText, int pageIndex) throws AppException {
-
-		isOnlineCheck();
-		
+	
 		CorePagedResult<List<CoreOrganization>> organizations = null;  		
 		RESTClient client = getRESTClient("orgs"); 
 		
@@ -51,8 +49,6 @@ public class ApiOrganizations extends ApiBase {
 	 * Return a list of organization types 
 	 */
 	public List<CoreOrganizationType> organizationtypes() throws AppException {
-
-		isOnlineCheck();
 		
 		List<CoreOrganizationType> organizationtypes = null;  		
 		RESTClient client = getRESTClient("types/orgleveltypes"); 	    
@@ -75,15 +71,11 @@ public class ApiOrganizations extends ApiBase {
 		return organizationtypes;
 	}
 	
-
-    
-
 	/*
-	
+	 * return a single organization by id
+	 */
 	public CoreOrganizationDetail organization(int orgId) throws AppException {
 
-		isOnlineCheck();
-		
 		CoreOrganizationDetail organization = null;
 		RESTClient client = getRESTClient(String.format("orgs/%s", orgId));
     		    	
@@ -97,16 +89,16 @@ public class ApiOrganizations extends ApiBase {
     	catch (AppException e)	{
     		// Add some parameters to the error for logging
     		ExceptionInfo info = e.addInfo();
-    		info.setContextId("Api.Organizations");
-    		info.getParameters().put("sitenumber", siteNumber);
-    		info.getParameters().put("username", username);
-    		info.getParameters().put("indvid", indvId);
+    		info.setContextId("Api.Organization");
+    		info.getParameters().put("sitenumber", _siteNumber);
+    		info.getParameters().put("username", _username);
+    		info.getParameters().put("orgid", orgId);
     		throw e;
     	}
 		return organization;
 	}
 	
-
+	/*
     public CorePagedResult<List<CoreOrganizationStaff>> OrganizationStaff(int orgId, int pageIndex)
     {
         var parms = new Dictionary<string, string>
