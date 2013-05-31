@@ -41,6 +41,16 @@ public class GlobalState extends Application
 			return "";
 		}
 	}
+
+	public Integer getSiteNumberInt() {
+		if (_user != null) {
+			return _user.SiteNumber;
+		}
+		else {
+			return 0;
+		}
+	}
+	
 	
 	// User name
 	public String getUserName() {

@@ -23,6 +23,8 @@ import com.acstech.churchlife.webservice.RESTClient.RequestMethod;
  * NOTE:  This will (eventually) replace the WebServiceHandler class
  * 
  * @author softwarearchitect
+ *
+ * FUTURE:  Split out areas into their own classes and begin to use the new ApiBase CTOR 
  * 
  */
 public class Api extends ApiBase {

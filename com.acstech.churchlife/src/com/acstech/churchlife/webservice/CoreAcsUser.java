@@ -21,14 +21,22 @@ public class CoreAcsUser extends CoreObject {
 	  public static String PERMISSION_VIEW = "V";
 	  public static String PERMISSION_DENIED = "N";
 	  
+	  // people
 	  public static String PERMISSION_MEMBERSEARCH = "MemberSearch";
 	  public static String PERMISSION_LOCATEPERSON = "LocatePerson";
 	  public static String PERMISSION_VIEWADDCOMMENTS = "ViewAddComments";
+	  
+	  // connections
 	  public static String PERMISSION_REASSIGNCONNECTION = "ReassignConnection";
 	  public static String PERMISSION_ASSIGNEDCONTACTSONLY = "AssignedContactsOnly";
 	  public static String PERMISSION_ASSIGNCONTACTS = "AssignContacts";	  
 	  public static String PERMISSION_VIEWOUTREACHHISTORY = "ViewOutreachHistory";
 	  
+	  // organization
+      public static String PERMISSION_LOCATEORGANIZATIONS = "LocateOrganizations";
+      public static String PERMISSION_VIEWORGANIZATIONRECORD = "ViewOrganizationRecord";
+      public static String PERMISSION_VIEWSTAFFROSTER = "ViewStaffRoster";
+
 	  
 	  // security roles
 	  public static String SECURITYROLE_STAFF = "Staff";
@@ -47,6 +55,7 @@ public class CoreAcsUser extends CoreObject {
       public String UnifiedLoginID;    
       public int IndvId;
       public int FamId;
+      public boolean OrgsAvailable;
       public Map<String,String> Rights = new HashMap<String,String>();
 
       // Merchant Info is not a 'true' child of this object as it is not 
@@ -157,6 +166,7 @@ public class CoreAcsUser extends CoreObject {
 	    	  user.UnifiedLoginID = jo.optString("UnifiedLoginID");	    			
 	    	  user.IndvId = jo.optInt("IndvId");
 	    	  user.FamId = jo.optInt("FamId");
+	    	  user.OrgsAvailable = jo.optBoolean("OrgsAvailable");
 	    	  
 	    	  // Rights
 	    	  JSONObject rights = jo.optJSONObject("Rights");

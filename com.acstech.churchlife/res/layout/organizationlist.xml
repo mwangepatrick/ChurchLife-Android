@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+ 	android:layout_width="fill_parent"
+  	android:layout_height="fill_parent">
+
+    <Spinner android:id="@+id/orgLevelSpinner"
+	         android:layout_width="match_parent"
+	         android:layout_height="wrap_content"
+	         android:prompt="@string/OrganizationList.AllTypes">
+	</Spinner>	
+	
+	<RelativeLayout android:layout_width="match_parent" 				  
+				    android:layout_height="wrap_content"
+				    android:paddingTop="3dp">
+	    	
+		<EditText
+	  		android:layout_height="wrap_content" 
+	  		android:id="@+id/txtSearchFor" 
+	  		android:layout_width="fill_parent"
+	  		android:inputType="textNoSuggestions"
+	  		android:layout_marginLeft="3dp"
+	  		android:layout_toLeftOf="@+id/btnSearch" >
+	  		<requestFocus></requestFocus>
+	  	</EditText>	 
+		<Button			
+			android:text="@string/IndividualList.Search" 
+			android:id="@+id/btnSearch"		
+			android:layout_width="wrap_content" 
+			android:layout_height="wrap_content" 
+			android:layout_alignParentRight="true">
+		</Button>	
+	</RelativeLayout>
+		
+  	<ListView
+   		android:id="@+id/ListView01"
+   		android:layout_height="wrap_content"
+   		android:layout_width="fill_parent"/>
+
+</LinearLayout>

@@ -154,6 +154,11 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
 			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_People), R.drawable.ic_action_people_color)); 
 		}
     	
+		// Organizations
+		if (showOrganizationMenu()) {
+			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Organization), R.drawable.ic_action_people_color)); 
+		}
+				
 		// Calendar
 		if (showCalendarMenu()) {
 			itemList.add(new DefaultListItem(getResources().getString(R.string.Menu_Calendar), R.drawable.ic_action_calendar_color));
@@ -187,6 +192,21 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     		(getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_MEMBERSEARCH) == false && getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_LOCATEPERSON) == false) ) {
     			
     		result = false;    		
+    	}
+    	return result;    	
+    }
+    
+    /**
+     * Logic for displaying the Organization menu
+     * @return
+     */
+    private boolean showOrganizationMenu() {
+    	boolean result = false;  //by default, hide it
+    
+    	if (getCurrentUser().OrgsAvailable &&
+    	   (getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_LOCATEORGANIZATIONS) && getCurrentUser().HasPermission(CoreAcsUser.PERMISSION_VIEWORGANIZATIONRECORD)) ) {
+    			
+    		result = true;    		
     	}
     	return result;    	
     }
@@ -282,6 +302,9 @@ public class ChurchlifeBaseActivity extends SlidingFragmentActivity {
     	
     	if (item.getTitle().equals(getResources().getString(R.string.Menu_People))) {
     		intent = new Intent().setClass(this, IndividualListActivity.class);  	
+    	}
+    	else if (item.getTitle().equals(getResources().getString(R.string.Menu_Organization))) {
+    		intent = new Intent().setClass(this, OrganizationListActivity.class);
     	}
     	else if (item.getTitle().equals(getResources().getString(R.string.Menu_Calendar))) {
     		intent = new Intent().setClass(this, EventListActivity.class);

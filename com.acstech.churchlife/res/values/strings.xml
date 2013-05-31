@@ -2,7 +2,8 @@
 <resources>  
     <string name="app_name">Church Life</string>
 
-    <string name="Menu.People">People</string>    
+    <string name="Menu.People">People</string>   
+    <string name="Menu.Organization">Organizations</string>    
     <string name="Menu.Calendar">Calendar</string>
     <string name="Menu.Connections">My Tasks</string>
     <string name="Menu.Giving">Giving</string>        
@@ -69,6 +70,9 @@
 	<string name="Individual.ContactCreated">This person has been successfully added to your Contacts.</string>
 	<string name="Individual.ContactCreateError">There was an error creating your contact.  Your contact could not be created.</string>
 		
+	<string name="OrganizationList.NoResults">Sorry, no organizations found with that name.</string>
+	<string name="OrganizationList.AllTypes">All Organizations</string>
+	
 	<string name="EventList.NoResults">Sorry, no events found.</string>
 	<string name="EventList.ProgressDialog">"Loading events. Please wait."</string>
 	<string name="EventList.More">More Results</string>
